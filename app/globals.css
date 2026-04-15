@@ -47,16 +47,18 @@
 
 :root {
   --font-sans: var(--font-inter);
-  --background: oklch(1 0 0);
+  --background: #F7F9FB;
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: #2563EB;
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+  --secondary: #64748B;
   --secondary-foreground: oklch(0.205 0 0);
+  --tertiary:#0EA5E9
+  --natural:#F8FAFC
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
@@ -71,7 +73,7 @@
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
+  --sidebar: #F1F5F9;
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
   --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -79,6 +81,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --danger:#9F403D
 }
 
 .dark {
@@ -125,4 +128,7 @@
   html {
     @apply font-sans;
   }
+}
+.hover{
+  @apply hover:text-primary hover:cursor-pointer transition-all duration-300 ease-in-out hover:scale-110;
 }
