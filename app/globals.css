@@ -55,10 +55,10 @@
   --popover-foreground: oklch(0.145 0 0);
   --primary: #2563EB;
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: #64748B;
-  --secondary-foreground: oklch(0.205 0 0);
-  --tertiary:#0EA5E9
-  --natural:#F8FAFC
+  --secondary: #465467;
+  --secondary-foreground: #64748B;
+  --tertiary:#0EA5E9;
+  --natural:#F8FAFC;
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
@@ -129,6 +129,13 @@
     @apply font-sans;
   }
 }
+.transition{
+  @apply transition-all duration-300 ease-in-out;
+}
 .hover{
-  @apply hover:text-primary hover:cursor-pointer transition-all duration-300 ease-in-out hover:scale-110;
+  @apply hover:text-primary hover:cursor-pointer transition hover:scale-110;
+}
+
+.sidebar-hover{
+  @apply hover:bg-secondary-foreground/10  hover:text-primary hover:cursor-pointer transition;
 }
