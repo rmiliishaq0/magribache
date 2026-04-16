@@ -133,7 +133,7 @@
   @apply transition-all duration-300 ease-in-out;
 }
 .hover{
-  @apply hover:text-primary hover:cursor-pointer transition hover:scale-110;
+  @apply hover:text-primary hover:cursor-pointer transition;
 }
 
 .sidebar-hover{

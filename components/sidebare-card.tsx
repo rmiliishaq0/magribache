@@ -8,6 +8,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 export default function SideBareCard({Logo,name,plan,active,isLogo=false}:{
     Logo: React.ElementType
@@ -27,9 +32,19 @@ export default function SideBareCard({Logo,name,plan,active,isLogo=false}:{
                         size="lg"
                         className={` cursor-pointer ${!isLogo && "sidebar-hover"} ${active && "bg-secondary-foreground/10"}`}
                         >
-                         <div className={`${isLogo ? "size-8 bg-primary text-sidebar-primary-foreground " : "text-secondary p-1.5 " }group-hover/item:text-primary transition rounded-lg aspect-square flex items-center justify-center ${active && "text-primary!"}`}>
+                         {open? <div className={`${isLogo ? "size-8 bg-primary text-sidebar-primary-foreground " : "text-secondary p-1.5 " }group-hover/item:text-primary transition rounded-lg aspect-square flex items-center justify-center ${active && "text-primary!"}`}>
                             <Logo className={`${isLogo?"size-4!": (open?"size-6!":"size-5!")}`}/>
-                        </div>
+                        </div>:<Tooltip >
+                                <TooltipTrigger >
+                                    <div className={`${isLogo ? "size-8 bg-primary text-sidebar-primary-foreground " : "text-secondary p-1.5 " }group-hover/item:text-primary transition rounded-lg aspect-square flex items-center justify-center ${active && "text-primary!"}`}>
+                                        <Logo className={`${isLogo?"size-4!": (open?"size-6!":"size-5!")}`}/>
+                                    </div>
+
+                            </TooltipTrigger >
+                            <TooltipContent side="right" >
+                                {name}
+                            </TooltipContent>
+                            </Tooltip>}
                         <div className="grid flex-1 text-left text-sm leading-tight">
                             <span className={`${isLogo ? "font-bold" :""} group-hover/item:text-primary transition text-secondary ${active && "text-primary!"}`}>{name}</span>
                             <span className="text-secondary/80 truncate text-xs">{plan}</span>

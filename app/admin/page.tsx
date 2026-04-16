@@ -1,5 +1,5 @@
 export default function AdminHome() {
     return (
-        null
+       <h1>hello</h1>
     )
 }
