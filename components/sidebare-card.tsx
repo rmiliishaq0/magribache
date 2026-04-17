@@ -36,7 +36,7 @@ export default function SideBareCard({Logo,name,plan,active,isLogo=false}:{
                             <Logo className={`${isLogo?"size-4!": (open?"size-6!":"size-5!")}`}/>
                         </div>:<Tooltip >
                                 <TooltipTrigger >
-                                    <div className={`${isLogo ? "size-8 bg-primary text-sidebar-primary-foreground " : "text-secondary p-1.5 " }group-hover/item:text-primary transition rounded-lg aspect-square flex items-center justify-center ${active && "text-primary!"}`}>
+                                    <div className={`${isLogo ? "size-8 bg-primary text-sidebar-primary-foreground " : "text-secondary p-1.5 " }group-hover/item:text-primary transition rounded-lg aspect-square flex items-center justify-center ${active && "text-primary!"} cursor-pointer`}>
                                         <Logo className={`${isLogo?"size-4!": (open?"size-6!":"size-5!")}`}/>
                                     </div>
 

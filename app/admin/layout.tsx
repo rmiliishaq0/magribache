@@ -19,7 +19,9 @@ export default function AdminLayout({ children }: Readonly<{
                 <Nav  />
             </div>
         </div>
-        {children}
+        <div className="m-5 mt-6 ">
+          {children}
+        </div>
       </main>
     </SidebarProvider>
   )
