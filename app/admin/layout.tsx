@@ -7,10 +7,10 @@ export default function AdminLayout({ children }: Readonly<{
 }>) {
   return (
     <SidebarProvider>
-      <AppSidebar/>
-      <main className="w-full">
-        <div className="flex items-center justify-between gap-2 mt-4">
-            <SidebarTrigger className="ml-4 mb-2 text-secondary hover:text-primary transition cursor-pointer" />
+      <AppSidebar />
+      <main className="w-full mx-4 mt-4 flex flex-col gap-8">
+        <div className="flex items-center justify-between gap-4 ">
+            <SidebarTrigger className=" text-secondary hover:text-primary transition cursor-pointer" />
             <Separator
               orientation="vertical"
               className="h-8"
@@ -19,7 +19,7 @@ export default function AdminLayout({ children }: Readonly<{
                 <Nav  />
             </div>
         </div>
-        <div className="m-5 mt-6 ">
+        <div >
           {children}
         </div>
       </main>

@@ -13,7 +13,7 @@ import Link from "next/link";
 
 export default function Nav(){
     return(
-        <nav className="flex items-center justify-between  mx-12 gap-4 flex-wrap">
+        <nav className="flex items-center justify-between  gap-4 flex-wrap">
             <div className="relative grow-2">
                 <Input 
                     placeholder="Rechercher des produits , clients ou factures..." 

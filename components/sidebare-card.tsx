@@ -46,7 +46,7 @@ export default function SideBareCard({Logo,name,plan,active,isLogo=false}:{
                             </TooltipContent>
                             </Tooltip>}
                         <div className="grid flex-1 text-left text-sm leading-tight">
-                            <span className={`${isLogo ? "font-bold" :""} group-hover/item:text-primary transition text-secondary ${active && "text-primary!"}`}>{name}</span>
+                            <span className={` font-bold group-hover/item:text-primary transition text-secondary ${active && "text-primary!"}`}>{name}</span>
                             <span className="text-secondary/80 truncate text-xs">{plan}</span>
                         </div>
                         </SidebarMenuButton>
