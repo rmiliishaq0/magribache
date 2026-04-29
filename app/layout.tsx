@@ -24,7 +24,7 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} h-full antialiased`}
     >
-      <body>
+      <body className="text-secondary">
         <ThemeProvider
             attribute="class"
             defaultTheme="light"

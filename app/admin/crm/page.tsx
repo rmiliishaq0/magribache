@@ -1,5 +1,7 @@
-export default function CRM() {
+import TabsWithTable from "@/components/crm"
+
+export default function CrmPage() {
     return (
-        <h1>crm</h1>
+        <TabsWithTable/>
     )
 }

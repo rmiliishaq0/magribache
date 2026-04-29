@@ -1,5 +1,7 @@
-export default function Sales(){
+import Sales from "@/components/sales"
+
+export default function SalesPage(){
     return(
-        <h1>sales</h1>
+        <Sales/>
     )
 }
