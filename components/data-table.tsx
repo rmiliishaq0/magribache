@@ -51,7 +51,7 @@ import {
 } from "@tanstack/react-table"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import { toast } from "sonner"
-import { file, z } from "zod"
+import {  z } from "zod"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { Badge } from "@/components/ui/badge"
@@ -106,7 +106,8 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 
-import { CrmTableFields } from "@/utils/constants"
+import type { ColumnMeta } from "@/utils/types"
+
 
 export const schema = z.object({
   id: z.number(),
@@ -167,11 +168,12 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
 
 export function DataTable({
   data: initialData,
-  activeTab
-  
+  activeTab,
+  constants
 }: {
   data: z.infer<typeof schema>[]
   activeTab: string
+  constants: Record<string,Record<string, ColumnMeta[]>>
 }) {
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -198,7 +200,7 @@ export function DataTable({
   )
 
   const columns = React.useMemo<ColumnDef<any>[]>(() => {
-  const currentFields = CrmTableFields[activeTab]
+  const currentFields = constants[activeTab]
   return [
       {
     id: "drag",
@@ -319,72 +321,6 @@ export function DataTable({
   },
   ]  
 }, [activeTab])
-
-
-
-
-
-//   {
-//     accessorKey: "limit",
-//     header: () => <div className="w-full text-right">Limit</div>,
-//     cell: ({ row }) => (
-//       <form
-//         onSubmit={(e) => {
-//           e.preventDefault()
-//           toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-//             loading: `Saving ${row.original.header}`,
-//             success: "Done",
-//             error: "Error",
-//           })
-//         }}
-//       >
-//         <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
-//           Limit
-//         </Label>
-//         <Input
-//           className="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background dark:bg-transparent dark:hover:bg-input/30 dark:focus-visible:bg-input/30"
-//           defaultValue={row.original.limit}
-//           id={`${row.original.id}-limit`}
-//         />
-//       </form>
-//     ),
-//   },
-//   {
-//     accessorKey: "reviewer",
-//     header: "Reviewer",
-//     cell: ({ row }) => {
-//       const isAssigned = row.original.reviewer !== "Assign reviewer"
-
-//       if (isAssigned) {
-//         return row.original.reviewer
-//       }
-
-//       return (
-//         <>
-//           <Label htmlFor={`${row.original.id}-reviewer`} className="sr-only">
-//             Reviewer
-//           </Label>
-//           <Select>
-//             <SelectTrigger
-//               className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
-//               size="sm"
-//               id={`${row.original.id}-reviewer`}
-//             >
-//               <SelectValue placeholder="Assign reviewer" />
-//             </SelectTrigger>
-//             <SelectContent align="end">
-//               <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-//               <SelectItem value="Jamik Tashpulatov">
-//                 Jamik Tashpulatov
-//               </SelectItem>
-//             </SelectContent>
-//           </Select>
-//         </>
-//       )
-//     },
-//   },
-
-
 
   const table = useReactTable({
     data,

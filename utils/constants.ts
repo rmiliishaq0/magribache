@@ -8,6 +8,7 @@ import {
   ShoppingCart,
   Users2,
 } from "lucide-react"
+import type { ColumnMeta } from "./types"
 
 export const sideBarecontents = {
   user: {
@@ -67,12 +68,7 @@ export const CrmFields = [
   "Contrats"
 ]
 
-type ColumnMeta = {
-  isNavigate?: boolean
-  isInput?: boolean
-  isBadge?: boolean
-  type?: "text" | "number" | "email" | "date" | "file"
-}
+
 
 export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>>={
   Clients:{
@@ -151,47 +147,47 @@ export const SalesFields = [
 
 export const SalesTableFields : Record<string,Record<string, ColumnMeta[]>>={
   Devis:{
-    "Code":[],
-    "Entreprise":[{isNavigate:true,}],
-    "Téléphone":[{isInput:true,type:"number"}],
-    "Email":[{isInput:true,type:"email"}],
-    "Catégories":[{isInput:true,type:"text"}],
-    "ICE":[{isInput:true,type:"number"}],
-    "Identifiant fiscal (IF)": [{isInput:true,type:"number"}],
-    "Ville": [{isInput:true,type:"text"}],
-    "Pays": [{isInput:true,type:"text"}],
-    "Actif": [{isBadge:true}],
-    "CARTE VISITE": [{isInput:true,type:"file"}],
+    "Numéro":[],   
+    "Client":[{isNavigate:true}],
+    "Date":[],
+    "Montant TTC":[{isInput:true,type:"number"}],
+    "Facture":[{isInput:true,type:"number"}],
+    "Bon de commande": [{isInput:true,type:"number"}],
+    "Bon de livraison": [{isInput:true,type:"text"}],
+    "Commentaires": [{isInput:true,type:"text"}],
+    "Statut": [{isBadge:true}],
   },
   "Bon de commande":{
-    "Code":[],
-    "Fournisseur":[{isNavigate:true,}],
-    "Email":[{isInput:true,type:"email"}],
-    "Numéro de téléphone":[{isInput:true,type:"number"}],
-    "ICE":[{isInput:true,type:"number"}],
-    "Identifiant fiscal (IF)": [{isInput:true,type:"number"}],
-    "Ville": [{isInput:true,type:"text"}],
-    "Pays": [{isInput:true,type:"text"}],
-    "Catégories": [{isInput:true,type:"text"}]
+    "Numéro":[],
+    "Client":[{isNavigate:true,}],
+    "Date":[{isInput:true,type:"date"}],
+    "Total HT":[{isInput:true,type:"date"}],
+    "Montant":[{isInput:true,type:"number"}],
+    "Statut":[{isBadge:true}],
+    "Qualification": [{isInput:true,type:"number"}],
+    "Agent": [{isInput:true,type:"text"}],
+    "N° de bon": [{isInput:true,type:"text"}],
   },
   Factures:{
-    "Nom":[{isNavigate:true,}],
-    "Civilité":[{isInput:true,type:"text"}],
-    "E-mail":[{isInput:true,type:"email"}],
-    "Téléphone":[{isInput:true,type:"number"}],
-    "Entreprise":[{isInput:true,type:"text"}],
-    "Ville":[{isInput:true,type:"text"}],
-    "Pays":[{isInput:true,type:"text"}],
-    "Actif":[{isBadge:true}],
+    "Numéro":[],    
+    "Client":[{isNavigate:true}],
+    "Date de facture":[{isInput:true,type:"text"}],
+    "Total HT":[{isInput:true,type:"number"}],
+    "Montant":[{isInput:true,type:"text"}],
+    "Statut":[{isBadge:true}],
+    "Commercial":[{isInput:true,type:"text"}],
+    "Periode":[],
   },
   "Bon de Livraison":{
-    "Name":[{isNavigate:true,}],
-    "Title":[{isInput:true,type:"text"}],
-    "Email":[{isInput:true,type:"email"}],
-    "Phone Number":[{isInput:true,type:"number"}],
-    "Supplier":[{isInput:true,type:"text"}],
-    "City":[{isInput:true,type:"text"}],
-    "Country":[{isInput:true,type:"text"}]
+    "Numéro":[],
+    "Client":[{isNavigate:true,}],
+    "Date":[{isInput:true,type:"text"}],
+    "Montant HT":[{isInput:true,type:"email"}],
+    "Montant TTC":[{isInput:true,type:"number"}],
+    "Statut":[{isBadge:true}],
+    "Société de livraison":[{isInput:true,type:"text"}],
+    "Statut de livraison":[{isInput:true,type:"text"}],
+    "Transporteur":[{isInput:true}]
   },
   Avoir:{
     "Nom":[{isNavigate:true,}],
@@ -206,17 +202,30 @@ export const SalesTableFields : Record<string,Record<string, ColumnMeta[]>>={
     "Localisation":[{isInput:true,type:"text"}],
   },
   Règlements:{
-   "Sujet":[{isNavigate:true,}],
-  "Client":[{isInput:true,type:"text"}],
-  "Modèle de contrat":[{isInput:true,type:"text"}],
-  "Date de depart":[{isInput:true,type:"date"}],
-  "Date de fin":[{isInput:true,type:"date"}]
+    "Avoir #":[],
+    "Client":[{isInput:true,type:"text"}],
+    "Date":[{isInput:true,type:"text"}],
+    "Montant HT":[{isInput:true,type:"date"}],
+    "Montant":[{isInput:true,type:"date"}]
   },
   Avances:{
-   "Sujet":[{isNavigate:true,}],
-  "Client":[{isInput:true,type:"text"}],
-  "Modèle de contrat":[{isInput:true,type:"text"}],
-  "Date de depart":[{isInput:true,type:"date"}],
-  "Date de fin":[{isInput:true,type:"date"}]
-  }
+    "Document":[{isInput:true,type:"text"}],
+    "Mode de règlement":[{isInput:true,type:"text"}],
+    "Client":[{isNavigate:true}],
+    "Montant reçu":[{isInput:true,type:"date"}],
+    "Référence":[{isInput:true,type:"date"}],
+    "Numéro de document":[{isInput:true}],
+    "Date":[],
+    "Libelle de paiement":[]
+    }
 }
+
+export const FiledsNeedCards=[
+  "Contacts",
+  "Prospects",
+  "Contacts fournisseurs",
+  "Devis",
+  "Bon de commande",
+  "Factures",
+  "Bon de Livraison"
+]

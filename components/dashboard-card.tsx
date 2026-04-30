@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/card"
 
 
-export default function DashboardCard({title,children,Logo,number,extra}: { title: string, children: React.ReactNode, Logo: React.ReactNode, number: number, extra: string}) {
+export default function DashboardCard({title,children,Logo,number,extra}: { title?: string, children?: React.ReactNode, Logo?: React.ReactNode, number?: number, extra?: string}) {
     return (
         <Card>
             <CardHeader>
