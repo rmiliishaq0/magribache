@@ -1,7 +1,10 @@
-import Sales from "@/components/sales"
+import TabsWithTable from "@/components/tabs-with-table"
+import { Card } from "@/components/ui/card";
 
 export default function SalesPage(){
     return(
-        <Sales/>
+        <Card className="p-4">
+            <TabsWithTable/>
+        </Card>
     )
 }

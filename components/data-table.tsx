@@ -108,6 +108,15 @@ import {
 
 import type { ColumnMeta } from "@/utils/types"
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 
 export const schema = z.object({
   id: z.number(),
@@ -169,11 +178,15 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
 export function DataTable({
   data: initialData,
   activeTab,
-  constants
+  constants,
+  buttonText,
+  children
 }: {
   data: z.infer<typeof schema>[]
-  activeTab: string
-  constants: Record<string,Record<string, ColumnMeta[]>>
+  activeTab?: string
+  constants: Record<string,ColumnMeta[]> | Record<string,Record<string, ColumnMeta[]>>
+  buttonText?: string
+  children?: React.ReactNode
 }) {
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -200,7 +213,7 @@ export function DataTable({
   )
 
   const columns = React.useMemo<ColumnDef<any>[]>(() => {
-  const currentFields = constants[activeTab]
+  const currentFields = activeTab ? constants[activeTab] : constants
   return [
       {
     id: "drag",
@@ -363,7 +376,7 @@ export function DataTable({
       defaultValue="outline"
       className="w-full flex-col justify-start gap-6"
     >
-      <div className="flex items-center justify-between px-4 lg:px-6">
+      <div className="flex items-center justify-between">
         <Label htmlFor="view-selector" className="sr-only">
           View
         </Label>
@@ -426,15 +439,30 @@ export function DataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          <Button variant="outline" size="sm">
+          {buttonText &&
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
             <IconPlus />
-            <span className="hidden lg:inline">Add Section</span>
+            <span className="hidden lg:inline">{buttonText}</span>
           </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{buttonText}</DialogTitle>
+                <DialogDescription>
+                  {children && <div>
+                    {children}
+                  </div>}
+                </DialogDescription>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>}
         </div>
       </div>
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+        className="relative flex flex-col gap-4 overflow-auto"
       >
         <div className="overflow-hidden rounded-lg border">
           <DndContext

@@ -6,10 +6,11 @@ import RevenueCard from "@/components/revenue-card";
 import SalesCard from "@/components/sales-card";
 import Chart from "@/components/Chart"
 import CalendarCustomDays from "@/components/Calendar"
+import { Card } from "@/components/ui/card";
 
 export default function AdminHome() {
     return (
-       <div className="space-y-8 mb-4">
+       <Card className="space-y-8 mb-4 p-4">
             <div className="flex items-center justify-between">
                 <div>
                 <h2 className="text-lg font-bold text-secondary">Vue d'ensemble opérationnelle</h2>
@@ -36,6 +37,6 @@ export default function AdminHome() {
                     <CalendarCustomDays/>
                 </div>
             </div>
-       </div>
+       </Card>
     )
 }

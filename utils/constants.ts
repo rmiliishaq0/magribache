@@ -229,3 +229,14 @@ export const FiledsNeedCards=[
   "Factures",
   "Bon de Livraison"
 ]
+
+export const TasksTableFields:Record<string,ColumnMeta[]> = {
+    "Titre":[{isNavigate:true,}],
+    "Date d'échéance":[{isInput:true,type:"date"}],
+    "Priorité":[{isInput:true,type:"text"}],
+    "Assigné":[{isInput:true,type:"text"}],
+    "Projet":[{isInput:true,type:"text"}],
+    "Statut":[{isBadge:true}],
+    "Date de création":[{isInput:true,type:"date"}],
+    "Date de dernière modification":[{isInput:true,type:"date"}],
+}
