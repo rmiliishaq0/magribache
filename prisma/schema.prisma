@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin { 
+  id    String     @id @default(uuid()) 
+  name String?
+  password String
+  email String? @unique
+  phone String?
+  address String?
+  website String?
+  description String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  logo String?
+  profilIcon String?
+  tasks Task[]
+} 
+
+
+model Task { 
+  id    String     @id @default(uuid()) 
+  name String
+  description String
+  status String
+  priority String
+  dueDate DateTime
+  projet String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  adminId String
+  admin Admin @relation(fields: [adminId], references: [id])
+} 

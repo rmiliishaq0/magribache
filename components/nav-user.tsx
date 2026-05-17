@@ -19,7 +19,11 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { ChevronsUpDownIcon,LogOutIcon} from "lucide-react"
-import Link from "next/link"
+import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
+import { logout } from "@/utils/Apis"
+import { useRouter } from "next/navigation"
+import { useAuthStore } from "@/stores/auth-store"
 
 export function NavUser({
   user,
@@ -29,7 +33,24 @@ export function NavUser({
     email: string
   }
 }) {
+  const authStore = useAuthStore();
+  const router = useRouter();
+  const {isPending,mutate} = useMutation({
+    mutationFn:logout,
+    onSuccess:()=>{
+      authStore.logout();
+      toast.success("Deconnecter avec succes")
+      router.push("/login");
+    },
+    onError:(error)=>{
+      toast.error(error.message)
+    }
+  })
+
   const { isMobile } = useSidebar()
+  const handelLogout = () => {
+    mutate(); 
+  }
 
   return (
     <SidebarMenu className="text-secondary cursor-pointer">
@@ -38,7 +59,7 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className=" data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarFallback className="rounded-lg">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
@@ -68,12 +89,10 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">
-              <Link href={"/logout"} className="flex items-center gap-2">
+            <DropdownMenuItem variant="destructive" className="cursor-pointer" onClick={handelLogout}>
                 <LogOutIcon
                 />
                 Se deconnecter
-              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

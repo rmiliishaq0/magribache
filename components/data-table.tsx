@@ -179,14 +179,10 @@ export function DataTable({
   data: initialData,
   activeTab,
   constants,
-  buttonText,
-  children
 }: {
   data: z.infer<typeof schema>[]
   activeTab?: string
   constants: Record<string,ColumnMeta[]> | Record<string,Record<string, ColumnMeta[]>>
-  buttonText?: string
-  children?: React.ReactNode
 }) {
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -439,25 +435,6 @@ export function DataTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-          {buttonText &&
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-            <IconPlus />
-            <span className="hidden lg:inline">{buttonText}</span>
-          </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{buttonText}</DialogTitle>
-                <DialogDescription>
-                  {children && <div>
-                    {children}
-                  </div>}
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>}
         </div>
       </div>
       <TabsContent
