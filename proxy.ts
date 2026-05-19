@@ -1,34 +1,43 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import prisma from "@/lib/prisma";
 
 export default async function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const pathname = request.nextUrl.pathname;
 
-  if (!token && pathname.startsWith("/admin")) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
+  // Protect admin routes
+  if (pathname.startsWith("/admin")) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
 
-  if (token) {
     try {
-      const {userId} = jwt.verify(token, process.env.SECRET!) as {userId:string};
-      const user = await prisma.admin.findFirst({
-        where:{
-            id:userId,
-        }
-      })
-      if(!user){
-        return NextResponse.redirect(new URL("/login", request.url));
-      }
-
-      if (pathname === "/login") {
-        return NextResponse.redirect(new URL("/admin", request.url));
-      }
+      jwt.verify(token, process.env.SECRET!);
 
       return NextResponse.next();
     } catch {
-      return NextResponse.redirect(new URL("/login", request.url));
+      const response = NextResponse.redirect(
+        new URL("/login", request.url)
+      );
+
+      response.cookies.delete("token");
+
+      return response;
+    }
+  }
+
+  // Prevent logged users from accessing login
+  if (pathname === "/login" && token) {
+    try {
+      jwt.verify(token, process.env.SECRET!);
+
+      return NextResponse.redirect(new URL("/admin", request.url));
+    } catch {
+      const response = NextResponse.next();
+
+      response.cookies.delete("token");
+
+      return response;
     }
   }
 

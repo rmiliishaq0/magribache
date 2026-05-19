@@ -231,12 +231,22 @@ export const FiledsNeedCards=[
 ]
 
 export const TasksTableFields:Record<string,ColumnMeta[]> = {
-    "Titre":[{isNavigate:true,}],
-    "Date d'échéance":[{isInput:true,type:"date"}],
-    "Priorité":[{isInput:true,type:"text"}],
-    "Assigné":[{isInput:true,type:"text"}],
-    "Projet":[{isInput:true,type:"text"}],
-    "Statut":[{isBadge:true}],
-    "Date de création":[{isInput:true,type:"date"}],
-    "Date de dernière modification":[{isInput:true,type:"date"}],
+    "name":[{isNavigate:true}],
+    "priority":[{isBadge:true,type:"text"}],
+    "projet":[{isInput:true,type:"text"}],
+    "status":[{isBadge:true}], 
+    "description":[{isInput:true,type:"date"}], 
+    "dueDate":[{isDate:true}],
+    "createdAt":[{isDate:true}],
+    "updatedAt":[{isDate:true}],
+}
+export const TasksTableFieldsKeys: Record<string, string> = {
+    "name": "Titre",
+    "priority": "Priorité",
+    "projet": "Projet",
+    "status": "Statut",
+    "description": "Description",
+    "dueDate": "Date d'échéance",
+    "createdAt": "Date de création",
+    "updatedAt": "Date de modification"
 }

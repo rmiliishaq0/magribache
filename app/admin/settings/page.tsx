@@ -22,7 +22,7 @@ export default function Settings() {
     const {isPending,isError,data,error,mutate}=useMutation({
         mutationFn:(data:z.infer<typeof settingSchema>)=>updateSetting(data),
         onSuccess:(data:any,variables,context)=>{
-            toast.success("Settings updated successfully")
+            toast.success("Paramètres mis à jour avec succès")
             me.setAuthState(data)
         },
         onError:(error:any,variables,context)=>{
@@ -41,7 +41,7 @@ export default function Settings() {
                 description:me.description!,
             },
             reValidateMode:"onBlur",
-            resolver:zodResolver(settingSchema)
+            resolver:zodResolver(settingSchema),
         })
         function onSubmit(data:z.infer<typeof settingSchema>){
             mutate(data)
@@ -59,7 +59,7 @@ export default function Settings() {
         },[me])
         return (
         <Card className="text-foreground p-4 flex flex-col mb-6">
-            <h1 className="text-xl font-medium">Profile Settings</h1>
+            <h1 className="text-xl font-medium">Paramètres du profil</h1>
             <form className="mt-4 flex flex-col gap-4" id="form-rhf-demo" onSubmit={form.handleSubmit(onSubmit)}>
                  <div className="flex items-center gap-4">
                 <Avatar className="h-20 w-20">
@@ -79,8 +79,8 @@ export default function Settings() {
                         name="name"
                         control={form.control}
                         render={({ field ,fieldState}) => (
-                            <Field>
-                                <FieldLabel htmlFor="form-rhf-demo-name">Name</FieldLabel>
+                            <Field aria-invalid={fieldState.invalid}>
+                                <FieldLabel htmlFor="form-rhf-demo-name">Nom</FieldLabel>
                                 <Input
                                     {...field}
                                     id="form-rhf-demo-name"
@@ -96,7 +96,7 @@ export default function Settings() {
                         control={form.control}
                         render={({ field ,fieldState}) => (
                             <Field>
-                                <FieldLabel htmlFor="form-rhf-demo-address">Address</FieldLabel>
+                                <FieldLabel htmlFor="form-rhf-demo-address">Adresse</FieldLabel>
                                 <Input
                                     {...field}
                                     id="form-rhf-demo-address"
@@ -112,7 +112,7 @@ export default function Settings() {
                         control={form.control}
                         render={({ field ,fieldState}) => (
                             <Field>
-                                <FieldLabel htmlFor="form-rhf-demo-phone">Phone</FieldLabel>
+                                <FieldLabel htmlFor="form-rhf-demo-phone">Téléphone</FieldLabel>
                                 <Input
                                     {...field}
                                     id="form-rhf-demo-phone"
@@ -129,7 +129,7 @@ export default function Settings() {
                         control={form.control}
                         render={({ field ,fieldState}) => (
                             <Field>
-                                <FieldLabel htmlFor="form-rhf-demo-website">Website</FieldLabel>
+                                <FieldLabel htmlFor="form-rhf-demo-website">Site web</FieldLabel>
                                 <Input
                                     {...field}
                                     id="form-rhf-demo-website"
@@ -162,8 +162,8 @@ export default function Settings() {
                     {me.logo && <img src={me.logo} alt="Logo" className="w-20 h-20" />}
                     <Input id="logo" type="file" accept="image/*" className="w-fit cursor-pointer" />
                 </div>
-                <Button disabled={!form.formState.isValid || isPending || isError} type="submit">
-                  {isPending ? <Spinner /> : "Modifier"}
+                <Button disabled={!form.formState.isValid || isPending || isError || !form.formState.isDirty  } type="submit">
+                  {isPending || form.formState.isSubmitting ? <Spinner /> : "Modifier"}
                 </Button>
             </form>
         </Card>

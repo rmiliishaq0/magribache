@@ -27,7 +27,7 @@ model Admin {
 model Task { 
   id    String     @id @default(uuid()) 
   name String
-  description String
+  description String?
   status String
   priority String
   dueDate DateTime

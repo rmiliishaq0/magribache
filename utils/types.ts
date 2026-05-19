@@ -2,6 +2,7 @@ export type ColumnMeta = {
   isNavigate?: boolean
   isInput?: boolean
   isBadge?: boolean
+  isDate?: boolean
   type?: "text" | "number" | "email" | "date" | "file"
 }
 

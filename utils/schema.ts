@@ -12,3 +12,12 @@ export const settingSchema = z.object({
     website: z.string().url("L'URL du site web est invalide"),
     description: z.string().min(1, "La description est requise"),
 });
+
+export const taskSchema = z.object({
+  name: z.string().min(1, "Le nom est requis"),
+  description: z.string().optional(),
+  dueDate: z.string().optional(),
+  priority: z.enum(["Haute", "Moyenne", "Basse"]),
+  project: z.string().optional(),
+  status: z.enum(["En cours", "Terminé"]),
+})
