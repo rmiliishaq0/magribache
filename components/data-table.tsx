@@ -38,14 +38,13 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
   type Row,
   type SortingState,
   type VisibilityState,
+  type OnChangeFn, 
 } from "@tanstack/react-table"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -82,9 +81,16 @@ import {
 import {
   Tabs,
   TabsContent,
-  TabsList,
-  TabsTrigger,
 } from "@/components/ui/tabs"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 
 import type { ColumnMeta } from "@/utils/types"
 import { taskSchema } from "@/utils/schema"
@@ -92,7 +98,7 @@ import { taskSchema } from "@/utils/schema"
 import TableCellViewer from "./DrawerTabs"
 import { Spinner } from "./ui/spinner"
 import { SortAsc, SortDesc } from "lucide-react"
-
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
 const schema = taskSchema.extend({
   id: z.number(),
@@ -152,7 +158,10 @@ export function DataTable({
   headers,
   pagination,
   setPagination,
-  isPending
+  isPending,
+  rowCount,
+  sorting,
+  setSorting
 }: {
   data: z.infer<typeof schema>[]
   activeTab?: string
@@ -161,6 +170,9 @@ export function DataTable({
   isPending?: boolean,
   pagination:any,
   setPagination: (pagination: any) => void,
+  rowCount: number,
+  sorting: SortingState,
+  setSorting: OnChangeFn<SortingState>
 }) {
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -169,7 +181,6 @@ export function DataTable({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
-  const [sorting, setSorting] = React.useState<SortingState>([])
   
   const sortableId = React.useId()
   const sensors = useSensors(
@@ -181,9 +192,7 @@ export function DataTable({
     setData(initialData)
   }, [initialData])
 
-  React.useEffect(()=>{
-    console.log(sorting)
-  },[sorting])
+
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
@@ -315,7 +324,7 @@ export function DataTable({
         })),
       {
         id: "actions",
-        cell: () => (
+        cell: ({row}) => (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -328,11 +337,29 @@ export function DataTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
-              <DropdownMenuItem>Edit</DropdownMenuItem>
-              <DropdownMenuItem>Make a copy</DropdownMenuItem>
-              <DropdownMenuItem>Favorite</DropdownMenuItem>
+                <TableCellViewer item={row.original} >
+                  <Button variant={"ghost"} className="w-full " >
+                    Modifier
+                  </Button>
+                </TableCellViewer>
               <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+              <Dialog>
+                <DialogTrigger className="w-full"><Button variant={"destructive"} className="w-full">Supprimer</Button></DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Êtes-vous absolument sûr ?</DialogTitle>
+                    <DialogDescription>
+                      Cette action est irréversible. Elle supprimera définitivement votre compte
+                      et vos données de nos serveurs.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button variant="outline">Annuler</Button>
+                    <Button variant="destructive">Supprimer</Button>
+                  </DialogFooter>
+                </DialogContent>
+                
+              </Dialog>
             </DropdownMenuContent>
           </DropdownMenu>
         ),
@@ -359,10 +386,10 @@ export function DataTable({
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    rowCount,
+    manualPagination: true,
   })
 
   function handleDragEnd(event: DragEndEvent) {
@@ -385,7 +412,7 @@ export function DataTable({
         <Label htmlFor="view-selector" className="sr-only">
           View
         </Label>
-        <Select defaultValue="outline">
+        {/* <Select defaultValue="outline">
           <SelectTrigger
             className="flex w-fit @4xl/main:hidden"
             size="sm"
@@ -399,8 +426,8 @@ export function DataTable({
             <SelectItem value="key-personnel">Key Personnel</SelectItem>
             <SelectItem value="focus-documents">Focus Documents</SelectItem>
           </SelectContent>
-        </Select>
-        <TabsList className="hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1 @4xl/main:flex">
+        </Select> */}
+        {/* <TabsList className="hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1 @4xl/main:flex">
           <TabsTrigger value="outline">Outline</TabsTrigger>
           <TabsTrigger value="past-performance">
             Past Performance <Badge variant="secondary">3</Badge>
@@ -409,14 +436,35 @@ export function DataTable({
             Key Personnel <Badge variant="secondary">2</Badge>
           </TabsTrigger>
           <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
-        </TabsList>
+        </TabsList> */}
+        <div>
+          {table.getFilteredSelectedRowModel().rows.length > 2 && (
+            <Dialog>
+                <DialogTrigger><Button variant={"destructive"}>Supprimer</Button></DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Êtes-vous absolument sûr ?</DialogTitle>
+                    <DialogDescription>
+                      Cette action est irréversible. Elle supprimera définitivement votre compte
+                      et vos données de nos serveurs.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <Button variant="outline">Annuler</Button>
+                    <Button variant="destructive">Supprimer</Button>
+                  </DialogFooter>
+                </DialogContent>
+                
+              </Dialog>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconLayoutColumns />
-                <span className="hidden lg:inline">Customize Columns</span>
-                <span className="lg:hidden">Columns</span>
+                <span className="hidden lg:inline">Personnaliser les colonnes</span>
+                <span className="lg:hidden">Colonnes</span>
                 <IconChevronDown />
               </Button>
             </DropdownMenuTrigger>
@@ -458,7 +506,8 @@ export function DataTable({
             sensors={sensors}
             id={sortableId}
           >
-            <Table>
+          <ScrollArea>
+            <Table   >
               <TableHeader className="sticky top-0 z-10 bg-muted">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
@@ -510,17 +559,19 @@ export function DataTable({
                 )}
               </TableBody>
             </Table>
+            <ScrollBar orientation="horizontal" />
+            </ScrollArea>
           </DndContext>
         </div>
         <div className="flex items-center justify-between px-4">
           <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {table.getFilteredSelectedRowModel().rows.length} ligne sur{" "}
+            {table.getFilteredRowModel().rows.length} sélectionnée(s)
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">
               <Label htmlFor="rows-per-page" className="text-sm font-medium">
-                Rows per page
+                Lignes par page
               </Label>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
@@ -534,7 +585,7 @@ export function DataTable({
                   />
                 </SelectTrigger>
                 <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
+                  {[10, 20, 30, 40, 50,100].map((pageSize) => (
                     <SelectItem key={pageSize} value={`${pageSize}`}>
                       {pageSize}
                     </SelectItem>
@@ -543,7 +594,7 @@ export function DataTable({
               </Select>
             </div>
             <div className="flex w-fit items-center justify-center text-sm font-medium">
-              Page {table.getState()?.pagination?.pageIndex + 1} of{" "}
+              Page {table.getState()?.pagination?.pageIndex + 1} sur{" "}
               {table.getPageCount()}
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">

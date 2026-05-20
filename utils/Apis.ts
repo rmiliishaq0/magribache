@@ -78,9 +78,9 @@ export async function addTask(data:z.infer<typeof taskSchema>){
   }
 }
 
-export async function fetchTasks(){
+export async function fetchTasks(params: URLSearchParams){
   try{
-    const response = await axios.get("/api/task-fetch");
+    const response = await axios.get(`/api/task-fetch?${params}`);
     return response.data;
   }catch(error:any){
     if (axios.isAxiosError(error)) {

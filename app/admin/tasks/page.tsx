@@ -24,6 +24,7 @@ import { taskSchema } from "@/utils/schema";
 import {useMutation,useQuery,useQueryClient} from "@tanstack/react-query"
 import { toast } from "sonner";
 import { addTask,fetchTasks  } from "@/utils/Apis"; 
+import {  SortingState } from "@tanstack/react-table";
 
 
 export default function Tasks() {
@@ -31,16 +32,10 @@ export default function Tasks() {
       pageIndex: 0,
       pageSize: 10,
     })
-    useEffect(() => {
-      const params = new URLSearchParams({
-      page: String(pagination.pageIndex + 1),
-      limit: String(pagination.pageSize),
-    })
-    console.log(`/api/users?${params}`)
-    }, [pagination])
+    const [sorting, setSorting] = useState<SortingState>([])
+
     const queryClient = useQueryClient();
     const [isOpen,setIsOpen] = useState(false)
-    const [tasks,setTasks]=useState<z.infer<typeof schema>[]>([]);
     const form = useForm<z.infer<typeof taskSchema>>({
         resolver:zodResolver(taskSchema),
         mode:"all",
@@ -65,20 +60,35 @@ export default function Tasks() {
     function onSubmit(data:z.infer<typeof taskSchema>){
       mutate(data)
     }
+    useEffect(()=>{
+      console.log(sorting)
+    },[sorting])
 
     const { isPending, isError, data, error } = useQuery({
-      queryKey: ['tasks'],
-      queryFn: fetchTasks,
+      queryKey: ['tasks',pagination,sorting],
+      queryFn: async()=>{
+        const sort = sorting[0];
+
+        const params = new URLSearchParams({
+          page: String(pagination.pageIndex + 1),
+          limit: String(pagination.pageSize),
+          sortBy: sort?.id ?? "createdAt",
+          order: sort?.desc ? "desc" : "asc",
+        });
+        return fetchTasks(params);
+      },
     })
-    useEffect(()=>{
-      setTasks(data?.tasks)
-    },[data])
     const schema = taskSchema.extend({
         id: z.number(),
     })
+    if(isError){
+      toast.error("Une erreur s'est produite lors de la récupération des tâches")
+      return null
+    }
     return (
-        <Card className="text-foreground p-4 flex flex-col mb-6">
-            <div className="flex items-center justify-between mb-6">
+        <Card className="text-foreground p-4 flex flex-col mb-6 overflow-hidden! ">
+            <div >
+              <div className="flex items-center justify-between mb-6 ">
                 <h2 className="text-lg font-bold text-secondary">les Tâches</h2>
                 {/* <p className="text-muted-foreground text-sm">Suivi du stock et des indicateurs de vente en temps réel.</p> */}
                 <Button variant="default" onClick={()=>{setIsOpen(true)}}>
@@ -86,7 +96,7 @@ export default function Tasks() {
                   <span>Ajouter une tâche</span>
                 </Button>
             </div>
-            <DataTable pagination={pagination} setPagination={setPagination} isPending={isPending } data={tasks} constants={TasksTableFields} headers={TasksTableFieldsKeys} />
+            <DataTable sorting={sorting} setSorting={setSorting} rowCount={data?.total || 0} pagination={pagination} setPagination={setPagination} isPending={isPending } data={data?.tasks || []} constants={TasksTableFields} headers={TasksTableFieldsKeys} />
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
                   <DialogContent>
                     <DialogHeader>
@@ -193,6 +203,7 @@ export default function Tasks() {
                             </form>
                   </DialogContent>
                 </Dialog>
+            </div>
         </Card>
         
     )

@@ -25,13 +25,13 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="text-secondary">
         <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
+             attribute="class"
+              defaultTheme="light"
+              disableTransitionOnChange
           >
             <TooltipProvider>
               <Providers>{children}
