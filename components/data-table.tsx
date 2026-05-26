@@ -161,7 +161,10 @@ export function DataTable({
   isPending,
   rowCount,
   sorting,
-  setSorting
+  setSorting,
+  onDelete,
+  openModel,
+  setOpenModel,
 }: {
   data: z.infer<typeof schema>[]
   activeTab?: string
@@ -172,7 +175,10 @@ export function DataTable({
   setPagination: (pagination: any) => void,
   rowCount: number,
   sorting: SortingState,
-  setSorting: OnChangeFn<SortingState>
+  setSorting: OnChangeFn<SortingState>,
+  onDelete:(ids:number[])=>void,
+  openModel:boolean,
+  setOpenModel:(openModel:boolean)=>void,
 }) {
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -192,7 +198,9 @@ export function DataTable({
     setData(initialData)
   }, [initialData])
 
-
+  React.useEffect(()=>{
+    table.getSelectedRowModel().rows
+  },[rowSelection])
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
@@ -343,7 +351,7 @@ export function DataTable({
                   </Button>
                 </TableCellViewer>
               <DropdownMenuSeparator />
-              <Dialog>
+              <Dialog open={openModel} onOpenChange={setOpenModel}>
                 <DialogTrigger className="w-full"><Button variant={"destructive"} className="w-full">Supprimer</Button></DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
@@ -354,8 +362,8 @@ export function DataTable({
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
-                    <Button variant="outline">Annuler</Button>
-                    <Button variant="destructive">Supprimer</Button>
+                    <Button variant="outline" onClick={()=>{setOpenModel(false)}}>Annuler</Button>
+                    <Button onClick={()=>{onDelete([row.original.id])}} variant="destructive">Supprimer</Button>
                   </DialogFooter>
                 </DialogContent>
                 
@@ -365,7 +373,13 @@ export function DataTable({
         ),
       },
     ]
-  }, [activeTab, data])
+  }, [activeTab,
+  constants,
+  headers,
+  openModel,
+  setOpenModel,
+  onDelete
+])
 
   const table = useReactTable({
     data,
@@ -439,7 +453,7 @@ export function DataTable({
         </TabsList> */}
         <div>
           {table.getFilteredSelectedRowModel().rows.length > 2 && (
-            <Dialog>
+            <Dialog open={openModel} onOpenChange={setOpenModel}>
                 <DialogTrigger><Button variant={"destructive"}>Supprimer</Button></DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
@@ -450,8 +464,8 @@ export function DataTable({
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter>
-                    <Button variant="outline">Annuler</Button>
-                    <Button variant="destructive">Supprimer</Button>
+                    <Button onClick={()=>{setOpenModel(false)}} variant="outline">Annuler</Button>
+                    <Button onClick={()=>{onDelete(table.getFilteredSelectedRowModel().rows.map((row) => row.original.id));}} variant="destructive">Supprimer</Button>
                   </DialogFooter>
                 </DialogContent>
                 

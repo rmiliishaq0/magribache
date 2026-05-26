@@ -91,3 +91,18 @@ export async function fetchTasks(params: URLSearchParams){
     throw new Error("Une erreur s'est produite");
   }
 }
+
+export async function deleteTasks(ids:number[]){
+  try{
+    const response = await axios.post("/api/task-delete",{ids});
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}
+
