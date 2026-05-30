@@ -1,4 +1,4 @@
-import { loginSchema } from "./schema";
+import {loginSchema, taskSchemaWithID} from "./schema";
 import z from "zod";
 import axios from "axios";
 import {settingSchema} from "./schema"
@@ -100,6 +100,20 @@ export async function deleteTasks(ids:number[]){
     if (axios.isAxiosError(error)) {
       throw new Error(
         error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}
+
+export async function updateTask(data:z.infer<typeof taskSchemaWithID>){
+  try{
+    const response = await axios.post("/api/update-task",{data});
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+          error.response?.data?.message || "Une erreur s'est produite"
       );
     }
     throw new Error("Une erreur s'est produite");

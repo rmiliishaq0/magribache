@@ -27,8 +27,7 @@ export async function POST(req:NextRequest){
             })        
         return Response.json({message:"Tâche ajoutée avec succès",task},{status:201})
         }
-    }catch(err){
-        console.log(err)
+    }catch{
         return Response.json({message:"Une erreur s'est produite"},{status:500})
     }
 

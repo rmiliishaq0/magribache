@@ -9,6 +9,7 @@ import {
   Users2,
 } from "lucide-react"
 import type { ColumnMeta } from "./types"
+import {values} from "eslint-config-next";
 
 export const sideBarecontents = {
   user: {
@@ -70,7 +71,7 @@ export const CrmFields = [
 
 
 
-export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>>={
+export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
   Clients:{
     "Code":[],
     "Entreprise":[{isNavigate:true,}],
@@ -145,7 +146,7 @@ export const SalesFields = [
   "Avances",
 ]
 
-export const SalesTableFields : Record<string,Record<string, ColumnMeta[]>>={
+export const SalesTableFields : Record<string,Record<string, ColumnMeta[]>> ={
   Devis:{
     "Numéro":[],   
     "Client":[{isNavigate:true}],
@@ -232,10 +233,10 @@ export const FiledsNeedCards=[
 
 export const TasksTableFields:Record<string,ColumnMeta[]> = {
     "name":[{isNavigate:true}],
-    "priority":[{isBadge:true,type:"text"}],
+    "priority":[{isBadge:true,type:"text",values:["Haute","Moyenne","Basse"],isSelected:true}],
     "projet":[{isInput:true,type:"text"}],
-    "status":[{isBadge:true}], 
-    "description":[{isInput:true,type:"date"}], 
+    "status":[{isBadge:true,isSelected:true,values:["En cours","Terminé"]}],
+    "description":[{isTextEarea:true}],
     "dueDate":[{isDate:true}],
     "createdAt":[{isDate:true}],
     "updatedAt":[{isDate:true}],

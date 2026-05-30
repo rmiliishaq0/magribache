@@ -2,116 +2,127 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger
 } from "@/components/ui/drawer"
-import {Select,SelectTrigger,SelectValue,SelectContent,SelectItem} from "@/components/ui/select"
-import {Label} from "@/components/ui/label"
+import {Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup} from "@/components/ui/select"
 import {Input} from "@/components/ui/input"
 import {z} from "zod"
-import {taskSchema} from "@/utils/schema"
+import {taskSchema, taskSchemaWithID} from "@/utils/schema"
 import { Button } from "./ui/button"
-import React from "react"
+import React, {useEffect} from "react"
+import {TasksTableFields,TasksTableFieldsKeys} from "@/utils/constants";
+import {Field, FieldError, FieldLabel} from "@/components/ui/field"
+import useTaskForm from "@/hooks/useTaskForm";
+import {Spinner} from "@/components/ui/spinner";
+import {Controller} from"react-hook-form"
+import {Textarea} from "@/components/ui/textarea";
+import useTaskUpadte from "@/hooks/useTaskUpadte";
 
+export default function TableCellViewer({ item ,open,setOpenChange}: { open:boolean,item: z.infer<typeof taskSchemaWithID> | null,setOpenChange:(open:boolean)=>void}) {
+    const form = useTaskForm(item)
+    const {isPending,mutate} = useTaskUpadte()
 
-export default function TableCellViewer({ item ,children}: { item: z.infer<typeof taskSchema> ,children:React.ReactNode}) {
+    useEffect(() => {
 
-  return (
-    <Drawer direction={"right"} >
-      <DrawerTrigger asChild>
-        {children}
-      </DrawerTrigger>
-      <DrawerContent>
-        <DrawerHeader className="gap-1">
-          <DrawerTitle>{item.name}</DrawerTitle>
-          <DrawerDescription>
-            Showing total visitors for the last 6 months
-          </DrawerDescription>
-        </DrawerHeader>
-        <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          <form className="flex flex-col gap-4">
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="header">Header</Label>
-              <Input id="header" defaultValue={item.name} />
+        if (item) {
+          form.reset({...item,project:item.project})
+      }
+    }, [item, form])
+    function onSubmit(data:z.infer<typeof taskSchema>) {
+        mutate({...data,id:item?.id ?? 0})
+    }
+    return (
+        <Drawer direction={"right"} open={open} onOpenChange={setOpenChange}>
+          <DrawerContent>
+            <DrawerHeader className="gap-1">
+              <DrawerTitle>{item?.name}</DrawerTitle>
+            </DrawerHeader>
+            <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm h-full">
+              <form id="form" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                {Object.entries(TasksTableFields).map(([fieldP,options])=>{
+                  const o = options?.[0];
+                  if((o.isInput || o.isNavigate )){
+                    return(
+                      <Controller
+                          key={fieldP}
+                          name={fieldP ==="projet" ? "project" : fieldP as keyof typeof item} control={form.control}
+                          render={({field,fieldState})=>{
+                              return(
+                                      <Field aria-invalid={fieldState.invalid}>
+                                          <FieldLabel htmlFor={fieldP ==="projet" ? "project" : fieldP as keyof typeof item}>{TasksTableFieldsKeys[fieldP]}</FieldLabel>
+                                          <Input id={fieldP ==="projet" ? "project" : fieldP as keyof typeof item} {...field} aria-invalid={fieldState.invalid} type={o?.type} />
+                                          {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                      </Field>
+                                  )
+
+                      }}
+                      />)
+                  }
+                  else if(o.isSelected){
+                      return(
+                          <Controller
+                              key={fieldP}
+                              name={fieldP as keyof typeof item}
+                              control={form.control}
+                              render={({ field, fieldState }) => (
+                                  <Field aria-invalid={fieldState.invalid}>
+                                    <FieldLabel htmlFor={fieldP}>{TasksTableFieldsKeys[fieldP]}</FieldLabel>
+
+                                    <Select
+                                        value={field.value}
+                                        onValueChange={field.onChange}
+                                    >
+                                      <SelectTrigger aria-invalid={fieldState.invalid}>
+                                        <SelectValue placeholder={fieldP} />
+                                      </SelectTrigger>
+
+                                      <SelectContent>
+                                        <SelectGroup>
+                                          {o?.values?.map((i)=>(
+                                              <SelectItem key={i} value={i}>{i}</SelectItem>
+                                          ))}
+                                        </SelectGroup>
+                                      </SelectContent>
+                                    </Select>
+
+                                    {fieldState.invalid && (
+                                        <FieldError errors={[fieldState.error]} />
+                                    )}
+                                  </Field>
+                              )}
+                          />
+                      )
+                  }
+                  else if(o.isTextEarea){
+                    return(
+                        <Controller
+                            key={fieldP}
+                            name={fieldP as keyof typeof item}
+                            control={form.control}
+                            render={({field,fieldState})=>(
+                                <Field aria-invalid={fieldState.invalid}>
+                                  <FieldLabel htmlFor={fieldP}>{TasksTableFieldsKeys[fieldP]}</FieldLabel>
+                                  <Textarea id={fieldP} {...field} aria-invalid={fieldState.invalid} />
+                                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                                </Field>
+                            )}
+                        />
+                    )
+                  }
+                })}
+
+              </form>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="type">Type</Label>
-                <Select defaultValue={item.priority}>
-                  <SelectTrigger id="type" className="w-full">
-                    <SelectValue placeholder="Select a type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Table of Contents">
-                      Table of Contents
-                    </SelectItem>
-                    <SelectItem value="Executive Summary">
-                      Executive Summary
-                    </SelectItem>
-                    <SelectItem value="Technical Approach">
-                      Technical Approach
-                    </SelectItem>
-                    <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Capabilities">Capabilities</SelectItem>
-                    <SelectItem value="Focus Documents">
-                      Focus Documents
-                    </SelectItem>
-                    <SelectItem value="Narrative">Narrative</SelectItem>
-                    <SelectItem value="Cover Page">Cover Page</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="status">Status</Label>
-                <Select defaultValue={item.status}>
-                  <SelectTrigger id="status" className="w-full">
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Done">Done</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Not Started">Not Started</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="target">Target</Label>
-                <Input id="target" defaultValue={item.dueDate} />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="limit">Limit</Label>
-                <Input id="limit" defaultValue={item.description} />
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="reviewer">Reviewer</Label>
-              <Select defaultValue={item.status}>
-                <SelectTrigger id="reviewer" className="w-full">
-                  <SelectValue placeholder="Select a reviewer" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-                  <SelectItem value="Jamik Tashpulatov">
-                    Jamik Tashpulatov
-                  </SelectItem>
-                  <SelectItem value="Emily Whalen">Emily Whalen</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </form>
-        </div>
-        <DrawerFooter>
-          <Button>Submit</Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Done</Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
-  )
+            <DrawerFooter>
+              <Button form={"form"} disabled={!form.formState.isValid || isPending || !form.formState.isDirty  } type="submit">{isPending || form.formState.isSubmitting ? <Spinner />: "Modifier"}</Button>
+              <DrawerClose asChild>
+                <Button variant="outline">Annuler</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </DrawerContent>
+
+        </Drawer>
+    )
 }

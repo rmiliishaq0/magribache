@@ -56,8 +56,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
+  DropdownMenuContent, DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -91,18 +90,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import DeleteDialog from "@/components/delete-dialog";
 
 import type { ColumnMeta } from "@/utils/types"
-import { taskSchema } from "@/utils/schema"
+import {taskSchemaWithID} from "@/utils/schema"
 
 import TableCellViewer from "./DrawerTabs"
 import { Spinner } from "./ui/spinner"
 import { SortAsc, SortDesc } from "lucide-react"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import {memo, useEffect, useState} from "react";
 
-const schema = taskSchema.extend({
-  id: z.number(),
-})
 
 function DragHandle({ id }: { id: number }) {
   const { attributes, listeners } = useSortable({
@@ -126,7 +124,7 @@ function DragHandle({ id }: { id: number }) {
 
 
 
-function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
+function DraggableRow({ row }: { row: Row<z.infer<typeof taskSchemaWithID>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
   })
@@ -151,7 +149,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   )
 }
 
-export function DataTable({
+export default memo(function DataTable({
   data: initialData,
   activeTab,
   constants,
@@ -163,10 +161,8 @@ export function DataTable({
   sorting,
   setSorting,
   onDelete,
-  openModel,
-  setOpenModel,
 }: {
-  data: z.infer<typeof schema>[]
+  data: z.infer<typeof taskSchemaWithID>[]
   activeTab?: string
   constants: Record<string, ColumnMeta[]> | Record<string, Record<string, ColumnMeta[]>>
   headers?: Record<string, string>
@@ -177,17 +173,13 @@ export function DataTable({
   sorting: SortingState,
   setSorting: OnChangeFn<SortingState>,
   onDelete:(ids:number[])=>void,
-  openModel:boolean,
-  setOpenModel:(openModel:boolean)=>void,
 }) {
+  const [selectedItem,setselectedItem]=useState<z.infer<typeof taskSchemaWithID> |null>(null)
+  const [deleteIds, setDeleteIds] = React.useState<number[] | null>(null)
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const sortableId = React.useId()
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -198,14 +190,10 @@ export function DataTable({
     setData(initialData)
   }, [initialData])
 
-  React.useEffect(()=>{
-    table.getSelectedRowModel().rows
-  },[rowSelection])
   const dataIds = React.useMemo<UniqueIdentifier[]>(
     () => data?.map(({ id }) => id) || [],
     [data]
   )
-
   const columns = React.useMemo<ColumnDef<any>[]>(() => {
     const currentFields = activeTab ? constants[activeTab] : constants
     return [
@@ -254,16 +242,14 @@ export function DataTable({
     </Button>
   )
 },
-          enableHiding: meta[0]?.isNavigate ? false : true,
+          enableHiding: meta?.[0]?.isNavigate ? false : true,
           cell: ({ row }: { row: any }) => {
-            const config = meta[0]
+            const config = meta?.[0]
             if (config?.isNavigate) {
               return (
-                <TableCellViewer item={row.original} >
-                  <Button variant="link" className="w-fit px-0 text-left text-foreground">
-                    {row.original.name}
-                  </Button>
-                </TableCellViewer>
+              <Button onClick={()=>{setselectedItem(row.original)}} variant="link" className="w-fit px-0 text-left text-foreground">
+                {row.original.name}
+              </Button>
               )
             }
 
@@ -296,7 +282,7 @@ export function DataTable({
               }
             }
 
-            if (config?.isInput) {
+            if (config?.isInput || config?.isTextEarea) {
               return (
                 <form
                   onSubmit={(e) => {
@@ -323,7 +309,7 @@ export function DataTable({
               <>
                 <div className="w-32">
                   <Badge variant="outline" className="px-1.5 text-muted-foreground">
-                    {meta[0]?.isDate ? new Date(row.original[field]).toLocaleDateString() : row.original[field]}
+                    {meta?.[0]?.isDate ? new Date(row.original[field]).toLocaleDateString() : row.original[field]}
                   </Badge>
                 </div>
               </>
@@ -345,29 +331,9 @@ export function DataTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
-                <TableCellViewer item={row.original} >
-                  <Button variant={"ghost"} className="w-full " >
-                    Modifier
-                  </Button>
-                </TableCellViewer>
+                <DropdownMenuItem onClick={()=>{row.original.projet ? setselectedItem({...row.original,project: row.original?.projet}) : setselectedItem(row.original) }}>Modifier</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <Dialog open={openModel} onOpenChange={setOpenModel}>
-                <DialogTrigger className="w-full"><Button variant={"destructive"} className="w-full">Supprimer</Button></DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Êtes-vous absolument sûr ?</DialogTitle>
-                    <DialogDescription>
-                      Cette action est irréversible. Elle supprimera définitivement votre compte
-                      et vos données de nos serveurs.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <Button variant="outline" onClick={()=>{setOpenModel(false)}}>Annuler</Button>
-                    <Button onClick={()=>{onDelete([row.original.id])}} variant="destructive">Supprimer</Button>
-                  </DialogFooter>
-                </DialogContent>
-                
-              </Dialog>
+              <DropdownMenuItem variant="destructive" onClick={() => { setDeleteIds([row.original.id])}}>Delete</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ),
@@ -376,9 +342,6 @@ export function DataTable({
   }, [activeTab,
   constants,
   headers,
-  openModel,
-  setOpenModel,
-  onDelete
 ])
 
   const table = useReactTable({
@@ -416,7 +379,6 @@ export function DataTable({
       })
     }
   }
-
   return (
     <Tabs
       defaultValue="outline"
@@ -453,23 +415,7 @@ export function DataTable({
         </TabsList> */}
         <div>
           {table.getFilteredSelectedRowModel().rows.length > 2 && (
-            <Dialog open={openModel} onOpenChange={setOpenModel}>
-                <DialogTrigger><Button variant={"destructive"}>Supprimer</Button></DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Êtes-vous absolument sûr ?</DialogTitle>
-                    <DialogDescription>
-                      Cette action est irréversible. Elle supprimera définitivement votre compte
-                      et vos données de nos serveurs.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <DialogFooter>
-                    <Button onClick={()=>{setOpenModel(false)}} variant="outline">Annuler</Button>
-                    <Button onClick={()=>{onDelete(table.getFilteredSelectedRowModel().rows.map((row) => row.original.id));}} variant="destructive">Supprimer</Button>
-                  </DialogFooter>
-                </DialogContent>
-                
-              </Dialog>
+              <Button variant="destructive" onClick={() => { setDeleteIds(table.getFilteredSelectedRowModel().rows.map((row) => row.original.id))}}>Delete</Button>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -655,6 +601,23 @@ export function DataTable({
           </div>
         </div>
       </TabsContent>
+      <TableCellViewer open={!!selectedItem} setOpenChange={(open:boolean)=>{if(!open) setselectedItem(null)}} item={selectedItem}/>
+      <DeleteDialog
+          open={!!deleteIds}
+          ids={deleteIds || []}
+          setOpenModel={(open) => {
+            if (!open) setDeleteIds(null)
+          }}
+          onDelete={(ids) => {
+            onDelete(ids as number[])
+            if(deleteIds){
+              if(deleteIds.length > 2){
+                table.toggleAllRowsSelected(false)
+              }
+            }
+            setDeleteIds(null)
+          }}
+      />
     </Tabs>
   )
-}
+})

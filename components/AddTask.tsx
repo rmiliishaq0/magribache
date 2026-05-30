@@ -7,23 +7,26 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Controller, useForm } from "react-hook-form"
+import {Controller, UseFormReturn} from "react-hook-form"
 import { Textarea } from "@/components/ui/textarea";
 import { Field ,FieldLabel,FieldError} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import z from "zod";
 import { taskSchema } from "@/utils/schema";
+import {memo} from "react";
+import {Spinner} from "@/components/ui/spinner";
 
-export default function AddTask({openTask,setOpenTask,onSubmit,form}:{
+export default memo(function AddTask({openTask,setOpenTask,onSubmit,form,isPending}:{
     openTask:boolean,
     setOpenTask:(openTask:boolean)=>void,
     onSubmit:(data:z.infer<typeof taskSchema>)=>void,
-    form:any
+    form:UseFormReturn<z.infer<typeof taskSchema>>
+    isPending:boolean
 }) {
     return (
-         <Dialog open={openTask} onOpenChange={setOpenTask}>
-                  <DialogContent>
+         <Dialog   open={openTask} onOpenChange={setOpenTask}>
+                  <DialogContent forceMount>
                     <DialogHeader>
                         <DialogTitle>Ajouter une tâche</DialogTitle>
                     </DialogHeader>
@@ -124,9 +127,11 @@ export default function AddTask({openTask,setOpenTask,onSubmit,form}:{
                                   </Field>
                                 )}
                               />
-                            <Button>Enregistrer</Button>
+                                <Button disabled={!form.formState.isValid || isPending || !form.formState.isDirty  } type="submit">
+                                    {isPending || form.formState.isSubmitting ? <Spinner /> : "Enregistrer"}
+                                </Button>
                             </form>
                   </DialogContent>
                 </Dialog>
     )
-}
+})

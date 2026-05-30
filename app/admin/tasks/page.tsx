@@ -1,16 +1,10 @@
 "use client"
 import { Card } from "@/components/ui/card";
-import { DataTable } from "@/components/data-table";
+import DataTable  from "@/components/data-table";
 import { TasksTableFields, TasksTableFieldsKeys } from "@/utils/constants";
-import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Field ,FieldLabel,FieldError} from "@/components/ui/field";
 import { IconPlus } from "@tabler/icons-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+import {useCallback, useEffect, useMemo, useState} from "react";
 import z from "zod"
 
 import { taskSchema } from "@/utils/schema";
@@ -20,6 +14,7 @@ import { addTask,fetchTasks  } from "@/utils/Apis";
 import {  SortingState } from "@tanstack/react-table";
 import { deleteTasks } from "@/utils/Apis";
 import AddTask from "@/components/AddTask";
+import useTaskForm from "@/hooks/useTaskForm";
 
 export default function Tasks() {
     const [pagination, setPagination] =useState({
@@ -29,48 +24,47 @@ export default function Tasks() {
     const [sorting, setSorting] = useState<SortingState>([])
     const [openTask,setOpenTask] = useState(false)
 
-
     const queryClient = useQueryClient();
-    const [isOpen,setIsOpen] = useState(false)
 
-    const form = useForm<z.infer<typeof taskSchema>>({
-        resolver:zodResolver(taskSchema),
-        mode:"all",
-        reValidateMode:"onBlur",
-    })
+    const form = useTaskForm()
 
-    const {mutate} = useMutation(
+    const createTaskMutation = useMutation(
       {
         mutationFn:(data:z.infer<typeof taskSchema>)=>addTask(data),
-        onSuccess:(data,variables,context)=>{
+        onSuccess:()=>{
           toast.success("La tâche a été ajoutée avec succès")
-          setIsOpen(false)
           form.reset()
           queryClient.invalidateQueries({ queryKey: ['tasks'] })
         },
-        onError:(error,variables,context)=>{
+        onError:(error)=>{
           toast.error(error.message)
         },
       }
     )
+
     const deleteTaskMutation = useMutation(
       {
         mutationFn:(ids:number[])=>deleteTasks(ids),
-        onSuccess:(data,variables,context)=>{
+        onSuccess:()=>{
           toast.success("La tâche a été supprimée avec succès")
           queryClient.invalidateQueries({ queryKey: ['tasks'] })
         },
-        onError:(error,variables,context)=>{
+        onError:(error)=>{
           toast.error(error.message)
         },
       }
     )
-    function onSubmit(data:z.infer<typeof taskSchema>){
-      mutate(data)
-    }
-    function onDelete(ids:number[]){
-      deleteTaskMutation.mutate(ids)
-    }
+    const mutateAddingTask = createTaskMutation.mutate
+    const onSubmit = useCallback(
+        (data: z.infer<typeof taskSchema>) => {
+            mutateAddingTask(data)
+        },
+        [mutateAddingTask]
+    )
+    const mutateDeletingTask = deleteTaskMutation.mutate
+    const onDelete= useCallback((ids:number[])=>{
+        mutateDeletingTask(ids)
+    },[mutateDeletingTask])
 
     const { isPending, isError, data, error } = useQuery({
       queryKey: ['tasks',pagination,sorting],
@@ -86,10 +80,15 @@ export default function Tasks() {
         return fetchTasks(params);
       },
     })
-    const schema = taskSchema.extend({
-        id: z.number(),
-    })
-
+    const total=useMemo(() => {
+        return data?.total || 0
+    },[data?.total])
+    const tasks = useMemo(() => data?.tasks || [], [data])
+    useEffect(() => {
+        if(isError){
+            toast.error(error?.message)
+        }
+    },[isError,error])
     return (
         <Card className="text-foreground p-4 flex flex-col mb-6 overflow-hidden! ">
             <div >
@@ -101,8 +100,8 @@ export default function Tasks() {
                   <span>Ajouter une tâche</span>
                 </Button>
             </div>
-            <DataTable openModel={isOpen} setOpenModel={setIsOpen} onDelete={onDelete} sorting={sorting} setSorting={setSorting} rowCount={data?.total || 0} pagination={pagination} setPagination={setPagination} isPending={isPending } data={data?.tasks || []} constants={TasksTableFields} headers={TasksTableFieldsKeys} />
-            <AddTask form={form} openTask={openTask} setOpenTask={setOpenTask} onSubmit={onSubmit} />
+            <DataTable onDelete={onDelete} sorting={sorting} setSorting={setSorting} rowCount={total} pagination={pagination} setPagination={setPagination} isPending={isPending } data={tasks} constants={TasksTableFields} headers={TasksTableFieldsKeys} />
+            <AddTask isPending={createTaskMutation.isPending} form={form} openTask={openTask} setOpenTask={setOpenTask} onSubmit={onSubmit} />
             </div>
         </Card>
         

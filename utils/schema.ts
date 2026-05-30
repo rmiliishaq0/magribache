@@ -21,3 +21,6 @@ export const taskSchema = z.object({
   project: z.string().optional(),
   status: z.enum(["En cours", "Terminé"]),
 })
+export const taskSchemaWithID = taskSchema.extend({
+    id: z.union([z.uuid(),z.number()]),
+})

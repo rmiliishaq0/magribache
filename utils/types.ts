@@ -3,8 +3,12 @@ export type ColumnMeta = {
   isInput?: boolean
   isBadge?: boolean
   isDate?: boolean
+  isSelected?: boolean
+  isTextEarea  ?:boolean
   type?: "text" | "number" | "email" | "date" | "file"
+  values?:Values
 }
+type Values = Array<string>
 
 type Me={
     name: string,
