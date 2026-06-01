@@ -4,7 +4,7 @@ import {updateTask} from "@/utils/Apis";
 import {toast} from "sonner";
 import {z} from 'zod'
 
-export default  function useTaskUpadte() {
+export  function useTaskUpadte() {
     const queryClient = useQueryClient();
     return useMutation(
             {

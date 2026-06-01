@@ -127,7 +127,7 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
   },
   Contrats:{
    "Sujet":[{isNavigate:true,}],
-  "Client":[{isInput:true,type:"text"}],
+    "Client":[{isInput:true,type:"text"}],
   "Modèle de contrat":[{isInput:true,type:"text"}],
   "Date de depart":[{isInput:true,type:"date"}],
   "Date de fin":[{isInput:true,type:"date",fullWidth:true}]

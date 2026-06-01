@@ -26,8 +26,7 @@ export default memo(function AddDialog({open,setOpen,onSubmit,form,isPending,con
 }) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="sm:max-w-2xl w-[1vw]"
->
+            <DialogContent className="sm:max-w-2xl w-full">
                 <DialogHeader>
                     <DialogTitle>Ajouter une {activeTab}</DialogTitle>
                 </DialogHeader>

@@ -25,8 +25,8 @@ export default memo(function AddTask({openTask,setOpenTask,onSubmit,form,isPendi
     isPending:boolean
 }) {
     return (
-         <Dialog   open={openTask} onOpenChange={setOpenTask}>
-                  <DialogContent forceMount>
+         <Dialog   open={openTask} onOpenChange={setOpenTask} >
+                  <DialogContent forceMount className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Ajouter une tâche</DialogTitle>
                     </DialogHeader>
