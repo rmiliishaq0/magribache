@@ -7,13 +7,13 @@ import { IconPlus } from "@tabler/icons-react";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import z from "zod"
 
-import { taskSchema } from "@/utils/schema";
+import {taskSchema, taskSchemaWithID} from "@/utils/schema";
 import {useMutation,useQuery,useQueryClient} from "@tanstack/react-query"
 import { toast } from "sonner";
 import { addTask,fetchTasks  } from "@/utils/Apis"; 
 import {  SortingState } from "@tanstack/react-table";
 import { deleteTasks } from "@/utils/Apis";
-import AddTask from "@/components/AddTask";
+import AddTask from "@/components/add-task";
 import useTaskForm from "@/hooks/useTaskForm";
 
 export default function Tasks() {
@@ -100,7 +100,7 @@ export default function Tasks() {
                   <span>Ajouter une tâche</span>
                 </Button>
             </div>
-            <DataTable onDelete={onDelete} sorting={sorting} setSorting={setSorting} rowCount={total} pagination={pagination} setPagination={setPagination} isPending={isPending } data={tasks} constants={TasksTableFields} headers={TasksTableFieldsKeys} />
+            <DataTable schema={taskSchemaWithID} onDelete={onDelete} sorting={sorting} setSorting={setSorting} rowCount={total} pagination={pagination} setPagination={setPagination} isPending={isPending } data={tasks} constants={TasksTableFields} headers={TasksTableFieldsKeys} />
             <AddTask isPending={createTaskMutation.isPending} form={form} openTask={openTask} setOpenTask={setOpenTask} onSubmit={onSubmit} />
             </div>
         </Card>

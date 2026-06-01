@@ -44,7 +44,7 @@ import {
   type Row,
   type SortingState,
   type VisibilityState,
-  type OnChangeFn, 
+  type OnChangeFn, PaginationState,
 } from "@tanstack/react-table"
 import { toast } from "sonner"
 import { z } from "zod"
@@ -81,25 +81,16 @@ import {
   Tabs,
   TabsContent,
 } from "@/components/ui/tabs"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+
 import DeleteDialog from "@/components/delete-dialog";
 
 import type { ColumnMeta } from "@/utils/types"
-import {taskSchemaWithID} from "@/utils/schema"
 
 import TableCellViewer from "./DrawerTabs"
 import { Spinner } from "./ui/spinner"
 import { SortAsc, SortDesc } from "lucide-react"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import {memo, useEffect, useState} from "react";
+import {memo, useState} from "react";
 
 
 function DragHandle({ id }: { id: number }) {
@@ -124,7 +115,7 @@ function DragHandle({ id }: { id: number }) {
 
 
 
-function DraggableRow({ row }: { row: Row<z.infer<typeof taskSchemaWithID>> }) {
+function DraggableRow({ row }: { row: any }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
   })
@@ -148,8 +139,12 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof taskSchemaWithID>> }) {
     </TableRow>
   )
 }
+type Pagination={
+  pageIndex:number
+  pageSize:number
+}
 
-export default memo(function DataTable({
+export default memo(function DataTable<T extends z.ZodTypeAny>({
   data: initialData,
   activeTab,
   constants,
@@ -161,20 +156,22 @@ export default memo(function DataTable({
   sorting,
   setSorting,
   onDelete,
+  schema
 }: {
-  data: z.infer<typeof taskSchemaWithID>[]
+  data:z.infer<T>
   activeTab?: string
   constants: Record<string, ColumnMeta[]> | Record<string, Record<string, ColumnMeta[]>>
   headers?: Record<string, string>
   isPending?: boolean,
-  pagination:any,
-  setPagination: (pagination: any) => void,
+  pagination:Pagination,
+  setPagination: OnChangeFn<PaginationState>,
   rowCount: number,
   sorting: SortingState,
   setSorting: OnChangeFn<SortingState>,
   onDelete:(ids:number[])=>void,
+  schema:T
 }) {
-  const [selectedItem,setselectedItem]=useState<z.infer<typeof taskSchemaWithID> |null>(null)
+  const [selectedItem,setselectedItem]=useState<T |null>(null)
   const [deleteIds, setDeleteIds] = React.useState<number[] | null>(null)
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -191,7 +188,7 @@ export default memo(function DataTable({
   }, [initialData])
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ id }) => id) || [],
+    () => data?.map(({ id}) => id) || [],
     [data]
   )
   const columns = React.useMemo<ColumnDef<any>[]>(() => {
@@ -601,7 +598,7 @@ export default memo(function DataTable({
           </div>
         </div>
       </TabsContent>
-      <TableCellViewer open={!!selectedItem} setOpenChange={(open:boolean)=>{if(!open) setselectedItem(null)}} item={selectedItem}/>
+      <TableCellViewer<T> open={!!selectedItem} setOpenChange={(open:boolean)=>{if(!open) setselectedItem(null)}} item={selectedItem}/>
       <DeleteDialog
           open={!!deleteIds}
           ids={deleteIds || []}

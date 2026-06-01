@@ -7,6 +7,7 @@ export type ColumnMeta = {
   isTextEarea  ?:boolean
   type?: "text" | "number" | "email" | "date" | "file"
   values?:Values
+  fullWidth?:boolean
 }
 type Values = Array<string>
 

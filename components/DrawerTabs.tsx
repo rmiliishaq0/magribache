@@ -20,7 +20,7 @@ import {Controller} from"react-hook-form"
 import {Textarea} from "@/components/ui/textarea";
 import useTaskUpadte from "@/hooks/useTaskUpadte";
 
-export default function TableCellViewer({ item ,open,setOpenChange}: { open:boolean,item: z.infer<typeof taskSchemaWithID> | null,setOpenChange:(open:boolean)=>void}) {
+export default function TableCellViewer<T>({ item ,open,setOpenChange}: { open:boolean,item: T | null,setOpenChange:(open:boolean)=>void}) {
     const form = useTaskForm(item)
     const {isPending,mutate} = useTaskUpadte()
 

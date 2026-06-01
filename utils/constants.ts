@@ -9,7 +9,6 @@ import {
   Users2,
 } from "lucide-react"
 import type { ColumnMeta } from "./types"
-import {values} from "eslint-config-next";
 
 export const sideBarecontents = {
   user: {
@@ -82,8 +81,7 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
     "Identifiant fiscal (IF)": [{isInput:true,type:"number"}],
     "Ville": [{isInput:true,type:"text"}],
     "Pays": [{isInput:true,type:"text"}],
-    "Actif": [{isBadge:true}],
-    "CARTE VISITE": [{isInput:true,type:"file"}],
+    "Actif": [{isBadge:true,isSelected:true,values:["Oui","Non"],fullWidth:true}],
   },
   Fournisseurs:{
     "Code":[],
@@ -104,7 +102,7 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
     "Entreprise":[{isInput:true,type:"text"}],
     "Ville":[{isInput:true,type:"text"}],
     "Pays":[{isInput:true,type:"text"}],
-    "Actif":[{isBadge:true}],
+    "Actif":[{isBadge:true,isSelected:true,values:["Oui","Non"]}]
   },
   "Contacts fournisseurs":{
     "Name":[{isNavigate:true,}],
@@ -113,7 +111,7 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
     "Phone Number":[{isInput:true,type:"number"}],
     "Supplier":[{isInput:true,type:"text"}],
     "City":[{isInput:true,type:"text"}],
-    "Country":[{isInput:true,type:"text"}]
+    "Country":[{isInput:true,type:"text",fullWidth:true}],
   },
   Prospects:{
     "Nom":[{isNavigate:true,}],
@@ -132,7 +130,7 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
   "Client":[{isInput:true,type:"text"}],
   "Modèle de contrat":[{isInput:true,type:"text"}],
   "Date de depart":[{isInput:true,type:"date"}],
-  "Date de fin":[{isInput:true,type:"date"}]
+  "Date de fin":[{isInput:true,type:"date",fullWidth:true}]
   }
 }
 
