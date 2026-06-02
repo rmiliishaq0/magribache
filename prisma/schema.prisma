@@ -37,3 +37,87 @@ model Task {
   adminId String
   admin Admin @relation(fields: [adminId], references: [id])
 } 
+
+model Client { 
+  id String     @id @default(uuid()) 
+  entreprise String
+  Téléphone String?
+  Email String? @unique
+  Catégories String?
+  ICE String?
+  IdentifiantFiscal String?
+  Ville String?
+  Pays String?
+  actif String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ContactsFournisseur { 
+  id String     @id @default(uuid()) 
+  name String
+  title String?
+  email String? @unique
+  phone String?
+  supplier String?
+  city String?
+  country String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  fournisseur Fournisseur[]
+}
+
+model Fournisseur {
+    id String     @id @default(uuid())
+    fournisseur String
+    email String? @unique
+    phone String?
+    ICE String?
+    IdentifiantFiscal String?
+    ville String?
+    pays String?
+    catégories String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    contactsFournisseurId String
+    contactsFournisseur ContactsFournisseur @relation(fields: [contactsFournisseurId], references: [id])
+}
+
+model Prospects {
+    id String     @id @default(uuid())
+    nom String
+    prospect String?
+    email String? @unique
+    téléphone String?
+    statut String?
+    source String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    localisation String?
+}
+
+model Contrats {
+    id String     @id @default(uuid())
+     nom String
+     sujet String?
+     client String?
+     modèleContrat String?
+     dateDepart String?
+     dateFin String?
+     createdAt DateTime @default(now())
+     updatedAt DateTime @updatedAt
+}
+
+model Contacts {
+    id String     @id @default(uuid())
+    nom String
+    civilité String?
+    email String? @unique
+    téléphone String?
+    entreprise String?
+    ville String?
+    pays String?
+    actif String?
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}

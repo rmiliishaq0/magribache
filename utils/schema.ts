@@ -64,7 +64,7 @@ export const prospectsschema = z.object({
     Prospect:z.string().optional(),
     Email:z.email("Email invalide").optional(),
     Téléphone:z.string().optional(),
-    "Attribué à":z.string().optional(),
+    //"Attribué à":z.string().optional(),
     Statut:z.string().optional(),
     Source:z.string().optional(),
     "Date d'ajout":z.string().optional(),

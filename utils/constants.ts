@@ -119,7 +119,7 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
     "Prospect":[{isInput:true,type:"text"}],
     "Email":[{isInput:true,type:"email"}],
     "Téléphone":[{isInput:true,type:"number"}],
-    "Attribué à":[{isInput:true,type:"text"}],
+    //"Attribué à":[{isInput:true,type:"text"}],
     "Statut":[{isInput:true,type:"text"}],
     "Source":[{isInput:true,type:"text"}],
     "Date d'ajout":[{isInput:true,type:"date"}],
