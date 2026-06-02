@@ -9,6 +9,7 @@ import {
   Users2,
 } from "lucide-react"
 import type { ColumnMeta } from "./types"
+import { EntityKey } from "./form-config"
 
 export const sideBarecontents = {
   user: {
@@ -59,7 +60,7 @@ export const sideBarecontents = {
   ]
 }
 
-export const CrmFields = [
+export const CrmFields:EntityKey[] = [
   "Clients",
   "Fournisseurs",
   "Contacts",

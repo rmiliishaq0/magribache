@@ -83,7 +83,9 @@ export default function Tasks() {
     const total=useMemo(() => {
         return data?.total || 0
     },[data?.total])
+    
     const tasks = useMemo(() => data?.tasks || [], [data])
+
     useEffect(() => {
         if(isError){
             toast.error(error?.message)

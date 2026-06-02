@@ -1,11 +1,19 @@
-// entity-config.ts
-
 import { clientSchema, fournisseurSchema ,contactsfournisseurSchema,prospectsschema,contratsschema,contactsschema} from "@/utils/schema";
 
 export const entityConfig = {
   Clients: {
     schema: clientSchema,
-    defaultValues: { },
+    defaultValues: { 
+      Code:"",
+      Entreprise:"",
+      Téléphone:"",
+      Catégories:"",
+      ICE:"",
+      "Identifiant fiscal (IF)": "",
+      Ville: "",
+      Pays: "",
+      Actif: "Non",
+    },
   },
 
   Fournisseurs: {

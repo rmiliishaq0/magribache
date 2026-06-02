@@ -26,8 +26,7 @@ export const taskSchemaWithID = taskSchema.extend({
 })
 
 export const clientSchema = z.object({
-    Code:z.uuid(),
-    Entreprise:z.string().optional(),
+    Entreprise:z.string(),
     Téléphone:z.string().optional(),
     Email:z.email("Email invalide").optional(),
     Catégories:z.string().optional(),
@@ -35,7 +34,7 @@ export const clientSchema = z.object({
     "Identifiant fiscal (IF)": z.string().optional(),
     Ville: z.string().optional(),
     Pays: z.string().optional(),
-    Actif: z.boolean()
+    Actif: z.enum(["Oui", "Non"])
 })
 
 export const contactsfournisseurSchema = z.object({
