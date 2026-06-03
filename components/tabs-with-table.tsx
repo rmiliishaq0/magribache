@@ -14,6 +14,7 @@ import { useEntity } from "@/hooks/useEntity"
 import { EntityKey } from "@/utils/form-config"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner";
+import { normalizeKeys } from "@/lib/utils";
 
 export default  function TabsWithTable(){
     const [pagination, setPagination] =useState({
@@ -22,6 +23,7 @@ export default  function TabsWithTable(){
     })
     const [sorting, setSorting] = useState<SortingState>([])
     const [open,setOpen] = useState(false)
+    const [selectedItem, setSelectedItem] = useState<any>(null)
 
 
     const path = usePathname()
@@ -64,19 +66,37 @@ export default  function TabsWithTable(){
         },[data?.total])
         
     const queryData = useMemo(() => data?.[activeTab.toLocaleLowerCase()] || [], [data])
-
+        
     useEffect(() => {
         if(isError){
             toast.error(error?.message)
         }
     },[isError,error])
+
+    const updateForm = useForm({
+        resolver: zodResolver(entity.schema),
+        defaultValues: entity.defaultValues,
+        mode:"all",
+        reValidateMode:"onBlur",
+    })
     
+    const onUpdate= useCallback((data: any)=>{
+        entity.actions.update.mutate({...data,id:selectedItem?.id ?? 0})
+    },[entity.actions.update,selectedItem])
+
+      useEffect(() => {
+         if (selectedItem) {
+            console.log("Selected Item:", selectedItem);
+            updateForm.reset({...normalizeKeys(selectedItem),"Identifiant fiscal (IF)" : selectedItem.IdentifiantFiscal})
+          }
+    }, [selectedItem, updateForm])
+
     return (
         <motion.div layout>
             <TabsSwitch setOpen={setOpen} constants={activeFields} activeTab={activeTab} setActiveTab={setActiveTab} towButtons={false}>
             <Card className="mt-4 px-4 py-6 flex flex-col gap-4">
                 {FiledsNeedCards.includes(activeTab) && <DashboardCard/>}
-                <DataTable isPending={isPending} schema={entity.schema} rowCount={total} sorting={sorting} setSorting={setSorting} pagination={pagination} setPagination={setPagination} constants={activeTableFields} activeTab={activeTab} data={queryData} onDelete={onDelete}/>
+                <DataTable selectedItem={selectedItem} setselectedItem={setSelectedItem} form={updateForm} isUpdatePending={entity.actions.update.isPending} onUpdate={onUpdate} isPending={isPending} schema={entity.schema} rowCount={total} sorting={sorting} setSorting={setSorting} pagination={pagination} setPagination={setPagination} constants={activeTableFields} activeTab={activeTab} data={queryData} onDelete={onDelete}/>
             </Card>
             </TabsSwitch>
             <AddDialog  constants={activeTableFields} activeTab={activeTab} open={open} form={form}  setOpen={setOpen}  onSubmit={onSubmit} isPending={entity.actions.create.isPending} />

@@ -159,7 +159,10 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
   onDelete,
   schema,
   selectedItem,
-  setselectedItem
+  setselectedItem,
+  form,
+  onUpdate,
+  isUpdatePending
 }: {
   data:z.infer<T>
   activeTab?: string
@@ -173,8 +176,11 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
   setSorting: OnChangeFn<SortingState>,
   onDelete:(ids:number[])=>void,
   schema:T,
-  setselectedItem: React.Dispatch<React.SetStateAction<any | null>>,
-  selectedItem:any | null
+  setselectedItem: React.Dispatch<any>,
+  selectedItem:any,
+  form:any,
+  onUpdate:(data:any)=>void,
+  isUpdatePending?:boolean
 }) {
   const [deleteIds, setDeleteIds] = React.useState<number[] | null>(null)
   const [data, setData] = React.useState(() => initialData)
@@ -588,7 +594,7 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
           </div>
         </div>
       </TabsContent>
-      <TableCellViewer constants={activeTab ? constants[activeTab] : constants} open={!!selectedItem} setOpenChange={(open:boolean)=>{if(!open) setselectedItem(null)}} item={selectedItem}/>
+      <TableCellViewer isPending={isUpdatePending} form={form} onSubmit={onUpdate} constants={activeTab ? constants[activeTab] : constants} open={!!selectedItem} setOpenChange={(open:boolean)=>{if(!open) setselectedItem(null)}} item={selectedItem}/>
       <DeleteDialog
           open={!!deleteIds}
           ids={deleteIds || []}

@@ -15,6 +15,7 @@ import {  SortingState } from "@tanstack/react-table";
 import { deleteTasks } from "@/utils/Apis";
 import AddTask from "@/components/add-task";
 import useTaskForm from "@/hooks/useTaskForm";
+import { useTaskUpadte } from "@/hooks/mutations";
 
 export default function Tasks() {
     const [pagination, setPagination] =useState({
@@ -23,6 +24,7 @@ export default function Tasks() {
     })
     const [sorting, setSorting] = useState<SortingState>([])
     const [openTask,setOpenTask] = useState(false)
+    const [selectedItem, setSelectedItem] = useState<any>(null)
 
     const queryClient = useQueryClient();
 
@@ -92,7 +94,20 @@ export default function Tasks() {
         }
     },[isError,error])
 
-    
+    const updateForm = useTaskForm(selectedItem)
+     
+    const updateTaskMutation = useTaskUpadte()
+    const onUpdate= useCallback((data: any)=>{
+      console.log(data)
+        updateTaskMutation.mutate({...data,id:selectedItem?.id ?? 0})
+    },[updateTaskMutation,selectedItem])
+
+      useEffect(() => {
+         if (selectedItem) {
+         updateForm.reset({...selectedItem,project:selectedItem.project})
+       }
+    }, [selectedItem, updateForm])
+
     return (
         <Card className="text-foreground p-4 flex flex-col mb-6 overflow-hidden! ">
             <div >
@@ -104,7 +119,7 @@ export default function Tasks() {
                   <span>Ajouter une tâche</span>
                 </Button>
             </div>
-            <DataTable schema={taskSchemaWithID} onDelete={onDelete} sorting={sorting} setSorting={setSorting} rowCount={total} pagination={pagination} setPagination={setPagination} isPending={isPending } data={tasks} constants={TasksTableFields} headers={TasksTableFieldsKeys} />
+            <DataTable isUpdatePending={updateTaskMutation.isPending} form={updateForm} onUpdate={onUpdate} selectedItem={selectedItem} setselectedItem={setSelectedItem} schema={taskSchemaWithID} onDelete={onDelete} sorting={sorting} setSorting={setSorting} rowCount={total} pagination={pagination} setPagination={setPagination} isPending={isPending } data={tasks} constants={TasksTableFields} headers={TasksTableFieldsKeys} />
             <AddTask isPending={createTaskMutation.isPending} form={form} openTask={openTask} setOpenTask={setOpenTask} onSubmit={onSubmit} />
             </div>
         </Card>

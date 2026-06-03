@@ -21,27 +21,23 @@ import {Textarea} from "@/components/ui/textarea";
 import {useTaskUpadte} from "@/hooks/mutations";
 import type { ColumnMeta } from "@/utils/types";
 
-export default function TableCellViewer({ item ,open,setOpenChange,constants,FieldsKeys}: { open:boolean,item: any | null,setOpenChange:(open:boolean)=>void ,constants:any ,FieldsKeys?:Record<string, string>}) {
+export default function TableCellViewer({ item ,open,setOpenChange,constants,FieldsKeys,form,isPending,onSubmit}: { open:boolean,item: any | null,setOpenChange:(open:boolean)=>void ,constants:any ,FieldsKeys?:Record<string, string>,form:any,isPending?:boolean,onSubmit:(data:any)=>void}) {
 
-    const form = useTaskForm(item)
-    const {isPending,mutate} = useTaskUpadte()
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if (item) {
-          form.reset({...item,project:item.project})
-      }
-    }, [item, form])
-    function onSubmit(data:z.infer<typeof taskSchema>) {
-        mutate({...data,id:item?.id ?? 0})
-    }
+    //     if (item) {
+    //       form.reset({...item,project:item.project})
+    //   }
+    // }, [item, form])
+    
     
 
     return (
         <Drawer direction={"right"} open={open} onOpenChange={setOpenChange}>
           <DrawerContent>
             <DrawerHeader className="gap-1">
-              <DrawerTitle>{item?.name}</DrawerTitle>
+              <DrawerTitle>{item?.name || item?.[0]}</DrawerTitle>
             </DrawerHeader>
             <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm h-full">
               <form id="form" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -70,7 +66,8 @@ export default function TableCellViewer({ item ,open,setOpenChange,constants,Fie
                               key={fieldP}
                               name={fieldP as keyof typeof item}
                               control={form.control}
-                              render={({ field, fieldState }) => (
+                              render={({ field, fieldState }) => { 
+                                  return (
                                   <Field aria-invalid={fieldState.invalid}>
                                     <FieldLabel htmlFor={fieldP}>{FieldsKeys ? FieldsKeys[fieldP] : fieldP}</FieldLabel>
 
@@ -94,8 +91,8 @@ export default function TableCellViewer({ item ,open,setOpenChange,constants,Fie
                                     {fieldState.invalid && (
                                         <FieldError errors={[fieldState.error]} />
                                     )}
-                                  </Field>
-                              )}
+                                  </Field>)}
+                              }
                           />
                       )
                   }
