@@ -22,16 +22,9 @@ export async function GET(req:NextRequest) {
         const sortBy = searchParams.get("sortBy") || "createdAt";
         const order = searchParams.get("order") || "desc";
 
-        const total = await prisma.task.count({
-            where: {
-                adminId: auth.user.id,
-            },
-        });
+        const total = await prisma.client?.count();
             
-        const tasks = await prisma.task.findMany({
-            where:{
-                adminId:auth.user.id
-            },
+        const clients = await prisma.client?.findMany({
             skip,
             take: limit,
             orderBy: {
@@ -39,7 +32,7 @@ export async function GET(req:NextRequest) {
             },
             //take:10,
         })
-        return Response.json({message:"Tâches récupérées avec succès", tasks, total},{status:200})
+        return Response.json({message:"Clients récupérés avec succès", clients, total},{status:200})
     }catch(err){
         console.log(err)
         return Response.json({message:"Une erreur s'est produite"},{status:500})

@@ -22,7 +22,7 @@ export async function GET(req:NextRequest) {
         const sortBy = searchParams.get("sortBy") || "createdAt";
         const order = searchParams.get("order") || "desc";
 
-        const total = await prisma.task.count({
+        const total = await prisma.task?.count({
             where: {
                 adminId: auth.user.id,
             },

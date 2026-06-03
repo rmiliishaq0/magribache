@@ -8,6 +8,7 @@ export type ColumnMeta = {
   type?: "text" | "number" | "email" | "date" | "file"
   values?:Values
   fullWidth?:boolean
+  isId?:boolean
 }
 type Values = Array<string>
 

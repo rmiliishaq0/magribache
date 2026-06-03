@@ -12,15 +12,17 @@ import {z} from "zod"
 import {taskSchema} from "@/utils/schema"
 import { Button } from "./ui/button"
 import {useEffect} from "react"
-import {TasksTableFields,TasksTableFieldsKeys} from "@/utils/constants";
+import {TasksTableFieldsKeys} from "@/utils/constants";
 import {Field, FieldError, FieldLabel} from "@/components/ui/field"
 import useTaskForm from "@/hooks/useTaskForm";
 import {Spinner} from "@/components/ui/spinner";
 import {Controller} from"react-hook-form"
 import {Textarea} from "@/components/ui/textarea";
 import {useTaskUpadte} from "@/hooks/mutations";
+import type { ColumnMeta } from "@/utils/types";
 
-export default function TableCellViewer<T>({ item ,open,setOpenChange}: { open:boolean,item: T | null,setOpenChange:(open:boolean)=>void}) {
+export default function TableCellViewer({ item ,open,setOpenChange,constants,FieldsKeys}: { open:boolean,item: any | null,setOpenChange:(open:boolean)=>void ,constants:any ,FieldsKeys?:Record<string, string>}) {
+
     const form = useTaskForm(item)
     const {isPending,mutate} = useTaskUpadte()
 
@@ -33,6 +35,8 @@ export default function TableCellViewer<T>({ item ,open,setOpenChange}: { open:b
     function onSubmit(data:z.infer<typeof taskSchema>) {
         mutate({...data,id:item?.id ?? 0})
     }
+    
+
     return (
         <Drawer direction={"right"} open={open} onOpenChange={setOpenChange}>
           <DrawerContent>
@@ -41,7 +45,7 @@ export default function TableCellViewer<T>({ item ,open,setOpenChange}: { open:b
             </DrawerHeader>
             <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm h-full">
               <form id="form" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
-                {Object.entries(TasksTableFields).map(([fieldP,options])=>{
+                {Object?.entries(constants).map(([fieldP,options])=>{
                   const o = options?.[0];
                   if((o.isInput || o.isNavigate )){
                     return(
@@ -51,8 +55,8 @@ export default function TableCellViewer<T>({ item ,open,setOpenChange}: { open:b
                           render={({field,fieldState})=>{
                               return(
                                       <Field aria-invalid={fieldState.invalid}>
-                                          <FieldLabel htmlFor={fieldP ==="projet" ? "project" : fieldP as keyof typeof item}>{TasksTableFieldsKeys[fieldP]}</FieldLabel>
-                                          <Input id={fieldP ==="projet" ? "project" : fieldP as keyof typeof item} {...field} aria-invalid={fieldState.invalid} type={o?.type} />
+                                          <FieldLabel htmlFor={fieldP ==="projet" ? "project" : fieldP as string}>{ FieldsKeys ? FieldsKeys[fieldP] : fieldP }</FieldLabel>
+                                          <Input id={fieldP ==="projet" ? "project" : fieldP as string} {...field} aria-invalid={fieldState.invalid} type={o?.type} />
                                           {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                       </Field>
                                   )
@@ -68,7 +72,7 @@ export default function TableCellViewer<T>({ item ,open,setOpenChange}: { open:b
                               control={form.control}
                               render={({ field, fieldState }) => (
                                   <Field aria-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor={fieldP}>{TasksTableFieldsKeys[fieldP]}</FieldLabel>
+                                    <FieldLabel htmlFor={fieldP}>{FieldsKeys ? FieldsKeys[fieldP] : fieldP}</FieldLabel>
 
                                     <Select
                                         value={field.value}
@@ -103,7 +107,7 @@ export default function TableCellViewer<T>({ item ,open,setOpenChange}: { open:b
                             control={form.control}
                             render={({field,fieldState})=>(
                                 <Field aria-invalid={fieldState.invalid}>
-                                  <FieldLabel htmlFor={fieldP}>{TasksTableFieldsKeys[fieldP]}</FieldLabel>
+                                  <FieldLabel htmlFor={fieldP}>{FieldsKeys ? FieldsKeys[fieldP] : fieldP}</FieldLabel>
                                   <Textarea id={fieldP} {...field} aria-invalid={fieldState.invalid} />
                                   {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                                 </Field>

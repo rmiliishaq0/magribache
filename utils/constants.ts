@@ -73,7 +73,6 @@ export const CrmFields:EntityKey[] = [
 
 export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
   Clients:{
-    "Code":[],
     "Entreprise":[{isNavigate:true,}],
     "Téléphone":[{isInput:true,type:"number"}],
     "Email":[{isInput:true,type:"email"}],

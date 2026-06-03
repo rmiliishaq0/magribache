@@ -91,6 +91,7 @@ import { Spinner } from "./ui/spinner"
 import { SortAsc, SortDesc } from "lucide-react"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import {memo, useState} from "react";
+import { Field } from "./ui/field"
 
 
 function DragHandle({ id }: { id: number }) {
@@ -156,7 +157,9 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
   sorting,
   setSorting,
   onDelete,
-  schema
+  schema,
+  selectedItem,
+  setselectedItem
 }: {
   data:z.infer<T>
   activeTab?: string
@@ -169,9 +172,10 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
   sorting: SortingState,
   setSorting: OnChangeFn<SortingState>,
   onDelete:(ids:number[])=>void,
-  schema:T
+  schema:T,
+  setselectedItem: React.Dispatch<React.SetStateAction<any | null>>,
+  selectedItem:any | null
 }) {
-  const [selectedItem,setselectedItem]=useState<T |null>(null)
   const [deleteIds, setDeleteIds] = React.useState<number[] | null>(null)
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -245,22 +249,25 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
             if (config?.isNavigate) {
               return (
               <Button onClick={()=>{setselectedItem(row.original)}} variant="link" className="w-fit px-0 text-left text-foreground">
-                {row.original.name}
+                {row.original[field.toLocaleLowerCase()] || row.original[field]}
               </Button>
               )
             }
 
-            if (config?.isBadge) {
-              if (field == "status") {
+            if (config?.isBadge) {                 
+              console.log(field)
+
+              if (field == "status" || field == "Actif") {             
+
                 return (
                   <>
                     <Badge variant="outline" className="px-1.5 text-muted-foreground">
-                      {row.original.status === "Terminé" ? (
+                      {row.original[field] === "Terminé" || row.original[field] === "Oui" ? (
                         <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
                       ) : (
                         <IconLoader />
                       )}
-                      {row.original.status}
+                      {row.original[field.toLocaleLowerCase()] || row.original[field]}
                     </Badge>
                   </>
                 )
@@ -281,32 +288,15 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
 
             if (config?.isInput || config?.isTextEarea) {
               return (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault()
-                    toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-                      loading: `Saving ${row.original.header}`,
-                      success: "Done",
-                      error: "Error",
-                    })
-                  }}
-                >
-                  <Label htmlFor={`${row.original.id}-${field}`} className="sr-only">
-                    {field}
-                  </Label>
-                  <Input
-                    className="h-8 w-16 border-transparent bg-transparent text-right shadow-none hover:bg-input/30 focus-visible:border focus-visible:bg-background dark:bg-transparent dark:hover:bg-input/30 dark:focus-visible:bg-input/30"
-                    defaultValue={row.original[field]}
-                    id={`${row.original.id}-${field}`}
-                  />
-                </form>
+                <Field>{row.original[field] || row.original.IdentifiantFiscal
+                   }</Field>
               )
             }
             return (
               <>
                 <div className="w-32">
                   <Badge variant="outline" className="px-1.5 text-muted-foreground">
-                    {meta?.[0]?.isDate ? new Date(row.original[field]).toLocaleDateString() : row.original[field]}
+                    {meta?.[0]?.isDate ? new Date(row.original[field]).toLocaleDateString() : (row.original[field] || row.original[field.toLocaleLowerCase()])}
                   </Badge>
                 </div>
               </>
@@ -598,7 +588,7 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
           </div>
         </div>
       </TabsContent>
-      <TableCellViewer<T> open={!!selectedItem} setOpenChange={(open:boolean)=>{if(!open) setselectedItem(null)}} item={selectedItem}/>
+      <TableCellViewer constants={activeTab ? constants[activeTab] : constants} open={!!selectedItem} setOpenChange={(open:boolean)=>{if(!open) setselectedItem(null)}} item={selectedItem}/>
       <DeleteDialog
           open={!!deleteIds}
           ids={deleteIds || []}

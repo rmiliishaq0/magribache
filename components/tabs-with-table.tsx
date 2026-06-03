@@ -63,13 +63,14 @@ export default  function TabsWithTable(){
             return data?.total || 0
         },[data?.total])
         
-    const queryData = useMemo(() => data?.tasks || [], [data])
+    const queryData = useMemo(() => data?.[activeTab.toLocaleLowerCase()] || [], [data])
 
     useEffect(() => {
         if(isError){
             toast.error(error?.message)
         }
     },[isError,error])
+    
     return (
         <motion.div layout>
             <TabsSwitch setOpen={setOpen} constants={activeFields} activeTab={activeTab} setActiveTab={setActiveTab} towButtons={false}>
