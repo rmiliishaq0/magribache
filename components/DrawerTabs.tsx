@@ -43,7 +43,7 @@ export default function TableCellViewer({ item ,open,setOpenChange,constants,Fie
               <form id="form" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
                 {Object?.entries(constants).map(([fieldP,options])=>{
                   const o = options?.[0];
-                  if((o.isInput || o.isNavigate )){
+                  if((o?.isInput || o?.isNavigate )){
                     return(
                       <Controller
                           key={fieldP}
@@ -60,7 +60,7 @@ export default function TableCellViewer({ item ,open,setOpenChange,constants,Fie
                       }}
                       />)
                   }
-                  else if(o.isSelected){
+                  else if(o?.isSelected){
                       return(
                           <Controller
                               key={fieldP}
@@ -96,7 +96,7 @@ export default function TableCellViewer({ item ,open,setOpenChange,constants,Fie
                           />
                       )
                   }
-                  else if(o.isTextEarea){
+                  else if(o?.isTextEarea){
                     return(
                         <Controller
                             key={fieldP}

@@ -98,8 +98,17 @@ export default function Tasks() {
      
     const updateTaskMutation = useTaskUpadte()
     const onUpdate= useCallback((data: any)=>{
-      console.log(data)
-        updateTaskMutation.mutate({...data,id:selectedItem?.id ?? 0})
+        if (!selectedItem?.id) return;
+        updateTaskMutation.mutate( {
+        ...data,
+        id: selectedItem.id,
+      },
+      {
+        onSuccess: () => {
+          form.reset(selectedItem);
+          setSelectedItem(null);
+        },
+      })
     },[updateTaskMutation,selectedItem])
 
       useEffect(() => {

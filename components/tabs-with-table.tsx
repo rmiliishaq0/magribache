@@ -26,6 +26,7 @@ export default  function TabsWithTable(){
     const [selectedItem, setSelectedItem] = useState<any>(null)
 
 
+
     const path = usePathname()
     //const activeFields = path.includes("crm")?CrmFields:SalesFields
     const activeFields = CrmFields
@@ -80,19 +81,36 @@ export default  function TabsWithTable(){
         reValidateMode:"onBlur",
     })
     
-    const onUpdate= useCallback((data: any)=>{
-        entity.actions.update.mutate({...data,id:selectedItem?.id ?? 0})
-    },[entity.actions.update,selectedItem])
+    const onUpdate = useCallback(
+  (data: any) => {
+
+    if (!selectedItem?.id) return;
+
+    entity.actions.update.mutate(
+      {
+        ...data,
+        id: selectedItem.id,
+      },
+      {
+        onSuccess: () => {
+          form.reset(entity.defaultValues);
+          setSelectedItem(null);
+        },
+      }
+    );
+  },
+  [entity.actions.update, selectedItem, form, entity.defaultValues]
+);
 
       useEffect(() => {
          if (selectedItem) {
-            console.log("Selected Item:", selectedItem);
+            console.log(selectedItem)
             updateForm.reset({...normalizeKeys(selectedItem),"Identifiant fiscal (IF)" : selectedItem.IdentifiantFiscal})
           }
     }, [selectedItem, updateForm])
 
     return (
-        <motion.div layout>
+        <motion.div>
             <TabsSwitch setOpen={setOpen} constants={activeFields} activeTab={activeTab} setActiveTab={setActiveTab} towButtons={false}>
             <Card className="mt-4 px-4 py-6 flex flex-col gap-4">
                 {FiledsNeedCards.includes(activeTab) && <DashboardCard/>}

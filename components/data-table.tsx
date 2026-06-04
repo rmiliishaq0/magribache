@@ -261,14 +261,12 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
             }
 
             if (config?.isBadge) {                 
-              console.log(field)
 
-              if (field == "status" || field == "Actif") {             
-
+              if (field == "status" || field == "Actif") {      
                 return (
                   <>
                     <Badge variant="outline" className="px-1.5 text-muted-foreground">
-                      {row.original[field] === "Terminé" || row.original[field] === "Oui" ? (
+                      {row.original[field] === "Terminé" || row.original["actif"] == "Oui" ? (
                         <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
                       ) : (
                         <IconLoader />

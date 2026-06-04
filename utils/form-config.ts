@@ -4,7 +4,6 @@ export const entityConfig = {
   Clients: {
     schema: clientSchema,
     defaultValues: { 
-      Code:"",
       Entreprise:"",
       Téléphone:"",
       Catégories:"",
@@ -18,7 +17,15 @@ export const entityConfig = {
 
   Fournisseurs: {
     schema: fournisseurSchema,
-    defaultValues: {}
+    defaultValues: {
+      Fournisseur:"",
+      Téléphone:"",
+      ICE:"",
+      "Identifiant fiscal (IF)":"",
+      Ville: "",
+      Pays:"",
+      Catégories: "",
+    }
   },
   Contacts:{
     schema: contactsschema,

@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { requireAuth } from "@/lib/auth";
 import { clientSchema } from "@/utils/schema";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@/app/generated/prisma/client";
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,13 +25,18 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         )
       }
-      const { Entreprise, "Identifiant fiscal (IF)": identifiantFiscal,Actif, ...rest } = data
+      const { ICE,Entreprise, "Identifiant fiscal (IF)": identifiantFiscal,Actif,Téléphone,Catégories, Email ,Pays,Ville} = data
       const client = await prisma.client?.create({
         data: {
-          entreprise: Entreprise,
-          ...rest,
-         IdentifiantFiscal: identifiantFiscal,
-         actif:Actif
+            entreprise :Entreprise,
+            téléphone :Téléphone,
+            email:Email,
+            catégories:Catégories,
+            ICE,
+            identifiantFiscal,
+            ville:Ville,
+            pays:Pays,
+            actif:Actif
         },
       })
 
@@ -42,8 +48,19 @@ export async function POST(req: NextRequest) {
         { status: 201 }
       )
     }
-  } catch (e) {
-    console.log(e)
+  } catch (error) {
+    console.error(error)
+    if (
+    error instanceof Prisma.PrismaClientKnownRequestError &&
+    error?.code === "P2002"
+  ) {
+    return Response.json(
+      {
+        message: "L'Email existe déjà.",
+      },
+      { status: 400 }
+    );
+  }
 
     return Response.json(
       { message: "Une erreur s'est produite" },

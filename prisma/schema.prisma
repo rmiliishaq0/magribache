@@ -17,7 +17,7 @@ model Admin {
   website String?
   description String?
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt()
   logo String?
   profilIcon String?
   tasks Task[]
@@ -33,7 +33,7 @@ model Task {
   dueDate DateTime
   projet String?
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt()
   adminId String
   admin Admin @relation(fields: [adminId], references: [id])
 } 
@@ -41,46 +41,52 @@ model Task {
 model Client { 
   id String     @id @default(uuid()) 
   entreprise String
-  Téléphone String?
-  Email String? @unique
-  Catégories String?
+  téléphone String?
+  email String? @unique
+  catégories String?
   ICE String?
-  IdentifiantFiscal String?
-  Ville String?
-  Pays String?
+  identifiantFiscal String?
+  ville String?
+  pays String?
   actif String?
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ContactsFournisseur { 
-  id String     @id @default(uuid()) 
-  name String
-  title String?
-  email String? @unique
-  phone String?
-  supplier String?
-  city String?
-  country String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  fournisseur Fournisseur[]
+  updatedAt DateTime @updatedAt()
 }
 
 model Fournisseur {
-    id String     @id @default(uuid())
-    fournisseur String
-    email String? @unique
-    phone String?
-    ICE String?
-    IdentifiantFiscal String?
-    ville String?
-    pays String?
-    catégories String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    contactsFournisseurId String
-    contactsFournisseur ContactsFournisseur @relation(fields: [contactsFournisseurId], references: [id])
+  id String @id @default(uuid())
+
+  fournisseur String
+  email String? @unique
+  téléphone String?
+  ICE String?
+  IdentifiantFiscal String?
+  ville String?
+  pays String?
+  catégories String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  contacts ContactsFournisseur[]
+}
+
+model ContactsFournisseur {
+  id String @id @default(uuid())
+
+  name String
+  title String?
+  email String? @unique
+  téléphone String?
+  Fournisseur String?
+  city String?
+  country String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  fournisseurId String
+  fournisseur Fournisseur @relation(fields: [fournisseurId], references: [id])
 }
 
 model Prospects {
@@ -92,7 +98,7 @@ model Prospects {
     statut String?
     source String?
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    updatedAt DateTime @updatedAt()
     localisation String?
 }
 
@@ -105,7 +111,7 @@ model Contrats {
      dateDepart String?
      dateFin String?
      createdAt DateTime @default(now())
-     updatedAt DateTime @updatedAt
+     updatedAt DateTime @updatedAt()
 }
 
 model Contacts {
@@ -119,5 +125,5 @@ model Contacts {
     pays String?
     actif String?
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    updatedAt DateTime @updatedAt()
 }

@@ -41,17 +41,16 @@ export const contactsfournisseurSchema = z.object({
     Name:z.string(),
     Title:z.string().optional(),
     Email:z.email("Email invalide").optional(),
-    "Phone Number":z.string().optional(),
-    Supplier:z.string().optional(),
+    "Téléphone":z.string().optional(),
+    Fournisseur:z.string().optional(),
     City:z.string().optional(),
     Country:z.string().optional(),
 })
 
 export const fournisseurSchema = z.object({
-    Code:z.uuid(),
-    Fournisseur:z.string().optional(),
+    Fournisseur:z.string(),
     Email:z.email("Email invalide").optional(),
-    "Numéro de téléphone":z.string().optional(),
+    Téléphone:z.string().optional(),
     ICE:z.string().optional(),
     "Identifiant fiscal (IF)": z.string().optional(),
     Ville: z.string().optional(),

@@ -84,10 +84,9 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
     "Actif": [{isBadge:true,isSelected:true,values:["Oui","Non"],fullWidth:true}],
   },
   Fournisseurs:{
-    "Code":[],
     "Fournisseur":[{isNavigate:true,}],
     "Email":[{isInput:true,type:"email"}],
-    "Numéro de téléphone":[{isInput:true,type:"number"}],
+    "Téléphone":[{isInput:true,type:"number"}],
     "ICE":[{isInput:true,type:"number"}],
     "Identifiant fiscal (IF)": [{isInput:true,type:"number"}],
     "Ville": [{isInput:true,type:"text"}],
