@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { requireAuth } from "@/lib/auth";
-import { clientSchema, fournisseurSchema } from "@/utils/schema";
+import { fournisseurSchema } from "@/utils/schema";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@/app/generated/prisma/client";
 
@@ -27,14 +27,14 @@ export async function POST(req: NextRequest) {
       }
       console.log(data)
 
-      const {Fournisseur,Email,Téléphone,ICE  ,"Identifiant fiscal (IF)":IdentifiantFiscal ,Ville,Pays,Catégories} = data
+      const {Fournisseur,Email,Téléphone,ICE  ,"Identifiant fiscal (IF)":identifiantFiscal ,Ville,Pays,Catégories} = data
       const fournisseur = await prisma.fournisseur?.create({
         data: {
             fournisseur :Fournisseur,
             email:Email,
             téléphone:Téléphone,
             ICE,
-            IdentifiantFiscal,
+            identifiantFiscal,
             ville : Ville,
             pays :Pays,
             catégories :Catégories,
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
 
       return Response.json(
         {
-          message: "Client ajouté avec succès",fournisseur
+          message: "Fournisseur ajouté avec succès",fournisseur
         },
         { status: 201 }
       )

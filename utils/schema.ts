@@ -82,9 +82,9 @@ export const contratsschema = z.object({
 export const contactsschema = z.object({
     Nom:z.string(),
     Civilité:z.string().optional(),
-    "E-mail":z.email("Email invalide").optional(),
+    Email:z.email("Email invalide").optional(),
     Téléphone:z.string().optional(),
-    Entreprise:z.string().optional(),
+    //Entreprise:z.string().optional(),
     Ville:z.string().optional(),
     Pays:z.string().optional(),
     Actif:z.enum(["Oui", "Non"])

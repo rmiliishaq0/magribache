@@ -96,9 +96,9 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
   Contacts:{
     "Nom":[{isNavigate:true,}],
     "Civilité":[{isInput:true,type:"text"}],
-    "E-mail":[{isInput:true,type:"email"}],
+    "Email":[{isInput:true,type:"email"}],
     "Téléphone":[{isInput:true,type:"number"}],
-    "Entreprise":[{isInput:true,type:"text"}],
+    //"Entreprise":[{isInput:true,type:"text"}],
     "Ville":[{isInput:true,type:"text"}],
     "Pays":[{isInput:true,type:"text"}],
     "Actif":[{isBadge:true,isSelected:true,values:["Oui","Non"]}]
@@ -107,8 +107,8 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
     "Name":[{isNavigate:true,}],
     "Title":[{isInput:true,type:"text"}],
     "Email":[{isInput:true,type:"email"}],
-    "Phone Number":[{isInput:true,type:"number"}],
-    "Supplier":[{isInput:true,type:"text"}],
+    "Téléphone":[{isInput:true,type:"number"}],
+    "Fournisseur":[{isInput:true,type:"text"}],
     "City":[{isInput:true,type:"text"}],
     "Country":[{isInput:true,type:"text",fullWidth:true}],
   },

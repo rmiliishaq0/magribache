@@ -60,7 +60,7 @@ model Fournisseur {
   email String? @unique
   téléphone String?
   ICE String?
-  IdentifiantFiscal String?
+  identifiantFiscal String?
   ville String?
   pays String?
   catégories String?
@@ -81,7 +81,7 @@ model ContactsFournisseur {
   Fournisseur String?
   city String?
   country String?
-
+  actif String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 
@@ -120,7 +120,7 @@ model Contacts {
     civilité String?
     email String? @unique
     téléphone String?
-    entreprise String?
+    //entreprise String?
     ville String?
     pays String?
     actif String?

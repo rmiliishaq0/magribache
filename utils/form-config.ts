@@ -29,20 +29,53 @@ export const entityConfig = {
   },
   Contacts:{
     schema: contactsschema,
-    defaultValues: {}
+    defaultValues: {
+      Nom:"",
+      Civilité:"",
+      Téléphone:"",
+      Entreprise:"",
+      Ville:"",
+      Pays:"",
+      Actif:"Non"
+    }
   },
 
   "Contacts fournisseurs": {
     schema: contactsfournisseurSchema,
-    defaultValues: {}
+    defaultValues: {
+      Name:"",
+      Title:"",
+      Email:"",
+      Téléphone:"",
+      Fournisseur:"",
+      City:"",
+      Country:""
+    }
   },
   "Prospects": {
     schema: prospectsschema,
-    defaultValues: {}
+    defaultValues: {
+      Nom:"",
+      Prospect:"",
+      Email:"",
+      Téléphone:"",
+      //"Attribué à":[{isInput:true,type:"text"}],
+      Statut:"",
+      Source:"",
+      "Date d'ajout":"",
+      "Dernier contact":"",
+      "Localisation":"",
+    }
   },
   "Contrats": {
     schema: contratsschema,
-    defaultValues: {},
+    defaultValues: {
+      "Sujet":"",
+      "Client":"",
+      "Modèle de contrat":"",
+      "Date de depart":"",
+      "Date de fin":""
+    },
   },
 } as const;
 

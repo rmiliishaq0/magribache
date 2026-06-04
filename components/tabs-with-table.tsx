@@ -104,8 +104,7 @@ export default  function TabsWithTable(){
 
       useEffect(() => {
          if (selectedItem) {
-            console.log(selectedItem)
-            updateForm.reset({...normalizeKeys(selectedItem),"Identifiant fiscal (IF)" : selectedItem.IdentifiantFiscal})
+            updateForm.reset({...normalizeKeys(selectedItem),"Identifiant fiscal (IF)" : selectedItem.identifiantFiscal})
           }
     }, [selectedItem, updateForm])
 
@@ -113,7 +112,10 @@ export default  function TabsWithTable(){
         <motion.div>
             <TabsSwitch setOpen={setOpen} constants={activeFields} activeTab={activeTab} setActiveTab={setActiveTab} towButtons={false}>
             <Card className="mt-4 px-4 py-6 flex flex-col gap-4">
-                {FiledsNeedCards.includes(activeTab) && <DashboardCard/>}
+                {FiledsNeedCards.includes(activeTab) && (<div className="grid md:grid-cols-2 grid-cols-2 gap-4">
+                    <DashboardCard number={data?.countActif || 0} extra="Actif" />
+                    <DashboardCard number={data?.inactif || 0} extra="Inactif"/>
+                </div>)}
                 <DataTable selectedItem={selectedItem} setselectedItem={setSelectedItem} form={updateForm} isUpdatePending={entity.actions.update.isPending} onUpdate={onUpdate} isPending={isPending} schema={entity.schema} rowCount={total} sorting={sorting} setSorting={setSorting} pagination={pagination} setPagination={setPagination} constants={activeTableFields} activeTab={activeTab} data={queryData} onDelete={onDelete}/>
             </Card>
             </TabsSwitch>

@@ -20,15 +20,20 @@ export async function POST(req: NextRequest) {
             if(!success){
                 return Response.json({message:"Données invalides",task},{status:400})
             }
-            const {id, Entreprise, "Identifiant fiscal (IF)": identifiantFiscal,Actif, ...rest } = data
+            const  {id, ICE,Entreprise, "Identifiant fiscal (IF)": identifiantFiscal,Actif,Téléphone,Catégories, Email ,Pays,Ville} = data
             await prisma.client.update({
                 where: {
                     id: String(id),
                 },
                 data: {
-                    entreprise: Entreprise,
-                    ...rest,
-                    IdentifiantFiscal: identifiantFiscal,
+                    entreprise :Entreprise,
+                    téléphone :Téléphone,
+                    email:Email,
+                    catégories:Catégories,
+                    ICE,
+                    identifiantFiscal,
+                    ville:Ville,
+                    pays:Pays,
                     actif:Actif
                 },
             })

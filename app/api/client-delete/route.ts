@@ -30,7 +30,7 @@ export async function POST(req:NextRequest){
                     },
                 },
             });
-            return Response.json({message:" clients a été supprimé avec succès"},{status:201})
+            return Response.json({message:" Clients a été supprimé avec succès"},{status:201})
         }
         return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }catch{
