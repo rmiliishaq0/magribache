@@ -10,6 +10,7 @@ import {
 } from "lucide-react"
 import type { ColumnMeta } from "./types"
 import { EntityKey } from "./form-config"
+import { useContactsFournisseurs, useFournisseurs } from "@/hooks/querys"
 
 export const sideBarecontents = {
   user: {
@@ -108,7 +109,7 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
     "Title":[{isInput:true,type:"text"}],
     "Email":[{isInput:true,type:"email"}],
     "Téléphone":[{isInput:true,type:"number"}],
-    "Fournisseur":[{isInput:true,type:"text"}],
+    "Fournisseur":[{isSelected:true,type:"text",needToFetch:true,hook:useFournisseurs,key:"fournisseur"}],
     "City":[{isInput:true,type:"text"}],
     "Country":[{isInput:true,type:"text",fullWidth:true}],
   },

@@ -34,15 +34,18 @@ export async function GET(req:NextRequest) {
 
         const inactif = total - countActif
             
-        const contactsFournisseur = await prisma.contactsFournisseur?.findMany({
+        const data = await prisma.contactsFournisseur?.findMany({
             skip,
             take: limit,
             orderBy: {
                 [sortBy]: order,
             },
             //take:10,
+            include:{
+                fournisseur:true
+            }
         })
-        return Response.json({message:"Contacts Fournisseur récupérés avec succès", contactsFournisseur, total,countActif,inactif},{status:200})
+        return Response.json({message:"Contacts Fournisseur récupérés avec succès", data, total,countActif,inactif},{status:200})
     }catch(err){
         console.log(err)
         return Response.json({message:"Une erreur s'est produite"},{status:500})

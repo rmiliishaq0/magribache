@@ -27,11 +27,12 @@ export  function useClients({pagination, sorting}: { pagination: Pagination; sor
     })
 }
 
-export  function useFournisseurs({pagination, sorting}: { pagination: Pagination; sorting: SortingState}, enabled: boolean) {
+export  function useFournisseurs({pagination, sorting}: { pagination?: Pagination; sorting?: SortingState}, enabled: boolean) {
   return useQuery({
       queryKey: ['fournisseurs',pagination,sorting],
       queryFn: async()=>{
-        const sort = sorting[0];
+        if(pagination && sorting){
+          const sort = sorting[0];
 
         const params = new URLSearchParams({
           page: String(pagination.pageIndex + 1),
@@ -40,6 +41,8 @@ export  function useFournisseurs({pagination, sorting}: { pagination: Pagination
           order: sort?.desc ? "desc" : "asc",
         });
         return getFournisseurs(params);
+        }
+        return getFournisseurs()
       },
       enabled,
     })

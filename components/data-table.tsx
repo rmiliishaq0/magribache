@@ -290,7 +290,12 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
               }
             }
 
-            if (config?.isInput || config?.isTextEarea) {
+            if (config?.isInput || config?.isTextEarea || config?.isSelected) {
+              if(typeof (row.original[field.toLocaleLowerCase()] || row.original[field]) === "object"){
+                return (
+                  <Field>{row.original[field.toLocaleLowerCase()]?.[config?.key] || row.original[field]?.[config?.key]}</Field>
+                )
+              }
               return (
                 <Field>{ row.original[field] ?? row.original[field.toLocaleLowerCase()] ?? row.original.identifiantFiscal
                    }</Field>

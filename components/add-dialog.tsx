@@ -55,6 +55,11 @@ export default memo(function AddDialog({open,setOpen,onSubmit,form,isPending,con
                             )
                         }
                     else if(o?.isSelected){
+                        let data:any
+                        if(o.needToFetch){
+                            const query = o.hook(true)
+                            data=query.data?.[key.toLocaleLowerCase()+"s"]
+                        }
                         return(
                          <div style={{gridColumn: o.fullWidth ? "span 2" : "span 1"}} key={key}>
 
@@ -81,11 +86,16 @@ export default memo(function AddDialog({open,setOpen,onSubmit,form,isPending,con
 
                                     <SelectContent>
                                         <SelectGroup>
-                                            {o.values?.map((value) => (
+                                            { o.values ? o.values?.map((value) => (
                                                 <SelectItem key={value} value={value}>
                                                     {value}
                                                 </SelectItem>
-                                            ))}
+                                            )): data?.map((val:any) => (
+                                                <SelectItem key={val.id} value={val.id}>
+                                                    {val?.fournisseur}
+                                                </SelectItem>
+                                            ))
+                                            }
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>

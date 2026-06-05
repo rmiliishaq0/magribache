@@ -66,7 +66,13 @@ export default  function TabsWithTable(){
             return data?.total || 0
         },[data?.total])
         
-    const queryData = useMemo(() => data?.[activeTab.toLocaleLowerCase()] || [], [data])
+    const queryData = useMemo(() => {
+        return (
+            data?.[activeTab.toLowerCase()] ??
+            data?.data ??
+            []
+        );
+    }, [data, activeTab]);
         
     useEffect(() => {
         if(isError){

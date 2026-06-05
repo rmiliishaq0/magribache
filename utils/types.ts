@@ -1,3 +1,4 @@
+
 export type ColumnMeta = {
   isNavigate?: boolean
   isInput?: boolean
@@ -9,6 +10,9 @@ export type ColumnMeta = {
   values?:Values
   fullWidth?:boolean
   isId?:boolean
+  needToFetch?: boolean
+  hook?:any
+  key?:string
 }
 type Values = Array<string>
 

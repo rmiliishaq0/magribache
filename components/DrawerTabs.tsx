@@ -61,6 +61,11 @@ export default function TableCellViewer({ item ,open,setOpenChange,constants,Fie
                       />)
                   }
                   else if(o?.isSelected){
+                      let data:any
+                        if(o.needToFetch){
+                            const query = o.hook(true)
+                            data=query.data?.[fieldP.toLocaleLowerCase()+"s"]
+                        }
                       return(
                           <Controller
                               key={fieldP}
@@ -68,22 +73,29 @@ export default function TableCellViewer({ item ,open,setOpenChange,constants,Fie
                               control={form.control}
                               render={({ field, fieldState }) => { 
                                   return (
-                                  <Field aria-invalid={fieldState.invalid}>
+                                <Field aria-invalid={fieldState.invalid}>
                                     <FieldLabel htmlFor={fieldP}>{FieldsKeys ? FieldsKeys[fieldP] : fieldP}</FieldLabel>
 
                                     <Select
-                                        value={field.value}
-                                        onValueChange={field.onChange}
-                                    >
+                                          value={field.value}
+                                          onValueChange={field.onChange}
+                                        >
                                       <SelectTrigger aria-invalid={fieldState.invalid}>
                                         <SelectValue placeholder={fieldP} />
                                       </SelectTrigger>
 
                                       <SelectContent>
                                         <SelectGroup>
-                                          {o?.values?.map((i)=>(
-                                              <SelectItem key={i} value={i}>{i}</SelectItem>
-                                          ))}
+                                          { o.values ? o.values?.map((value:string) => (
+                                                <SelectItem key={value} value={value}>
+                                                    {value}
+                                                </SelectItem>
+                                            )): data?.map((val:any) => (
+                                                <SelectItem key={val.id} value={val.id}>
+                                                    {val?.fournisseur}
+                                                </SelectItem>
+                                            ))
+                                            }
                                         </SelectGroup>
                                       </SelectContent>
                                     </Select>

@@ -388,9 +388,9 @@ export async function getClients(params: URLSearchParams){
   }
 }
 
-export async function getFournisseurs(params: URLSearchParams){
+export async function getFournisseurs(params?: URLSearchParams){
   try{
-    const response = await axios.get(`/api/fournisseur-fetch?${params}`);
+    const response = params ?  await axios.get(`/api/fournisseur-fetch?${params}`) : await axios.get("/api/fournisseur-fetch");
     return response.data;
   }catch(error:any){
     if (axios.isAxiosError(error)) {
