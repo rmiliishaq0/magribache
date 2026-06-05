@@ -110,7 +110,8 @@ export default  function TabsWithTable(){
 
       useEffect(() => {
          if (selectedItem) {
-            updateForm.reset({...normalizeKeys(selectedItem),"Identifiant fiscal (IF)" : selectedItem.identifiantFiscal})
+            console.log(selectedItem)
+            updateForm.reset({...normalizeKeys(selectedItem),Fournisseur:selectedItem.fournisseurId,"Identifiant fiscal (IF)" : selectedItem.identifiantFiscal})
           }
     }, [selectedItem, updateForm])
 

@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
             City,
             Country,
         } = data
-      const fournisseur = await prisma.contactsFournisseur?.create({
+      await prisma.contactsFournisseur?.create({
         data: {
             name :Name,
             email:Email,
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
 
       return Response.json(
         {
-          message: "Contacts Fournisseur ajouté avec succès",fournisseur
+          message: "Contacts Fournisseur ajouté avec succès"
         },
         { status: 201 }
       )
