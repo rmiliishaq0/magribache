@@ -27,29 +27,25 @@ export async function POST(req: NextRequest) {
       }
 
       const {
-            Nom,
-            Civilité,
-            Email,
-            Téléphone,
-            Ville,
-            Pays,
-            Actif
+                Sujet,
+                Client,
+                "Modèle de contrat" : ModèleDeContrat,
+                "Date de depart": DateDeDepart,
+                "Date de fin" : DateDeFin
         } = data
-      const contact = await prisma.contrats?.create({
+      const contrats = await prisma.contrats?.create({
         data: {
-            nom:Nom,
-            civilité:Civilité,
-            email:Email,
-            téléphone:Téléphone,
-            ville:Ville,
-            pays:Pays,
-            actif:Actif
+            sujet:Sujet,
+            client:Client,
+            modèleContrat:ModèleDeContrat,
+            dateDepart:DateDeDepart,
+            dateFin:DateDeFin
         },
       })
 
       return Response.json(
         {
-          message: "Contact ajouté avec succès",contact
+          message: "Contrats ajouté avec succès",contrats
         },
         { status: 201 }
       )

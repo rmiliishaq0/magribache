@@ -110,8 +110,12 @@ export default  function TabsWithTable(){
 
       useEffect(() => {
          if (selectedItem) {
-            console.log(selectedItem)
-            updateForm.reset({...normalizeKeys(selectedItem),Fournisseur:selectedItem.fournisseurId,"Identifiant fiscal (IF)" : selectedItem.identifiantFiscal})
+            const {Fournisseur,...rest}= selectedItem
+            if(activeTab=="Contacts fournisseurs"){
+                            updateForm.reset({...normalizeKeys(rest),Fournisseur:selectedItem.fournisseurId,"Identifiant fiscal (IF)" : selectedItem.identifiantFiscal})
+            }else{
+                updateForm.reset({...normalizeKeys(rest),"Identifiant fiscal (IF)" : selectedItem.identifiantFiscal,"Modèle de contrat":selectedItem.modèleContrat,"Date de depart":selectedItem.dateDepart,"Date de fin":selectedItem.dateFin})
+            }
           }
     }, [selectedItem, updateForm])
 

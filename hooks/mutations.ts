@@ -1,6 +1,6 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {clientSchema, fournisseurSchema, taskSchemaWithID,contactsfournisseurSchema, contactsschema, contratsschema, prospectsschema} from "@/utils/schema";
-import {createClient, updateTask ,createFournisseur, createContact,createContactsFournisseurs,createContrats,createProspects,updateContrats,updateProspects,updateContactsFournisseurs,updateContact,updateFournisseur,updateClient,deleteContrats,deleteProspects,deleteContactsFournisseurs,deleteContacts,deleteFournisseur,deleteClient} from "@/utils/Apis";
+import {createClient, updateTask ,createFournisseur, createContact,createContactsFournisseurs,createContrats,createProspects,updateContrats,updateProspects,updateContactsFournisseurs,updateContact,updateFournisseur,updateClient,deleteContrats,deleteProspects,deleteContactsFournisseurs,deleteContacts,deleteFournisseur,deleteClient, moveProspect} from "@/utils/Apis";
 import {toast} from "sonner";
 import {z} from 'zod'
 
@@ -291,6 +291,21 @@ export const useDeleteContrats = () => {
         onSuccess: () => {
             query.invalidateQueries({ queryKey: ['contrats'] });
             toast.success("Contrat supprimé avec succès");
+        },
+        onError: (error) => {
+            toast.error(error.message ||"Erreur lors de la suppression du contact fournisseur");
+        }
+    })
+}
+
+export const useMoveProspect = ()=>{
+    const query =useQueryClient()
+
+    return useMutation({
+        mutationFn: async (data:any) => moveProspect(data),
+        onSuccess: () => {
+            query.invalidateQueries({ queryKey: ['prospects'] });
+            toast.success("Le prospect a été déplacé");
         },
         onError: (error) => {
             toast.error(error.message ||"Erreur lors de la suppression du contact fournisseur");

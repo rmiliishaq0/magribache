@@ -457,3 +457,17 @@ export async function getContrats(params: URLSearchParams){
     throw new Error("Une erreur s'est produite");
   }
 }
+
+export async function moveProspect(data:z.infer<typeof prospectsschema>) {
+  try{
+    const response = await axios.post("/api/move-client",{data});
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+          error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}

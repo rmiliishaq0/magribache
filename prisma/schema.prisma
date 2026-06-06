@@ -104,7 +104,6 @@ model Prospects {
 
 model Contrats {
     id String     @id @default(uuid())
-     nom String
      sujet String?
      client String?
      modèleContrat String?

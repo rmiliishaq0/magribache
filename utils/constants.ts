@@ -121,16 +121,16 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
     //"Attribué à":[{isInput:true,type:"text"}],
     "Statut":[{isInput:true,type:"text"}],
     "Source":[{isInput:true,type:"text"}],
-    "Date d'ajout":[{isInput:true,type:"date"}],
-    "Dernier contact":[{isInput:true,type:"date"}],
+    "Date d'ajout":[{isDate:true,type:"date",key:"createdAt"}],
+    "Dernier contact":[{isDate:true,type:"date",key:"updatedAt"}],
     "Localisation":[{isInput:true,type:"text"}],
   },
   Contrats:{
    "Sujet":[{isNavigate:true,}],
     "Client":[{isInput:true,type:"text"}],
-  "Modèle de contrat":[{isInput:true,type:"text"}],
-  "Date de depart":[{isInput:true,type:"date"}],
-  "Date de fin":[{isInput:true,type:"date",fullWidth:true}]
+  "Modèle de contrat":[{isInput:true,type:"text",key:"modèleContrat"}],
+  "Date de depart":[{isDate:true,type:"date",key:"dateDepart"}],
+  "Date de fin":[{isDate:true,type:"date",fullWidth:true,key:"dateFin"}]
   }
 }
 
@@ -221,7 +221,7 @@ export const SalesTableFields : Record<string,Record<string, ColumnMeta[]>> ={
 
 export const FiledsNeedCards=[
   "Contacts",
-  "Prospects",
+  //"Prospects",
   "Contacts fournisseurs",
   "Devis",
   "Bon de commande",

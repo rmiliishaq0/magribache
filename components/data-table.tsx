@@ -92,6 +92,7 @@ import { SortAsc, SortDesc } from "lucide-react"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import {memo, useState} from "react";
 import { Field } from "./ui/field"
+import { useMoveProspect } from "@/hooks/mutations"
 
 
 function DragHandle({ id }: { id: number }) {
@@ -182,6 +183,7 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
   onUpdate:(data:any)=>void,
   isUpdatePending?:boolean
 }) {
+  const moveProspectMutation = useMoveProspect()
   const [deleteIds, setDeleteIds] = React.useState<number[] | null>(null)
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -291,21 +293,22 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
             }
 
             if (config?.isInput || config?.isTextEarea || config?.isSelected) {
+              console.log(row.original)
+              console.warn([meta?.[0]?.key])
               if(typeof (row.original[field.toLocaleLowerCase()] || row.original[field]) === "object"){
                 return (
                   <Field>{row.original[field.toLocaleLowerCase()]?.[config?.key] || row.original[field]?.[config?.key]}</Field>
                 )
               }
               return (
-                <Field>{ row.original[field] ?? row.original[field.toLocaleLowerCase()] ?? row.original.identifiantFiscal
-                   }</Field>
+                <Field>{ row.original[field] ?? row.original[field.toLocaleLowerCase()] ?? row.original.identifiantFiscal ?? row.original?.[meta?.[0]?.key]}</Field>
               )
             }
             return (
               <>
                 <div className="w-32">
                   <Badge variant="outline" className="px-1.5 text-muted-foreground">
-                    {meta?.[0]?.isDate ? new Date(row.original[field]).toLocaleDateString() : (row.original[field] || row.original[field.toLocaleLowerCase()])}
+                    {meta?.[0]?.isDate ? new Date(row.original[field] ?? row.original?.[meta?.[0]?.key]).toLocaleDateString() : (row.original?.[meta?.[0]?.key] || row.original[field] || row.original[field.toLowerCase()])}
                   </Badge>
                 </div>
               </>
@@ -328,6 +331,7 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
                 <DropdownMenuItem onClick={()=>{row.original.projet ? setselectedItem({...row.original,project: row.original?.projet}) : setselectedItem(row.original) }}>Modifier</DropdownMenuItem>
+                {activeTab == "Prospects" && <DropdownMenuItem onClick={()=>{moveProspectMutation.mutate(row.original)}}>Convertir en client</DropdownMenuItem>}
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive" onClick={() => { setDeleteIds([row.original.id])}}>Delete</DropdownMenuItem>
             </DropdownMenuContent>
