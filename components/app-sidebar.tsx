@@ -57,7 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter className="mb-4">
         {
-          isPending || !authState.name || !authState.email ? 
+          isPending || !authState.email ? 
           <div className="flex w-fit items-center gap-4 bg-white/80 rounded-lg p-1">
             <Skeleton className="size-10 shrink-0 rounded-full" />
             <div className="grid gap-2">
@@ -66,7 +66,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </div>
           </div>:
           <div className="bg-white/80 rounded-lg">
-            <NavUser user={{name:authState?.name!,email:authState?.email!}} />
+            <NavUser user={{name:authState?.name! ?? "Admin",email:authState?.email!}} />
           </div>
         }
       </SidebarFooter>

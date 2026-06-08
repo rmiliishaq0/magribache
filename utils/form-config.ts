@@ -1,4 +1,4 @@
-import { clientSchema, fournisseurSchema ,contactsfournisseurSchema,prospectsschema,contratsschema,contactsschema} from "@/utils/schema";
+import { clientSchema, fournisseurSchema ,contactsfournisseurSchema,prospectsschema,contratsschema,contactsschema,salesSchema} from "@/utils/schema";
 
 export const entityConfig = {
   Clients: {
@@ -77,6 +77,25 @@ export const entityConfig = {
       "Date de fin":""
     },
   },
+  "Devis":{
+    schema:salesSchema,
+    defaultValues: {
+      "Sujet":"",
+      "Client":"",
+      "Modèle de contrat":"",
+      "Date de depart":"",
+      "Date de fin":""
+    },
+  },
+  "Factures":{
+    schema:salesSchema,
+    defaultValues: {
+      "Sujet":"",
+      "Client":"",
+      "Modèle de contrat":"",
+      "Date de depart":"",
+      "Date de fin":""
+    }}
 } as const;
 
 export type EntityKey = keyof typeof entityConfig;

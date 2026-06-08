@@ -99,6 +99,18 @@ export function useEntity(activeTab: EntityKey,{pagination, sorting}: { paginati
       delete: deleteContractMutation,
       query:contracts,
     },
+    Devis: {
+      create: createContractMutation,
+      update: updateContractMutation,
+      delete: deleteContractMutation,
+      query:contracts,
+    },
+    Factures: {
+      create: createContractMutation,
+      update: updateContractMutation,
+      delete: deleteContractMutation,
+      query:contracts,
+    },
   };
 
   return {

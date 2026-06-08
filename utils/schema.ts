@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { string, z } from "zod";
 
 export const loginSchema = z.object({
     email: z.email("Email invalide"),
@@ -89,3 +89,43 @@ export const contactsschema = z.object({
     Pays:z.string().optional(),
     Actif:z.enum(["Oui", "Non"])
 })
+
+export const salesSchema = z.object({
+    id:z.string(),
+    numero:string(),
+    type:z.enum(["DEVIS","FACTURE"]),
+    status:z.enum([ "BROUILLON", "ENVOYE", "PAYE" ,"ANNULE"]),
+    reference:z.string(),
+    objet:z.string(),
+    clientId:z.string(),
+    dateDocument:z.string(),
+    dateValidite:z.string(),
+    devise:z.string().default("MAD"),
+    notes:string().optional(),
+    conditions:z.string().optional(),
+    remise:z.float64().optional(),
+    ajustement:z.float64().optional(),
+    montantHT:z.float64().optional(),
+    montantTVA:z.float64().optional(),
+    montantTTC:z.float64().optional(),
+})
+
+export const devisSchema = z.object({
+    client:z.string().min(1,"Client requis"),
+    notes:z.string().optional(),
+    devisDate:z.string().optional(),
+    dateValidite:z.string().optional(),
+    reference:z.string().optional(),
+    devise:z.enum(["MAD","USD","EUR"]),
+    statut:z.enum(["BROUILLON","ENVOYE","PAYE","ANNULE"]),
+    items:z.array(
+       z.object({
+          article:z.string().min(1,"Article requis"),
+          quantity:z.number().min(1),
+          unitPrice:z.number().min(0),
+          tax:z.number().min(0),
+       })
+    ).min(1)
+ })
+
+

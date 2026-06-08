@@ -28,9 +28,10 @@ export default  function TabsWithTable(){
 
 
     const path = usePathname()
-    //const activeFields = path.includes("crm")?CrmFields:SalesFields
-    const activeFields = CrmFields
-    const activeTableFields = path.includes("crm")?CrmTableFields:SalesTableFields
+    const isCrm=path.includes("crm")
+    const activeFields = isCrm?CrmFields:SalesFields
+    //const activeFields = CrmFields
+    const activeTableFields = path.includes("crm") ? CrmTableFields:SalesTableFields
 
     const [activeTab, setActiveTab] = useState<EntityKey >(activeFields[0])
 
@@ -130,7 +131,7 @@ export default  function TabsWithTable(){
                 <DataTable selectedItem={selectedItem} setselectedItem={setSelectedItem} form={updateForm} isUpdatePending={entity.actions.update.isPending} onUpdate={onUpdate} isPending={isPending} schema={entity.schema} rowCount={total} sorting={sorting} setSorting={setSorting} pagination={pagination} setPagination={setPagination} constants={activeTableFields} activeTab={activeTab} data={queryData} onDelete={onDelete}/>
             </Card>
             </TabsSwitch>
-            <AddDialog  constants={activeTableFields} activeTab={activeTab} open={open} form={form}  setOpen={setOpen}  onSubmit={onSubmit} isPending={entity.actions.create.isPending} />
+            {isCrm  && <AddDialog  constants={activeTableFields} activeTab={activeTab} open={open} form={form}  setOpen={setOpen}  onSubmit={onSubmit} isPending={entity.actions.create.isPending} />}
         </motion.div>
         
     )

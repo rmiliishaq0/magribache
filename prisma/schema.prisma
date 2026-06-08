@@ -49,6 +49,7 @@ model Client {
   ville String?
   pays String?
   actif String?
+  documents Document[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
 }
@@ -125,4 +126,84 @@ model Contacts {
     actif String?
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt()
+}
+
+enum DocumentType {
+  DEVIS
+  FACTURE
+}
+
+enum DocumentStatus {
+  BROUILLON
+  ENVOYE
+  PAYE
+  ANNULE
+}
+
+model Document {
+  id String @id @default(uuid())
+
+  numero String @unique
+
+  type DocumentType
+
+  status DocumentStatus @default(BROUILLON)
+
+  reference String?
+
+  objet String?
+
+  clientId String
+
+  client Client @relation(fields: [clientId], references: [id])
+
+  dateDocument DateTime @default(now())
+
+  dateValidite String?
+
+  devise String? @default("MAD")
+
+  notes String?
+
+  conditions String?
+
+  remise Float @default(0)
+
+  ajustement Float @default(0)
+
+  montantHT Float @default(0)
+
+  montantTVA Float @default(0)
+
+  montantTTC Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  items DocumentItem[]
+}
+
+model DocumentItem {
+  id String @id @default(uuid())
+
+  documentId String
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  article String
+
+  description String?
+
+  quantite Float @default(1)
+
+  prixUnitaire Float @default(0)
+
+  taxe Float @default(0)
+
+  remise Float @default(0)
+
+  montantHT Float @default(0)
+
+  montantTTC Float @default(0)
+
+  createdAt DateTime @default(now())
 }

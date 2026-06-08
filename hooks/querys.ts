@@ -9,11 +9,12 @@ type Pagination = {
 
 
 
-export  function useClients({pagination, sorting}: { pagination: Pagination; sorting: SortingState}, enabled: boolean) {
+export  function useClients({pagination, sorting}: { pagination?: Pagination; sorting?: SortingState}, enabled: boolean) {
   return useQuery({
       queryKey: ['clients',pagination,sorting],
       queryFn: async()=>{
-        const sort = sorting[0];
+        if(pagination && sorting){
+          const sort = sorting[0];
 
         const params = new URLSearchParams({
           page: String(pagination.pageIndex + 1),
@@ -22,6 +23,8 @@ export  function useClients({pagination, sorting}: { pagination: Pagination; sor
           order: sort?.desc ? "desc" : "asc",
         });
         return getClients(params);
+        }
+        return getClients();
       },
       enabled,
     })

@@ -1,4 +1,4 @@
-import {clientSchema, fournisseurSchema, loginSchema, taskSchemaWithID,contactsfournisseurSchema, contactsschema, contratsschema, prospectsschema} from "./schema";
+import {clientSchema, fournisseurSchema, loginSchema, taskSchemaWithID,contactsfournisseurSchema, contactsschema, contratsschema, prospectsschema, devisSchema} from "./schema";
 import z from "zod";
 import axios from "axios";
 import {settingSchema} from "./schema"
@@ -374,7 +374,7 @@ export async function deleteContrats(ids:number[]){
 }
 
 
-export async function getClients(params: URLSearchParams){
+export async function getClients(params?: URLSearchParams){
   try{
     const response = await axios.get(`/api/client-fetch?${params}`);
     return response.data;
@@ -461,6 +461,20 @@ export async function getContrats(params: URLSearchParams){
 export async function moveProspect(data:z.infer<typeof prospectsschema>) {
   try{
     const response = await axios.post("/api/move-client",{data});
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+          error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}
+
+export async function createDevis(data:z.infer<typeof devisSchema>){
+    try{
+    const response = await axios.post("/api/devis-create",{data});
     return response.data;
   }catch(error:any){
     if (axios.isAxiosError(error)) {
