@@ -12,17 +12,28 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { devisSchema } from "@/utils/schema"
 import { z} from "zod"
-import DevisPreview from "@/components/doc-preview"
 import { useClients } from "@/hooks/querys"
 import { useEffect, useState ,useRef, RefObject} from "react"
 import { useReactToPrint } from "react-to-print"
 import { Spinner } from "@/components/ui/spinner"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import {toast} from "sonner"
-import { createDevis } from "@/utils/Apis"
-import { useRouter } from "next/navigation"
+import { createDevis, getDoc } from "@/utils/Apis"
+import { useParams, useRouter } from "next/navigation"
+import DocPreview from "@/components/doc-preview"
   
   export default function DevisCreatePage() {
+    const { id } = useParams<{ id: string }>();
+    const {data} = useQuery({
+          queryKey: ['doc',id],
+          queryFn: async()=>{          
+                  const params = new URLSearchParams({
+                    id,
+                    type: "DEVIS",
+                  })
+                  return getDoc(params);
+            },
+    })     
     const router = useRouter()
     const previewRef =useRef<HTMLDivElement>(null)
     const clientQuery = useClients({},true)
@@ -45,6 +56,9 @@ import { useRouter } from "next/navigation"
          ]
       }
    })
+
+   
+
    const selectedClientId = form.watch("client")
    useEffect(() => {
 
@@ -67,6 +81,19 @@ import { useRouter } from "next/navigation"
     contentRef: previewRef,
   })
 
+    useEffect(() => {
+      if (data?.docs) {
+        const formData = data?.docs
+        form.reset({"client": formData?.clientId,devise:formData?.devise,devisDate:formData?.dateDocument,dateValidite:formData?.dateValidite,statut:formData?.status,reference:formData?.reference,items:formData.items.map((item) => ({
+    article: item.article ?? "",
+    quantity: item.quantite ?? 1,
+    unitPrice: item.prixUnitaire ?? 0,
+    tax: item.taxe ?? 20,
+  })),
+});
+      }
+    }, [data, form,selectedClientId])
+
   const {isError,isPending,mutate}=useMutation({
           mutationFn: async (data:z.infer<typeof devisSchema>) => createDevis(data),
           onSuccess: () => {
@@ -83,10 +110,10 @@ import { useRouter } from "next/navigation"
     return (
           <div className="flex flex-col gap-4 mb-4">
             <Card className="flex justify-between items-center gap-4 flex-row p-4">
-              <h2 className="text-lg font-bold text-secondary">Créer Un Devis</h2>
+              <h2 className="text-lg font-bold text-secondary">Modifier Un Devis</h2>
               <div className="flex gap-4">
                 <Button form="devis" disabled={!form.formState.isValid || isPending || isError || !form.formState.isDirty  } type="submit">
-                  {isPending || form.formState.isSubmitting ? <Spinner /> : "Enregistrer"}
+                  {isPending || form.formState.isSubmitting ? <Spinner /> : "Modifier"}
                 </Button>
                 <Button onClick={handlePrint} variant="outline">Imprimer</Button>
               </div>
@@ -104,7 +131,7 @@ import { useRouter } from "next/navigation"
               <ResizableHandle />
               <ResizablePanel defaultSize="60%" className="w-full">
                 <div ref={previewRef} className="flex h-full w-full justify-center p-4 w-full">
-                  <DevisPreview isFacture={false} name={client.name} email={client.email} phone={client.phone} form={form}/>
+                  <DocPreview docNumber={data?.docs?.numero} isFacture ={false} name={client.name} email={client.email} phone={client.phone} form={form}/>
                 </div>
               </ResizablePanel>
             </ResizablePanelGroup>  

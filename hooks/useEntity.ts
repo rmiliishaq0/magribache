@@ -19,8 +19,10 @@ import {
   useDeleteContactsFournisseurs,
   useDeleteProspects,
   useDeleteContrats,
+  useDeleteDevis,
+  useDeleteFacture,
 } from "@/hooks/mutations";
-import { useClients ,useFournisseurs,useContacts,useContactsFournisseurs,useProspects,useContrats} from "./querys";
+import { useClients ,useFournisseurs,useContacts,useContactsFournisseurs,useProspects,useContrats, useDevis, useFacture} from "./querys";
 import {SortingState} from "@tanstack/react-table";
 
 type Pagination = {
@@ -49,6 +51,8 @@ export function useEntity(activeTab: EntityKey,{pagination, sorting}: { paginati
   const deleteSupplierContactMutation = useDeleteContactsFournisseurs();
   const deleteProspectMutation = useDeleteProspects();
   const deleteContractMutation = useDeleteContrats();
+  const deleteDevis = useDeleteDevis();
+  const deleteFacture = useDeleteFacture();
 
   const clients = useClients({ pagination, sorting },activeTab == "Clients");
   const fournisseurs = useFournisseurs({ pagination, sorting },activeTab == "Fournisseurs");
@@ -56,6 +60,9 @@ export function useEntity(activeTab: EntityKey,{pagination, sorting}: { paginati
   const supplierContacts = useContactsFournisseurs({ pagination, sorting },activeTab == "Contacts fournisseurs");
   const prospects = useProspects({ pagination, sorting },activeTab == "Prospects");
   const contracts = useContrats({ pagination, sorting },activeTab == "Contrats");
+
+  const devis=useDevis({ pagination, sorting },activeTab == "Devis")
+  const facture=useFacture({ pagination, sorting },activeTab == "Factures")
 
   const entityActions = {
     Clients: {
@@ -100,16 +107,16 @@ export function useEntity(activeTab: EntityKey,{pagination, sorting}: { paginati
       query:contracts,
     },
     Devis: {
-      create: createContractMutation,
-      update: updateContractMutation,
-      delete: deleteContractMutation,
-      query:contracts,
+      //create: createContractMutation,
+      //update: updateContractMutation,
+      delete: deleteDevis,
+      query:devis,
     },
     Factures: {
-      create: createContractMutation,
-      update: updateContractMutation,
-      delete: deleteContractMutation,
-      query:contracts,
+      //create: createContractMutation,
+      //update: updateContractMutation,
+      delete: deleteFacture,
+      query:facture,
     },
   };
 

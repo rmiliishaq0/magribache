@@ -93,7 +93,7 @@ export default  function TabsWithTable(){
 
     if (!selectedItem?.id) return;
 
-    entity.actions.update.mutate(
+    entity?.actions?.update.mutate(
       {
         ...data,
         id: selectedItem.id,
@@ -106,7 +106,7 @@ export default  function TabsWithTable(){
       }
     );
   },
-  [entity.actions.update, selectedItem, form, entity.defaultValues]
+  [entity?.actions?.update, selectedItem, form, entity.defaultValues]
 );
 
       useEffect(() => {
@@ -124,11 +124,18 @@ export default  function TabsWithTable(){
         <motion.div>
             <TabsSwitch setOpen={setOpen} constants={activeFields} activeTab={activeTab} setActiveTab={setActiveTab} towButtons={false}>
             <Card className="mt-4 px-4 py-6 flex flex-col gap-4">
-                {FiledsNeedCards.includes(activeTab) && (<div className="grid md:grid-cols-2 grid-cols-2 gap-4">
+                {FiledsNeedCards.includes(activeTab) && (isCrm ?(<>
+                <div className="grid md:grid-cols-2 grid-cols-2 gap-4">
                     <DashboardCard number={data?.countActif || 0} extra="Actif" />
                     <DashboardCard number={data?.inactif || 0} extra="Inactif"/>
-                </div>)}
-                <DataTable selectedItem={selectedItem} setselectedItem={setSelectedItem} form={updateForm} isUpdatePending={entity.actions.update.isPending} onUpdate={onUpdate} isPending={isPending} schema={entity.schema} rowCount={total} sorting={sorting} setSorting={setSorting} pagination={pagination} setPagination={setPagination} constants={activeTableFields} activeTab={activeTab} data={queryData} onDelete={onDelete}/>
+                    </div>
+                </>) : (<div className="grid md:grid-cols-2 grid-cols-2 gap-4">
+                    <DashboardCard number={data?.total || 0} extra="Total" />
+                    <DashboardCard number={data?.paye || 0} extra="Paye"/>
+                    <DashboardCard number={data?.annule || 0} extra="Annule" />
+                    <DashboardCard number={data?.brouillon || 0} extra="Brouillon"/>
+                </div>))}
+                <DataTable selectedItem={selectedItem} setselectedItem={setSelectedItem} form={updateForm} isUpdatePending={entity?.actions?.update?.isPending} onUpdate={onUpdate} isPending={isPending} schema={entity.schema} rowCount={total} sorting={sorting} setSorting={setSorting} pagination={pagination} setPagination={setPagination} constants={activeTableFields} activeTab={activeTab} data={queryData} onDelete={onDelete}/>
             </Card>
             </TabsSwitch>
             {isCrm  && <AddDialog  constants={activeTableFields} activeTab={activeTab} open={open} form={form}  setOpen={setOpen}  onSubmit={onSubmit} isPending={entity.actions.create.isPending} />}

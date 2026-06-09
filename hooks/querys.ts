@@ -1,6 +1,6 @@
 import {useQuery} from "@tanstack/react-query";
 import { SortingState } from "@tanstack/react-table";
-import { getClients ,getContrats,getProspects,getContactsFournisseurs,getContacts,getFournisseurs} from "@/utils/Apis";
+import { getClients ,getContrats,getProspects,getContactsFournisseurs,getContacts,getFournisseurs, getDevis, getFacture} from "@/utils/Apis";
 
 type Pagination = {
   pageIndex: number;
@@ -118,6 +118,41 @@ export function useContrats({pagination, sorting}: { pagination: Pagination; sor
           order: sort?.desc ? "desc" : "asc",
         });
         return getContrats(params);
+      },
+      enabled,
+    })
+}
+
+export function useDevis({pagination, sorting}: { pagination: Pagination; sorting: SortingState}, enabled: boolean) {
+  return useQuery({
+      queryKey: ['deivs',pagination,sorting],
+      queryFn: async()=>{
+        const sort = sorting[0];
+
+        const params = new URLSearchParams({
+          page: String(pagination.pageIndex + 1),
+          limit: String(pagination.pageSize),
+          sortBy: sort?.id ?? "createdAt",
+          order: sort?.desc ? "desc" : "asc",
+        });
+        return getDevis(params);
+      },
+      enabled,
+    })
+}
+export function useFacture({pagination, sorting}: { pagination: Pagination; sorting: SortingState}, enabled: boolean) {
+  return useQuery({
+      queryKey: ['facture',pagination,sorting],
+      queryFn: async()=>{
+        const sort = sorting[0];
+
+        const params = new URLSearchParams({
+          page: String(pagination.pageIndex + 1),
+          limit: String(pagination.pageSize),
+          sortBy: sort?.id ?? "createdAt",
+          order: sort?.desc ? "desc" : "asc",
+        });
+        return getFacture(params);
       },
       enabled,
     })

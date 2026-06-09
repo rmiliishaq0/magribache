@@ -121,8 +121,8 @@ export const devisSchema = z.object({
     items:z.array(
        z.object({
           article:z.string().min(1,"Article requis"),
-          quantity:z.number().min(1),
-          unitPrice:z.number().min(0),
+          quantity:z.number().min(1).optional(),
+          unitPrice:z.number().min(0).optional(),
           tax:z.number().min(0),
        })
     ).min(1)

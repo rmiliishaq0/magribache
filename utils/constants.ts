@@ -147,14 +147,14 @@ export const SalesFields = [
 export const SalesTableFields : Record<string,Record<string, ColumnMeta[]>> ={
   Devis:{
     "Numéro":[],   
-    "Client":[{isNavigate:true}],
-    "Date":[],
-    "Montant TTC":[{isInput:true,type:"number"}],
-    "Facture":[{isInput:true,type:"number"}],
-    "Bon de commande": [{isInput:true,type:"number"}],
-    "Bon de livraison": [{isInput:true,type:"text"}],
-    "Commentaires": [{isInput:true,type:"text"}],
-    "Statut": [{isBadge:true}],
+    "Client":[{isInput:true,key:"entreprise"}],
+    "Date":[{isDate:true}],
+    "Montant TTC":[{isInput:true,type:"number",key:"montantTTC"}],
+    //"Facture":[{isInput:true,type:"number"}],
+    //"Bon de commande": [{isInput:true,type:"number"}],
+    //"Bon de livraison": [{isInput:true,type:"text"}],
+    "Commentaires": [{isInput:true,type:"text",key:"notes"}],
+    "Statut": [{isBadge:true,key:"status"}],
   },
   // "Bon de commande":{
   //   "Numéro":[],
@@ -169,13 +169,13 @@ export const SalesTableFields : Record<string,Record<string, ColumnMeta[]>> ={
   // },
   Factures:{
     "Numéro":[],    
-    "Client":[{isNavigate:true}],
-    "Date de facture":[{isInput:true,type:"text"}],
-    "Total HT":[{isInput:true,type:"number"}],
-    "Montant":[{isInput:true,type:"text"}],
-    "Statut":[{isBadge:true}],
-    "Commercial":[{isInput:true,type:"text"}],
-    "Periode":[],
+    "Client":[{isInput:true,key:"entreprise"}],
+    "Date de facture":[{isInput:true,type:"text",key:"dateDocument"}],
+    "Total HT":[{isInput:true,type:"number",key:"montantHT"}],
+    "Montant":[{isInput:true,type:"text",key:"montantTTC"}],
+    "Statut":[{isBadge:true,key:"status"}],
+    //"Commercial":[{isInput:true,type:"text",key:"montantTTC"}],
+    //"Periode":[],
   }
   // "Bon de Livraison":{
   //   "Numéro":[],

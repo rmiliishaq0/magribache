@@ -92,7 +92,8 @@ import { SortAsc, SortDesc } from "lucide-react"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import {memo, useState} from "react";
 import { Field } from "./ui/field"
-import { useMoveProspect } from "@/hooks/mutations"
+import { useMoveProspect, useTransferDevis } from "@/hooks/mutations"
+import { useRouter } from "next/navigation"
 
 
 function DragHandle({ id }: { id: number }) {
@@ -183,7 +184,9 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
   onUpdate:(data:any)=>void,
   isUpdatePending?:boolean
 }) {
+  const router =useRouter()
   const moveProspectMutation = useMoveProspect()
+  const transferDevis =useTransferDevis()
   const [deleteIds, setDeleteIds] = React.useState<number[] | null>(null)
   const [data, setData] = React.useState(() => initialData)
   const [rowSelection, setRowSelection] = React.useState({})
@@ -263,17 +266,16 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
             }
 
             if (config?.isBadge) {                 
-
-              if (field == "status" || field == "Actif") {      
+              if (field == "status" || field == "Actif" || field == "Statut") {      
                 return (
                   <>
                     <Badge variant="outline" className="px-1.5 text-muted-foreground">
-                      {row.original[field] === "Terminé" || row.original["actif"] == "Oui" ? (
+                      {row.original[field] === "Terminé" || row.original["actif"] == "Oui" || row.original[field]?.[config?.key] == "PAYE" || row.original[field]?.[config?.key] == "ENVOYE" ?  (
                         <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
                       ) : (
                         <IconLoader />
                       )}
-                      {row.original[field.toLocaleLowerCase()] || row.original[field]}
+                      {row.original[field.toLocaleLowerCase()] || row.original[field] || row?.original?.[config?.key]}
                     </Badge>
                   </>
                 )
@@ -308,7 +310,7 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
               <>
                 <div className="w-32">
                   <Badge variant="outline" className="px-1.5 text-muted-foreground">
-                    {meta?.[0]?.isDate ? new Date(row.original[field] ?? row.original?.[meta?.[0]?.key]).toLocaleDateString() : (row.original?.[meta?.[0]?.key] || row.original[field] || row.original[field.toLowerCase()])}
+                    {meta?.[0]?.isDate ? new Date(row.original[field] ?? row.original?.[meta?.[0]?.key] ?? row.original?.dateDocument ).toLocaleDateString()  : (row.original?.[meta?.[0]?.key] || row.original[field] || row.original[field.toLowerCase()] || row.original.numero)}
                   </Badge>
                 </div>
               </>
@@ -330,8 +332,9 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
-                <DropdownMenuItem onClick={()=>{row.original.projet ? setselectedItem({...row.original,project: row.original?.projet}) : setselectedItem(row.original) }}>Modifier</DropdownMenuItem>
+                <DropdownMenuItem onClick={()=>{activeTab == "Devis" || activeTab =="Factures" ? router.push(`/admin/sales/${activeTab.toLocaleLowerCase()}/${row.original?.id} `) : row.original.projet ? setselectedItem({...row.original,project: row.original?.projet}) : setselectedItem(row.original) }}>Modifier</DropdownMenuItem>
                 {activeTab == "Prospects" && <DropdownMenuItem onClick={()=>{moveProspectMutation.mutate(row.original)}}>Convertir en client</DropdownMenuItem>}
+                {activeTab == "Devis" && <DropdownMenuItem onClick={()=>{transferDevis.mutate({id:row.original?.id})}}>Convertir en Facture</DropdownMenuItem>}
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive" onClick={() => { setDeleteIds([row.original.id])}}>Delete</DropdownMenuItem>
             </DropdownMenuContent>

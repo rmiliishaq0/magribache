@@ -3,20 +3,24 @@
 import { useAuthStore } from "@/stores/auth-store"
 import { devisSchema } from "@/utils/schema"
 import { UseFormReturn } from "react-hook-form"
-import {string, z} from "zod"
+import {z} from "zod"
 
 interface DevisPreviewProps {
   form: UseFormReturn<z.infer<typeof devisSchema>>
   name:string,
   email:string,
   phone:string,
+  isFacture:boolean
+  docNumber:string | null
 }
 
-export default function DevisPreview({
+export default function DocPreview({
   name,
   email,
   phone,  
   form,
+  isFacture,
+  docNumber
 }: DevisPreviewProps) {
 
   const values = form.watch()
@@ -64,11 +68,11 @@ export default function DevisPreview({
 
           <div>
             <h1 className="text-3xl font-bold">
-              DEVIS
+              {isFacture?"Facture" : "DEVIS"}
             </h1>
 
             <p className="text-sm text-muted-foreground mt-2">
-              N° DEV-2026-0001
+              {isFacture? (docNumber ? docNumber : "N° FAC-2026-0001" ):(docNumber ? docNumber : "N° DEV-2026-0001" )}
             </p>
           </div>
 
@@ -125,7 +129,7 @@ export default function DevisPreview({
               <span className="font-medium">
                 Date:
               </span>{" "}
-              {values.devisDate || new Date().toLocaleDateString()}
+              {values.devisDate ? new Date(values.devisDate).toLocaleDateString() :   new Date().toLocaleDateString()}
             </p>
 
             <p>

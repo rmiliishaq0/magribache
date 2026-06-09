@@ -13,6 +13,10 @@ export default function useTaskForm(values?: TaskFormValues) {
         reValidateMode:"onBlur",
         defaultValues: values ?? {
             name: "",
+            dueDate: "",
+            project: "",
+            //status: "",
+            description: "",
         }
     })
 }

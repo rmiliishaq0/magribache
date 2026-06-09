@@ -20,9 +20,9 @@ import { Textarea } from "./ui/textarea"
 import { Separator } from "./ui/separator"
 import { Controller, useFieldArray, UseFormReturn } from "react-hook-form"
 import z from "zod"
-import { clientSchema, devisSchema } from "@/utils/schema"
+import { devisSchema } from "@/utils/schema"
 
-export default function DevisForm({form,client,onSubmit}:{form:UseFormReturn<z.infer< typeof devisSchema>>,client:any,onSubmit:(data:z.infer<typeof devisSchema>)=>void}) {
+export default function DocForm({form,client,onSubmit}:{form:UseFormReturn<z.infer< typeof devisSchema>>,client:any,onSubmit:(data:z.infer<typeof devisSchema>)=>void}) {
     const { fields, append, remove } = useFieldArray({
         control:form.control,
         name:"items"
@@ -30,14 +30,14 @@ export default function DevisForm({form,client,onSubmit}:{form:UseFormReturn<z.i
     
     
     const items = form.watch("items")
-    const subtotal = items.reduce((acc, item) => {
+    const subtotal = items?.reduce((acc, item) => {
         return acc + (
             Number(item.quantity || 0) *
             Number(item.unitPrice || 0)
         )
     }, 0)
 
-    const totalTax = items.reduce((acc, item) => {
+    const totalTax = items?.reduce((acc, item) => {
         return acc + (
             Number(item.quantity || 0) *
             Number(item.unitPrice || 0) *
@@ -79,7 +79,7 @@ export default function DevisForm({form,client,onSubmit}:{form:UseFormReturn<z.i
                         <Field aria-invalid={fieldState.invalid}>
                             <FieldLabel htmlFor="objet">Date du devis
                             </FieldLabel>
-                            <Input aria-invalid={fieldState.invalid} type="date" id="dateDocument" {...field}/>
+                            <Input aria-invalid={fieldState.invalid} type="date" id="dateDocument" {...field} />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
                     )}
@@ -207,6 +207,7 @@ export default function DevisForm({form,client,onSubmit}:{form:UseFormReturn<z.i
                                 {...field}
                                 type="number"
                                 placeholder="Qte"
+                                onChange={(e) => field.onChange(Number(e.target.value))}
                             />
                         )}
                     />
@@ -220,6 +221,7 @@ export default function DevisForm({form,client,onSubmit}:{form:UseFormReturn<z.i
                                     {...field}
                                     type="number"
                                     placeholder="PU"
+                                    onChange={(e) => field.onChange(Number(e.target.value))}
                                 />
                             )}
                         />
@@ -233,6 +235,7 @@ export default function DevisForm({form,client,onSubmit}:{form:UseFormReturn<z.i
                                     {...field}
                                     type="number"
                                     placeholder="TVA"
+                                     onChange={(e) => field.onChange(Number(e.target.value))}
                                 />
                             )}
                         />
@@ -272,18 +275,18 @@ export default function DevisForm({form,client,onSubmit}:{form:UseFormReturn<z.i
                 <div className="flex flex-col items-center gap-2">
                     <span className="text-secondary block">Sous-total HT</span>
                     <h3 className="font-semibold text-lg">
-                        {subtotal.toFixed(2)} {form.getValues("devise") ?? "MAD"}
+                        {subtotal?.toFixed(2)} {form.getValues("devise") ?? "MAD"}
                     </h3>
                 </div>
                 <Separator orientation="vertical"/>
                 <div className="flex flex-col items-center gap-2">
                     <span className="text-secondary block">TVA(20%)</span>
-                    <h3 className="font-semibold text-lg">{totalTax.toFixed(2)} {form.getValues("devise") ?? "MAD"}</h3>
+                    <h3 className="font-semibold text-lg">{totalTax?.toFixed(2)} {form.getValues("devise") ?? "MAD"}</h3>
                 </div>
                 <Separator orientation="vertical"/>
                 <div className="flex flex-col items-center gap-2">
                     <span className="text-secondary block">Total TTC</span>
-                    <h3 className="font-semibold text-lg">{total.toFixed(2)} {form.getValues("devise") ?? "MAD"}</h3>
+                    <h3 className="font-semibold text-lg">{total?.toFixed(2)} {form.getValues("devise") ?? "MAD"}</h3>
                 </div>
             </div>
             </form>

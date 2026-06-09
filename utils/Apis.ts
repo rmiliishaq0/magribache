@@ -485,3 +485,102 @@ export async function createDevis(data:z.infer<typeof devisSchema>){
     throw new Error("Une erreur s'est produite");
   }
 }
+
+
+export async function createFacture(data:z.infer<typeof devisSchema>){
+    try{
+    const response = await axios.post("/api/facture-create",{data});
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+          error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}
+
+export async function getDevis(params: URLSearchParams){
+  try{
+    const response = await axios.get(`/api/devis-fetch?${params}`);
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}
+
+export async function getFacture(params: URLSearchParams){
+  try{
+    const response = await axios.get(`/api/facture-fetch?${params}`);
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}
+
+export async function deleteDevis(ids:number[]){
+  try{
+    const response = await axios.post("/api/devis-delete",{ids});
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}
+
+export async function deleteFacture(ids:number[]){
+  try{
+    const response = await axios.post("/api/facture-delete",{ids});
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}
+
+export async function getDoc(params:URLSearchParams){
+  try{
+    const response = await axios.get(`/api/doc-fetch?${params}`);
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+        error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}
+
+export async function transferDevis(data:z.infer<typeof devisSchema>) {
+  try{
+    const response = await axios.post("/api/transfer-devis",{data});
+    return response.data;
+  }catch(error:any){
+    if (axios.isAxiosError(error)) {
+      throw new Error(
+          error.response?.data?.message || "Une erreur s'est produite"
+      );
+    }
+    throw new Error("Une erreur s'est produite");
+  }
+}
