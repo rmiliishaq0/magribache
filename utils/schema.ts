@@ -18,7 +18,7 @@ export const taskSchema = z.object({
   description: z.string().optional(),
   dueDate: z.string().optional(),
   priority: z.enum(["Haute", "Moyenne", "Basse"]),
-  project: z.string().optional(),
+  project: z.string(),
   status: z.enum(["En cours", "Terminé"]),
 })
 export const taskSchemaWithID = taskSchema.extend({

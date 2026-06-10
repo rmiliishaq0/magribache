@@ -30,7 +30,7 @@ model Task {
   description String?
   status String
   priority String
-  dueDate DateTime
+  dueDate DateTime?
   projet String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()

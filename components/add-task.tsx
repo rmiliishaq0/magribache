@@ -17,7 +17,7 @@ import { taskSchema } from "@/utils/schema";
 import {memo} from "react";
 import {Spinner} from "@/components/ui/spinner";
 
-export default memo(function AddTask({openTask,setOpenTask,onSubmit,form,isPending}:{
+export default function AddTask({openTask,setOpenTask,onSubmit,form,isPending}:{
     openTask:boolean,
     setOpenTask:(openTask:boolean)=>void,
     onSubmit:(data:z.infer<typeof taskSchema>)=>void,
@@ -134,4 +134,4 @@ export default memo(function AddTask({openTask,setOpenTask,onSubmit,form,isPendi
                   </DialogContent>
                 </Dialog>
     )
-})
+}

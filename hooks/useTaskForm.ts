@@ -6,17 +6,18 @@ import z from "zod";
 type TaskFormValues = z.infer<typeof taskSchemaWithID> | null;
 
 
-export default function useTaskForm(values?: TaskFormValues) {
+export default function useTaskForm() {
     return useForm<z.infer<typeof taskSchema>>({
         resolver:zodResolver(taskSchema),
         mode:"all",
-        reValidateMode:"onBlur",
-        defaultValues: values ?? {
+        reValidateMode:"onChange",
+        defaultValues: {
             name: "",
             dueDate: "",
             project: "",
-            //status: "",
             description: "",
+            priority: "Moyenne",
+            status:"En cours"
         }
     })
 }
