@@ -19,7 +19,9 @@ export async function POST(req:NextRequest){
                     adminId:auth.user.id,
                     name:data.name,
                     description:data.description,
-                    dueDate:new Date(data.dueDate || ""),
+                    dueDate:data.dueDate && data.dueDate !== ""
+                    ? new Date(data.dueDate)
+                    : null,
                     priority:data.priority,
                     projet:data.project,
                     status:data.status   
@@ -27,7 +29,8 @@ export async function POST(req:NextRequest){
             })        
         return Response.json({message:"Tâche ajoutée avec succès",task},{status:201})
         }
-    }catch{
+    }catch(err){
+        console.log(err)
         return Response.json({message:"Une erreur s'est produite"},{status:500})
     }
 

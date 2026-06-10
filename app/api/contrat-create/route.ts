@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
         } = data
       const contrats = await prisma.contrats?.create({
         data: {
+            nom:"",
             sujet:Sujet,
             client:Client,
             modèleContrat:ModèleDeContrat,

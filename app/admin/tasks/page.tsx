@@ -28,7 +28,7 @@ export default function Tasks() {
 
     const queryClient = useQueryClient();
 
-    const form = useTaskForm()
+    const form = useTaskForm() 
 
     const createTaskMutation = useMutation(
       {
@@ -37,6 +37,7 @@ export default function Tasks() {
           toast.success("La tâche a été ajoutée avec succès")
           form.reset()
           queryClient.invalidateQueries({ queryKey: ['tasks'] })
+          setOpenTask(false)
         },
         onError:(error)=>{
           toast.error(error.message)
@@ -94,7 +95,7 @@ export default function Tasks() {
         }
     },[isError,error])
 
-    const updateForm = useTaskForm(selectedItem)
+    const updateForm = useTaskForm()
      
     const updateTaskMutation = useTaskUpadte()
     const onUpdate= useCallback((data: any)=>{
@@ -112,17 +113,24 @@ export default function Tasks() {
     },[updateTaskMutation,selectedItem])
 
       useEffect(() => {
-         if (selectedItem) {
-         updateForm.reset({...selectedItem,project:selectedItem.project})
-       }
-    }, [selectedItem, updateForm])
+  if (selectedItem) {
+    updateForm.reset({
+      name: selectedItem.name ?? "",
+      dueDate: selectedItem.dueDate ?? "",
+      project: selectedItem.project ?? "",
+      description: selectedItem.description ?? "",
+      priority: selectedItem.priority ?? "Moyenne",
+      status: selectedItem.status ?? "En cours",
+    })
+  }
+}, [selectedItem, updateForm])
 
     return (
         <Card className="text-foreground p-4 flex flex-col mb-6 overflow-hidden! ">
             <div >
               <div className="flex items-center justify-between mb-6 ">
                 <h2 className="text-lg font-bold text-secondary">les Tâches</h2>
-                {/* <p className="text-muted-foreground text-sm">Suivi du stock et des indicateurs de vente en temps réel.</p> */}
+                {/* <p className="text-muted-foreground text-sm">Suivi du stock et des indicateurs de vente en temps réel.</p> */} 
                 <Button variant="default" onClick={()=>{setOpenTask(true)}}>
                   <IconPlus />
                   <span>Ajouter une tâche</span>

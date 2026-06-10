@@ -9,6 +9,54 @@ import CalendarCustomDays from "@/components/Calendar"
 import { Card } from "@/components/ui/card";
 
 export default function AdminHome() {
+    const staticData=[{
+        name:"Total Produits en Stock",
+        value:12,
+        extra:"Article",
+        progress:15
+    },
+    {
+        name:"Rupture de stock",
+        value:14,
+        extra:"Article",
+        progress:10
+    },
+    {
+        name:"Stock bas",
+        value:4,
+        extra:"Article",
+        progress:8,
+    },
+    {
+        name:"Devis Accepté",
+        value:2,
+        extra:"Devis",
+        progress:2
+    },
+    {
+        name:"Devis en attente",
+        value:0,
+        extra:"Devis",
+        progress:0,
+    },
+    {
+        name:"Achats de l'année",
+        value:"10k",
+        extra:"dh",
+        progress:50
+    },{
+        name:"Achats du mois",
+        value:"20k",
+        extra:"dh",
+        progress:70
+    },
+    {
+        name:"BL Payée Partiellement",
+        value:0,
+        extra:"dh",
+        progress:0
+    }
+]
     return (
        <Card className="space-y-8 mb-4 p-4">
             <div className="flex items-center justify-between">
@@ -21,9 +69,9 @@ export default function AdminHome() {
                 </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {Array.from({length: 8}).map((_,i)=>(
-                    <DashboardCard key={i} title="Rupture de stock" number={10} extra="Articles" Logo={<SendToBack/>}>
-                        <Progress value={100}/>
+                {staticData.map((i)=>(
+                    <DashboardCard key={i} title={i.name} number={i.value} extra={i.extra} Logo={<SendToBack/>}>
+                        <Progress value={i.progress}/>
                     </DashboardCard>
                 ))}
             </div>
