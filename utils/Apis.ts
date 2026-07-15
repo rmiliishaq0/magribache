@@ -50,16 +50,44 @@ export async function me(){
   }
 }
 
-export async function updateSetting(data:z.infer<typeof settingSchema>){
-    try{
-    const response = await axios.post("/api/settings-update",data);
+export async function updateSetting(data: z.infer<typeof settingSchema>) {
+  try {
+    const formData = new FormData();
+
+    formData.append("name", data.name);
+    formData.append("address", data.address);
+    formData.append("phone", data.phone);
+    formData.append("website", data.website);
+    formData.append("description", data.description);
+
+    if (data.logo) {
+      formData.append("logo", data.logo);
+    }
+
+    if (data.profileImage) {
+      formData.append("profileImage", data.profileImage);
+    }
+
+    if (data.signature) {
+      formData.append("signature", data.signature);
+    }
+    if(data.defaultColor){
+        formData.append("defaultColor",data.defaultColor);
+    }
+    if(data.footerText){
+      formData.append("footerText",data.footerText)
+    }
+
+    const response = await axios.post("/api/settings-update", formData);
+
     return response.data;
-  }catch(error:any){
+  } catch (error: any) {
     if (axios.isAxiosError(error)) {
       throw new Error(
         error.response?.data?.message || "Une erreur s'est produite"
       );
     }
+
     throw new Error("Une erreur s'est produite");
   }
 }

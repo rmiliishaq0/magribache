@@ -8,36 +8,21 @@ import {
 } from "@/components/ui/drawer"
 import {Select, SelectTrigger, SelectValue, SelectContent, SelectItem, SelectGroup} from "@/components/ui/select"
 import {Input} from "@/components/ui/input"
-import {z} from "zod"
-import {taskSchema} from "@/utils/schema"
 import { Button } from "./ui/button"
-import {useEffect} from "react"
-import {TasksTableFieldsKeys} from "@/utils/constants";
 import {Field, FieldError, FieldLabel} from "@/components/ui/field"
-import useTaskForm from "@/hooks/useTaskForm";
 import {Spinner} from "@/components/ui/spinner";
-import {Controller} from"react-hook-form"
+import {Controller, UseFormReturn} from"react-hook-form"
 import {Textarea} from "@/components/ui/textarea";
-import {useTaskUpadte} from "@/hooks/mutations";
-import type { ColumnMeta } from "@/utils/types";
+import type {ColumnMeta, Crm} from "@/utils/types"
+import { EntityKey } from "@/utils/form-config";
 
-export default function TableCellViewer({ item ,open,setOpenChange,constants,FieldsKeys,form,isPending,onSubmit}: { open:boolean,item: any | null,setOpenChange:(open:boolean)=>void ,constants:any ,FieldsKeys?:Record<string, string>,form:any,isPending?:boolean,onSubmit:(data:any)=>void}) {
-
-
-    // useEffect(() => {
-
-    //     if (item) {
-    //       form.reset({...item,project:item.project})
-    //   }
-    // }, [item, form])
-    
-    
+export default function TableCellViewer({ item ,open,setOpenChange,constants,FieldsKeys,form,isPending,onSubmit,activeTab}: { open:boolean,item: Crm | null,setOpenChange:(open:boolean)=>void ,constants:Record<string,Record<string, ColumnMeta>> ,FieldsKeys?:Record<string, string>,form:UseFormReturn<Crm>,isPending?:boolean,onSubmit:(data:Crm)=>void,activeTab:EntityKey}) {
 
     return (
         <Drawer direction={"right"} open={open} onOpenChange={setOpenChange}>
           <DrawerContent>
             <DrawerHeader className="gap-1">
-              <DrawerTitle>{item?.name || item?.[0]}</DrawerTitle>
+              <DrawerTitle>{activeTab}</DrawerTitle>
             </DrawerHeader>
             <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm h-full">
               <form id="form" onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -48,6 +33,7 @@ export default function TableCellViewer({ item ,open,setOpenChange,constants,Fie
                       <Controller
                           key={fieldP}
                           name={fieldP ==="projet" ? "project" : fieldP as keyof typeof item} control={form.control}
+                          control={form.control}
                           render={({field,fieldState})=>{
                               return(
                                       <Field aria-invalid={fieldState.invalid}>

@@ -11,6 +11,11 @@ export const settingSchema = z.object({
     phone: z.string().min(1, "Le téléphone est requis"),
     website: z.string().url("L'URL du site web est invalide"),
     description: z.string().min(1, "La description est requise"),
+    logo:z.union([z.instanceof(File).optional(),z.string().optional()]) ,
+    profileImage:  z.union([z.instanceof(File).optional(),z.string().optional()]) ,
+    signature: z.union([z.instanceof(File).optional(),z.string().optional()]),
+    defaultColor: z.string().optional(),
+    footerText:z.string().optional(),
 });
 
 export const taskSchema = z.object({
@@ -26,9 +31,12 @@ export const taskSchemaWithID = taskSchema.extend({
 })
 
 export const clientSchema = z.object({
-    Entreprise:z.string(),
+    Entreprise:z.string().min(1, "Le nom est requis"),
     Téléphone:z.string().optional(),
-    Email:z.email("Email invalide").optional(),
+    Email:z.preprocess(
+        (value) => value === "" || null ? undefined : value,
+        z.email("Email invalide").optional()
+        ),
     Catégories:z.string().optional(),
     ICE:z.string().optional(),
     "Identifiant fiscal (IF)": z.string().optional(),
@@ -38,9 +46,12 @@ export const clientSchema = z.object({
 })
 
 export const contactsfournisseurSchema = z.object({
-    Name:z.string(),
+    Name:z.string().min(1, "Le nom est requis"),
     Title:z.string().optional(),
-    Email:z.email("Email invalide").optional(),
+    Email:z.preprocess(
+        (value) => value === "" || null ? undefined : value,
+        z.email("Email invalide").optional()
+        ),
     "Téléphone":z.string().optional(),
     Fournisseur:z.string().optional(),
     City:z.string().optional(),
@@ -48,8 +59,11 @@ export const contactsfournisseurSchema = z.object({
 })
 
 export const fournisseurSchema = z.object({
-    Fournisseur:z.string(),
-    Email:z.email("Email invalide").optional(),
+    Fournisseur:z.string().min(1, "Le nom est requis"),
+    Email:z.preprocess(
+        (value) => value === "" || null ? undefined : value,
+        z.email("Email invalide").optional()
+        ),
     Téléphone:z.string().optional(),
     ICE:z.string().optional(),
     "Identifiant fiscal (IF)": z.string().optional(),
@@ -59,9 +73,12 @@ export const fournisseurSchema = z.object({
 })
 
 export const prospectsschema = z.object({
-    Nom:z.string(),
+    Nom:z.string().min(1, "Le nom est requis"),
     Prospect:z.string().optional(),
-    Email:z.email("Email invalide").optional(),
+    Email:z.preprocess(
+        (value) => value === "" || null ? undefined : value,
+        z.email("Email invalide").optional()
+        ),
     Téléphone:z.string().optional(),
     //"Attribué à":z.string().optional(),
     Statut:z.string().optional(),
@@ -72,7 +89,7 @@ export const prospectsschema = z.object({
 })
 
 export const contratsschema = z.object({
-    "Sujet":z.string().optional(),
+    "Sujet":z.string().min(1, "Le nom est requis"),
     "Client":z.string().optional(),
     "Modèle de contrat":z.string().optional(),
     "Date de depart":z.string().optional(),
@@ -80,9 +97,12 @@ export const contratsschema = z.object({
 })
 
 export const contactsschema = z.object({
-    Nom:z.string(),
+    Nom:z.string().min(1, "Le nom est requis"),
     Civilité:z.string().optional(),
-    Email:z.email("Email invalide").optional(),
+    Email:z.preprocess(
+        (value) => value === "" || null ? undefined : value,
+        z.email("Email invalide").optional()
+        ),
     Téléphone:z.string().optional(),
     //Entreprise:z.string().optional(),
     Ville:z.string().optional(),
@@ -128,4 +148,7 @@ export const devisSchema = z.object({
     ).min(1)
  })
 
+ export const crmSchema = z.union([
+    clientSchema,prospectsschema,contactsfournisseurSchema,fournisseurSchema,contactsschema,contratsschema
+ ])
 

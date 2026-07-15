@@ -7,6 +7,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar"
 import SideBareCard from "@/components/sidebare-card"
 import Link from "next/link"
@@ -35,6 +36,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     if(!data?.me)return;
     authState.setAuthState(data?.me)
   },[data,error])
+
   return (
     <Sidebar className="mt-2" collapsible="icon" {...props}>
       <SidebarHeader>
@@ -55,20 +57,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         }
         </div>
       </SidebarContent>
-      <SidebarFooter className="mb-4">
-        {
-          isPending || !authState.email ? 
-          <div className="flex w-fit items-center gap-4 bg-white/80 rounded-lg p-1">
-            <Skeleton className="size-10 shrink-0 rounded-full" />
-            <div className="grid gap-2">
-              <Skeleton className="h-4 w-[150px]" />
-              <Skeleton className="h-4 w-[100px]" />
-            </div>
-          </div>:
-          <div className="bg-white/80 rounded-lg">
-            <NavUser user={{name:authState?.name! ?? "Admin",email:authState?.email!}} />
-          </div>
-        }
+      <SidebarFooter className="mb-4">     
+            <NavUser user={{name:authState?.name! ?? "Admin",email:authState?.email!, profileImage:authState?.profilIcon || undefined, isPending: isPending && !authState.email }} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

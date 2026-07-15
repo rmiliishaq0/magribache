@@ -25,8 +25,7 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         )
       }
-      console.log(data)
-
+      
       const 
         {
             Nom,
@@ -37,9 +36,10 @@ export async function POST(req: NextRequest) {
             Source,
             Localisation
         } = data
-      const prospects = await prisma.prospects?.create({
+      const prospects = await prisma.client?.create({
         data: {
-            nom :Nom,
+            type:"PROSPECT",
+            entreprise :Nom!,
             email:Email,
             prospect:Prospect,
             téléphone:Téléphone,

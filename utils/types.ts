@@ -1,3 +1,5 @@
+import { z } from "zod";
+import { crmSchema } from "./schema";
 
 export type ColumnMeta = {
   isNavigate?: boolean
@@ -26,3 +28,5 @@ type Me={
     logo: string | null,
     profilIcon: string | null
 }
+
+export type Crm = z.infer<typeof crmSchema>

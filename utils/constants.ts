@@ -10,7 +10,7 @@ import {
 } from "lucide-react"
 import type { ColumnMeta } from "./types"
 import { EntityKey } from "./form-config"
-import { useContactsFournisseurs, useFournisseurs } from "@/hooks/querys"
+import { useClients, useFournisseurs } from "@/hooks/querys"
 
 export const sideBarecontents = {
   user: {
@@ -114,7 +114,7 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
     "Country":[{isInput:true,type:"text",fullWidth:true}],
   },
   Prospects:{
-    "Nom":[{isNavigate:true,}],
+    "Nom":[{isNavigate:true,key:"entreprise"}],
     "Prospect":[{isInput:true,type:"text"}],
     "Email":[{isInput:true,type:"email"}],
     "Téléphone":[{isInput:true,type:"number"}],
@@ -127,10 +127,10 @@ export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
   },
   Contrats:{
    "Sujet":[{isNavigate:true,}],
-    "Client":[{isInput:true,type:"text"}],
-  "Modèle de contrat":[{isInput:true,type:"text",key:"modèleContrat"}],
-  "Date de depart":[{isDate:true,type:"date",key:"dateDepart"}],
-  "Date de fin":[{isDate:true,type:"date",fullWidth:true,key:"dateFin"}]
+    "Client":[{isSelected:true,type:"text",needToFetch:true,hook:useClients,key:"clients"}],
+    "Modèle de contrat":[{isInput:true,type:"text",key:"modèleContrat"}],
+    "Date de depart":[{isInput:true,type:"date",key:"dateDepart"}],
+    "Date de fin":[{isInput:true,type:"date",fullWidth:true,key:"dateFin"}]
   }
 }
 

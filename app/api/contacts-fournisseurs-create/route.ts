@@ -69,6 +69,14 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+  if(error?.code=== "P2003"){
+    return Response.json(
+      {
+        message: "Le Fournisseur est obligatoire",
+      },
+      { status: 400 }
+    );
+  }
 
     return Response.json(
       { message: "Une erreur s'est produite" },

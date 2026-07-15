@@ -12,6 +12,7 @@ export const entityConfig = {
       Ville: "",
       Pays: "",
       Actif: "Non",
+      Email:""
     },
   },
 
@@ -25,6 +26,7 @@ export const entityConfig = {
       Ville: "",
       Pays:"",
       Catégories: "",
+      Email:""
     }
   },
   Contacts:{
@@ -36,7 +38,8 @@ export const entityConfig = {
       Entreprise:"",
       Ville:"",
       Pays:"",
-      Actif:"Non"
+      Actif:"Non",
+      Email:""
     }
   },
 
@@ -55,16 +58,16 @@ export const entityConfig = {
   "Prospects": {
     schema: prospectsschema,
     defaultValues: {
+      Entreprise:"",
       Nom:"",
       Prospect:"",
-      Email:"",
       Téléphone:"",
-      //"Attribué à":[{isInput:true,type:"text"}],
       Statut:"",
       Source:"",
       "Date d'ajout":"",
       "Dernier contact":"",
       "Localisation":"",
+      Email:""
     }
   },
   "Contrats": {

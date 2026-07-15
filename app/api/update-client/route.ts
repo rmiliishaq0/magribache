@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
             const  {id, ICE,Entreprise, "Identifiant fiscal (IF)": identifiantFiscal,Actif,Téléphone,Catégories, Email ,Pays,Ville} = data
             await prisma.client.update({
                 where: {
+                    type:"CLIENT",
                     id: String(id),
                 },
                 data: {

@@ -30,7 +30,7 @@ type Pagination = {
   pageSize: number;
 };
 
-export function useEntity(activeTab: EntityKey,{pagination, sorting}: { pagination: Pagination; sorting: SortingState}) {
+export function useEntity<T extends EntityKey>(activeTab:T,{pagination, sorting}: { pagination: Pagination; sorting: SortingState}) {
   const createClientMutation = useCreateClients();
   const createSupplierMutation = useCreateFournisseurs();
   const createContactMutation = useCreateContacts();

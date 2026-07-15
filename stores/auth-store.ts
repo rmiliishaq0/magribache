@@ -9,6 +9,9 @@ type AuthData = {
     description: string | null;
     logo: string | null;
     profilIcon: string | null;
+    signature: string | null;
+    defaultColor: string | null;
+    footerText: string | null;
 };
 
 type AuthState = AuthData & {
@@ -25,6 +28,9 @@ export const useAuthStore = create<AuthState>()((set) => ({
   description: null,
   logo: null,
   profilIcon: null,
+  signature: null,
+  defaultColor: null,
+footerText:null,
   setAuthState: (authState:AuthData) => set(authState),
-  logout: () => set({ name:null,email:null,phone:null,address:null,website:null,description:null,logo:null,profilIcon:null }),
+  logout: () => set({ name:null,email:null,phone:null,address:null,website:null,description:null,logo:null,profilIcon:null,signature:null,defaultColor:null,footerText:null }),
 }))

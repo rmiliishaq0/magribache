@@ -3,6 +3,7 @@
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
 } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -24,18 +25,21 @@ import { toast } from "sonner"
 import { logout } from "@/utils/Apis"
 import { useRouter } from "next/navigation"
 import { useAuthStore } from "@/stores/auth-store"
+import { Skeleton } from "./ui/skeleton";
 
-export function NavUser({
-  user,
-}: {
+type NavUserProps = {
   user: {
     name: string
     email: string
+    profileImage?: string
+    isPending?: boolean
   }
-}) {
+}
+
+export function NavUser({ user }: NavUserProps) {
   const authStore = useAuthStore();
   const router = useRouter();
-  const {isPending,mutate} = useMutation({
+  const {mutate} = useMutation({
     mutationFn:logout,
     onSuccess:()=>{
       authStore.logout();
@@ -61,14 +65,28 @@ export function NavUser({
               size="lg"
               className=" data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+            {user.isPending ? (
+              <>
+                <div>
+                  <Skeleton className="h-8 w-8 rounded-lg bg-secondary/20" />
+                </div>
+                <div className="grid gap-1.5">
+                  <Skeleton className="h-4 w-[150px] bg-secondary/20 rounded-lg" />
+                  <Skeleton className="h-4 w-[100px] bg-secondary/20 rounded-lg" />
+                </div>
+              </>) : (
+              <>
+                <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarFallback className="rounded-lg">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                {user.profileImage && <AvatarImage src={user.profileImage} alt="User Avatar" />}
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
               </div>
               <ChevronsUpDownIcon className="ml-auto size-4" />
+              </>
+            )}
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -78,7 +96,7 @@ export function NavUser({
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarFallback className="rounded-lg">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>

@@ -4,6 +4,8 @@ import { useAuthStore } from "@/stores/auth-store"
 import { devisSchema } from "@/utils/schema"
 import { UseFormReturn } from "react-hook-form"
 import {z} from "zod"
+import Image from "next/image";
+
 
 interface DevisPreviewProps {
   form: UseFormReturn<z.infer<typeof devisSchema>>
@@ -22,6 +24,7 @@ export default function DocPreview({
   isFacture,
   docNumber
 }: DevisPreviewProps) {
+
 
   const values = form.watch()
 
@@ -64,10 +67,15 @@ export default function DocPreview({
       >
 
         {/* HEADER */}
-        <div className="flex items-start justify-between border-b pb-6">
+        <div className="flex  justify-between border-b pb-6 items-end">
 
-          <div>
-            <h1 className="text-3xl font-bold">
+          <div className="flex flex-col items-start">
+              {user.logo && (
+                <Image src={user.logo}  alt="Logo"  width={180}
+  height={80} className="object-contain mb-4" />
+              )}
+            <h1 className={`text-3xl font-bold` }   style={{ color: user.defaultColor || "#000" }}
+>
               {isFacture?"Facture" : "DEVIS"}
             </h1>
 
@@ -148,7 +156,7 @@ export default function DocPreview({
 
           <table className="w-full">
 
-            <thead className="bg-muted">
+            <thead style={{backgroundColor:user.defaultColor || "oklch(0.97 0 0)" ,color:user.defaultColor ? "white" :"black"}}>
 
               <tr className="text-left">
 
@@ -225,7 +233,7 @@ export default function DocPreview({
         {/* NOTES */}
         <div className="mt-8">
 
-          <p className="font-medium mb-2">
+          <p className="font-medium mb-2 text-wrap">
             Notes
           </p>
 
@@ -236,7 +244,14 @@ export default function DocPreview({
         </div>
 
         {/* TOTALS */}
-        <div className="mt-10 flex justify-end">
+        <div className="mt-10 flex justify-between items-center">
+          <div>
+            {user.signature && (
+              <Image width={250}
+  height={120}
+  className="object-contain" src={user.signature} alt="signature"/>
+            )}
+          </div>
 
           <div className="w-full max-w-sm space-y-3">
 
@@ -256,7 +271,7 @@ export default function DocPreview({
               </span>
             </div>
 
-            <div className="border-t pt-3 flex justify-between text-xl font-bold">
+            <div className={`border-t pt-3 flex justify-between text-xl font-bold`}   style={{ color: user.defaultColor || "#000" }}>
 
               <span>Total TTC</span>
 
@@ -270,10 +285,9 @@ export default function DocPreview({
 
         </div>
 
-        {/* FOOTER */}
         <div className="mt-20 border-t pt-6 text-center text-sm text-muted-foreground">
 
-          Merci pour votre confiance.
+          {user.footerText ||"Merci pour votre confiance."}
 
         </div>
 

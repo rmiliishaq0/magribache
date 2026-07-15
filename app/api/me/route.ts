@@ -25,6 +25,9 @@ export async function GET(request: NextRequest) {
                 description: true,
                 logo: true,
                 profilIcon: true,
+                signature:true,
+                footerText:true,
+                defaultColor:true,
             }
         })
         return NextResponse.json({ me: user }, { status: 200 });

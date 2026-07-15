@@ -90,10 +90,11 @@ import TableCellViewer from "./DrawerTabs"
 import { Spinner } from "./ui/spinner"
 import { SortAsc, SortDesc } from "lucide-react"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import {memo, useState} from "react";
+import {memo} from "react";
 import { Field } from "./ui/field"
 import { useMoveProspect, useTransferDevis } from "@/hooks/mutations"
 import { useRouter } from "next/navigation"
+import { EntityKey } from "@/utils/form-config";
 
 
 function DragHandle({ id }: { id: number }) {
@@ -114,8 +115,6 @@ function DragHandle({ id }: { id: number }) {
     </Button>
   )
 }
-
-
 
 
 function DraggableRow({ row }: { row: any }) {
@@ -260,7 +259,7 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
             if (config?.isNavigate) {
               return (
               <Button onClick={()=>{setselectedItem(row.original)}} variant="link" className="w-fit px-0 text-left text-foreground">
-                {row.original[field.toLocaleLowerCase()] || row.original[field]}
+                {row.original[field.toLocaleLowerCase()] || row.original[field] || row.original[config?.key]}
               </Button>
               )
             }
@@ -604,7 +603,7 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
           </div>
         </div>
       </TabsContent>
-      <TableCellViewer isPending={isUpdatePending} form={form} onSubmit={onUpdate} constants={activeTab ? constants[activeTab] : constants} open={!!selectedItem} setOpenChange={(open:boolean)=>{if(!open) setselectedItem(null)}} item={selectedItem}/>
+      <TableCellViewer isPending={isUpdatePending} form={form} onSubmit={onUpdate} activeTab={activeTab as EntityKey} constants={activeTab ? constants[activeTab] : constants} open={!!selectedItem} setOpenChange={(open:boolean)=>{if(!open) setselectedItem(null)}} item={selectedItem}/>
       <DeleteDialog
           open={!!deleteIds}
           ids={deleteIds || []}

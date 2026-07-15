@@ -31,12 +31,13 @@ const
             Source,
             Localisation
         } = data            
-        await prisma.prospects.update({
+        await prisma.client.update({
                 where: {
+                    type:"PROSPECT",
                     id: String(id),
                 },
                  data: {
-                    nom :Nom,
+                    entreprise :Nom,
                     email:Email,
                     prospect:Prospect,
                     téléphone:Téléphone,

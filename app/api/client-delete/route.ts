@@ -25,6 +25,7 @@ export async function POST(req:NextRequest){
                 : result.data.ids;
             await prisma.client.deleteMany({
                 where: {
+                    type:"CLIENT",
                     id: {
                         in: ids,
                     },
@@ -33,7 +34,8 @@ export async function POST(req:NextRequest){
             return Response.json({message:" Clients a été supprimé avec succès"},{status:201})
         }
         return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-    }catch{
+    }catch(err){
+        console.log(err)
         return Response.json({message:"Une erreur s'est produite"},{status:500})
     }
 }

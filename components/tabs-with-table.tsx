@@ -2,7 +2,7 @@
 import {  useCallback, useEffect, useMemo, useState } from "react"
 import { usePathname } from "next/navigation"
 import TabsSwitch from "./Tabs"
-import { CrmFields, CrmTableFields ,SalesFields,SalesTableFields,FiledsNeedCards} from "@/utils/constants"
+import { CrmFields, CrmTableFields ,SalesTableFields,FiledsNeedCards} from "@/utils/constants"
 import  DataTable  from "./data-table"
 import { Card } from "./ui/card"
 import DashboardCard from "./dashboard-card"
@@ -29,13 +29,12 @@ export default  function TabsWithTable(){
 
     const path = usePathname()
     const isCrm=path.includes("crm")
-    const activeFields = isCrm?CrmFields:SalesFields
-    //const activeFields = CrmFields
+    const activeFields = CrmFields
     const activeTableFields = path.includes("crm") ? CrmTableFields:SalesTableFields
 
     const [activeTab, setActiveTab] = useState<EntityKey >(activeFields[0])
 
-    const entity = useEntity(activeTab,{pagination, sorting})
+    const entity = useEntity<Crm>(activeTab,{pagination, sorting})
 
     const form = useForm({
         resolver: zodResolver(entity.schema),
@@ -113,9 +112,12 @@ export default  function TabsWithTable(){
          if (selectedItem) {
             const {Fournisseur,...rest}= selectedItem
             if(activeTab=="Contacts fournisseurs"){
-                            updateForm.reset({...normalizeKeys(rest),Fournisseur:selectedItem.fournisseurId,"Identifiant fiscal (IF)" : selectedItem.identifiantFiscal})
-            }else{
-                updateForm.reset({...normalizeKeys(rest),"Identifiant fiscal (IF)" : selectedItem.identifiantFiscal,"Modèle de contrat":selectedItem.modèleContrat,"Date de depart":selectedItem.dateDepart,"Date de fin":selectedItem.dateFin})
+                updateForm.reset({...normalizeKeys(rest),Fournisseur:selectedItem.fournisseurId,"Identifiant fiscal (IF)" : selectedItem.identifiantFiscal,Email:selectedItem.email || undefined})    
+            }else if(activeTab ==="Contacts"){
+                updateForm.reset({...normalizeKeys(rest),Email:selectedItem.email || undefined})
+            }
+            else{
+                updateForm.reset({...normalizeKeys(rest),"Identifiant fiscal (IF)" : selectedItem.identifiantFiscal,"Modèle de contrat":selectedItem.modèleContrat,"Date de depart":selectedItem.dateDepart,"Date de fin":selectedItem.dateFin,Email:selectedItem.email || undefined,Nom:selectedItem?.entreprise})
             }
           }
     }, [selectedItem, updateForm])

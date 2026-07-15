@@ -30,17 +30,12 @@ export async function POST(req:NextRequest){
             if(!success){
                 return Response.json({message:"Données invalides" +error},{status:400})
             }
-            await prisma.client.create({
-                data:{
-                    entreprise :nom,
-                    téléphone:téléphone,
-                    email:email,
-                    actif:"Oui"
-                }
-            })
-            await prisma.prospects.delete({
+            await prisma.client.update({
                 where:{
-                    id:id
+                    id
+                },
+                data:{
+                    type:"CLIENT"
                 }
             })
                  

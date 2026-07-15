@@ -22,8 +22,9 @@ export async function POST(req:NextRequest){
             const ids = Array.isArray(result.data)
                 ? result.data
                 : result.data.ids;
-            await prisma.prospects.deleteMany({
+            await prisma.client.deleteMany({
                 where: {
+                    type:"PROSPECT",
                     id: {
                         in: ids,
                     },

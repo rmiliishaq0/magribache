@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
       const { ICE,Entreprise, "Identifiant fiscal (IF)": identifiantFiscal,Actif,Téléphone,Catégories, Email ,Pays,Ville} = data
       const client = await prisma.client?.create({
         data: {
+            type:"CLIENT",
             entreprise :Entreprise,
             téléphone :Téléphone,
             email:Email,

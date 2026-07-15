@@ -22,9 +22,16 @@ export async function GET(req:NextRequest) {
         const sortBy = searchParams.get("sortBy") || "createdAt";
         const order = searchParams.get("order") || "desc";
 
-        const total = await prisma.prospects?.count();
-            
-        const prospects = await prisma.prospects?.findMany({
+        const allProspects = await prisma.client.findMany({
+            where:{
+                type:"PROSPECT"
+            }
+        });
+        const total = allProspects.length    
+        const prospects = await prisma.client?.findMany({
+            where:{
+                type:"PROSPECT"
+            },
             skip,
             take: limit,
             orderBy: {
