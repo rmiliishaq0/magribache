@@ -148,7 +148,3 @@ export const devisSchema = z.object({
     ).min(1)
  })
 
- export const crmSchema = z.union([
-    clientSchema,prospectsschema,contactsfournisseurSchema,fournisseurSchema,contactsschema,contratsschema
- ])
-

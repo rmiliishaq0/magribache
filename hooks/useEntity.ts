@@ -1,4 +1,4 @@
-import { entityConfig, EntityKey } from "@/utils/form-config";
+import { entityConfig, EntityKey } from "@/config/form-config";
 
 import {
   useCreateClients,

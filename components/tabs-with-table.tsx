@@ -2,7 +2,7 @@
 import {  useCallback, useEffect, useMemo, useState } from "react"
 import { usePathname } from "next/navigation"
 import TabsSwitch from "./Tabs"
-import { CrmFields, CrmTableFields ,SalesTableFields,FiledsNeedCards} from "@/utils/constants"
+import { CrmFields, CrmTableFields ,SalesTableFields,FiledsNeedCards} from "@/constants/constants"
 import  DataTable  from "./data-table"
 import { Card } from "./ui/card"
 import DashboardCard from "./dashboard-card"
@@ -11,7 +11,7 @@ import {SortingState} from "@tanstack/react-table";
 import AddDialog from "@/components/add-dialog";
 import {useForm} from "react-hook-form";
 import { useEntity } from "@/hooks/useEntity"
-import { EntityKey } from "@/utils/form-config"
+import { EntityKey } from "@/config/form-config"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner";
 import { normalizeKeys } from "@/lib/utils";
