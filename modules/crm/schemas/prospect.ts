@@ -24,7 +24,7 @@ export const crmSchema = z.object({
     rc:z.string().optional(),
     ifNumber:z.string().optional(),
 
-    activity:z.string().optional(),
+    activity:z.union([z.string().optional()]),
 
     companyType:z.enum(CompanyType).optional(),
 

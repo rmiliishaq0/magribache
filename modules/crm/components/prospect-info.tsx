@@ -1,8 +1,7 @@
-import { Button } from "@/components/ui/button";
+"use client"
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import {useCallback, useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import {
   Select,
@@ -10,89 +9,57 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import {
-    CompanyType,
-  PartnerPriority,
-  PartnerSource,
-  PartnerStatus,
-} from "@/app/generated/prisma/enums";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useProspectForm } from "@/modules/crm/hooks/forms";
-import { useCreateProspect } from "../hooks/mutations/use-create-prospect";
-import { z } from "zod";
+} from "@/components/ui/select"
+import { PartnerPriority, PartnerSource, PartnerStatus } from "@/app/generated/prisma/enums";
 import { Options } from "../constants/options-to-frensh";
-import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
-import { crmScemaWithId } from "../types";
-import {  crmSchema, crmSchemaWithRef } from "../schemas/prospect";
+import { useProspectForm } from "../hooks/forms";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { CompanyType } from "@/app/generated/prisma/browser";
+import { Pen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Spinner } from "@/components/ui/spinner";
+import { z } from "zod";
+import { crmSchema, crmSchemaWithRef } from "../schemas/prospect";
+import {fieldLabels} from "@/modules/crm/constants/options-to-frensh"
+import { format, setDate } from "date-fns";
+import { cn } from "@/lib/utils";
+import { priorityColors, statusColors } from "../constants/colors";
 import { useUpdateProspect } from "../hooks/mutations/use-update-prospect";
+import {ProspectStatus} from "@/modules/crm/types"
 import { SelectOption } from "../constants/select-option";
 
 
-export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof crmScemaWithId> | null, setItem:React.Dispatch<React.SetStateAction<z.infer<typeof crmScemaWithId> | null>>}) {
-    const updateMutate = useUpdateProspect()
-    const mutate = useCreateProspect()
-    const form= useProspectForm({defaultValues:{
-        companyName:item?.companyName || undefined,
-        fullName:item?.fullName || "",
-        email:item?.email || undefined,
-        phone:item?.phone || undefined,
-        whatsapp:item?.whatsapp || undefined,
-        website:item?.website || undefined,
-        address:item?.address || undefined,
-        city:item?.city || undefined,
-        region:item?.region || undefined,
-        country:item?.country || undefined,
-        ice:item?.ice || undefined,
-        rc:item?.rc || undefined,
-        ifNumber:item?.ifNumber || undefined,
-        activity:item?.activity || undefined,
-        source:item?.source || "OTHER",
-        status:item?.status || "NEW",
-        priority:item?.priority || "LOW",
-        notes:item?.notes || undefined,
-        nextFollowUpAt:item?.nextFollowUpAt || undefined,
-        companyType:item?.companyType || "INDIVIDUAL",
-
-    }})
+export default function ProspectInfo({prospect}:{prospect :z.infer<typeof crmSchemaWithRef>}){  
+    const [isEditing,setIsEditing] = useState(false)
+    const form= useProspectForm({})
+    useEffect(()=>{
+        form.reset(prospect)
+    },[form,prospect])
+    const mutate = useUpdateProspect()
     const onSubmit = useCallback((data:z.infer<typeof crmSchema>)=>{
-        updateMutate.mutate({...data,reference:item?.reference || ""},{onSuccess:()=>{
-            setItem(null)
-        }})
-    },[updateMutate])
-        useEffect(() => {
-            if (!item) return;
-            form.reset({
-                companyName:item?.companyName || undefined,
-        fullName:item?.fullName || "",
-        email:item?.email || undefined,
-        phone:item?.phone || undefined,
-        whatsapp:item?.whatsapp || undefined,
-        website:item?.website || undefined,
-        address:item?.address || undefined,
-        city:item?.city || undefined,
-        region:item?.region || undefined,
-        country:item?.country || undefined,
-        ice:item?.ice || undefined,
-        rc:item?.rc || undefined,
-        ifNumber:item?.ifNumber || undefined,
-        activity:item?.activity || undefined,
-        source:item?.source || "OTHER",
-        status:item?.status || "NEW",
-        priority:item?.priority || "LOW",
-        notes:item?.notes || undefined,
-        nextFollowUpAt:item?.nextFollowUpAt || undefined,
-        companyType:item?.companyType || "INDIVIDUAL",
-            })
-
-            }, [item,form]);
+        mutate.mutate({...data,reference:prospect?.reference})
+    },[mutate])
     return(
-        <>
-        <form  onSubmit={form.handleSubmit(onSubmit)} id="form">               
-             <ScrollArea className="h-[calc(90vh-130px)] overflow-y-auto" >
-
-            <FieldGroup className="p-4 flex flex-col gap-4">
+        <Card>
+            <CardHeader className="flex justify-between items-center">
+                <CardTitle className="text-lg font-bold text-secondary">Informations prospect</CardTitle>
+                <div className="flex gap-4 items-center">
+                    {!isEditing && <Button variant={"outline"} onClick={()=>{setIsEditing(true)}}><Pen/> Modifier</Button>}
+                    {isEditing &&<> 
+                        <Button form={"form"} disabled={!form.formState.isValid || mutate.isPending || form.formState.isSubmitting || !form.formState.isDirty}  type="submit">{mutate.isPending || form.formState.isSubmitting ? <Spinner />: "Modifier"}</Button>
+                        <Button variant="outline" onClick={()=>{setIsEditing(false)}}>Annuler</Button>
+                        </>
+                    }
+                </div>
+            </CardHeader>
+            <CardContent>
+                {isEditing ? 
+                     <form onSubmit={form.handleSubmit(onSubmit)}   id="form">               
+            <FieldGroup className="p-4 grid grid-cols-2 md:grid-cols-3 gap-4 items-center justify-center">
                     <Controller
                     name="companyName"
                     control={form.control}
@@ -341,6 +308,7 @@ export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof c
                     )}
                     />
 
+
                     <Controller
                         name="status"
                         control={form.control}
@@ -351,12 +319,12 @@ export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof c
                             <SelectTrigger>
                             <SelectValue placeholder="Choisir un statut" />
                             </SelectTrigger>
-                            <SelectContent>
-                            {SelectOption.map((item) => (
-                                <SelectItem key={item} value={item}>
-                                    {Options[item as keyof typeof Options]}
-                                </SelectItem>
-                            ))}
+                            <SelectContent className="w-fit h-fit" >
+                                {SelectOption.map((item) => (
+                                    <SelectItem key={item} value={item}>
+                                        {Options[item as keyof typeof Options]}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -449,17 +417,57 @@ export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof c
                         </Field>
                     )}
                     />
-            </FieldGroup>                    </ScrollArea>
+            </FieldGroup>            
+                </form>
+                :
+                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 items-center justify-center">
+                        {Object.entries(prospect).map(([key,value])=>{
+                            let url:string|undefined = undefined
+                            let badgeStyle= undefined
+                            let isBadge= false
+                            if(key =="id" || key =="activities" || key =="updatedAt" || key =="activities" || key=="type") return
+                            if(value && key && key =="status"){
+                                isBadge=true
+                                badgeStyle = statusColors[value as keyof typeof statusColors]
+                            }
+                            if(value && key && key=="priority"){
+                                isBadge=true
+                                badgeStyle = priorityColors[value as keyof typeof priorityColors]
+                                console.log(badgeStyle)
+                            }
+                            if(Object.keys(Options).includes(String(value))){
+                                value = Options[value as keyof typeof Options]
+                            }
+                            if(value && key && key =="email"){
+                                url = `mailto:${value}`
+                            }
+                            if(value && key && key =="whatsapp"){
+                                url = `https://wa.me/${value}`
+                            }
+                            if(value && key && key =="website"){
+                                url = String(value)
+                            }
+                            if(value && key && (key =="createdAt" || key=="nextFollowUpAt")){
+                                value = format(new Date(value),"PPP")
+                            }
+                            return <DataField isBadge={isBadge} badgeStyle={badgeStyle} key={key} field={fieldLabels[key as keyof typeof fieldLabels] ||key} value={String(value).trim()} url={url} />
+                        }
+                        )} 
 
-        </form>
-        <DrawerFooter>
-            <Button form={"form"} disabled={!form.formState.isValid || mutate.isPending || form.formState.isSubmitting || !form.formState.isDirty}  type="submit">
-                {mutate.isPending || form.formState.isSubmitting ? <Spinner />: "Modifier"}
-            </Button>
-            <DrawerClose asChild>
-                <Button variant="outline">Annuler</Button>
-            </DrawerClose>
-        </DrawerFooter>
+                   </div>
+                }
+            </CardContent>
+        </Card>
+    )
+}
+
+
+function DataField ({url,field,value,isBadge,badgeStyle}:{url?:string,field:string,value:string,isBadge?:boolean,badgeStyle?:string}){
+    return(
+         <>
+            <div>
+                <h3 className="text-secondary flex gap-4 text-start font-medium text-[16px] items-center">{field} : {isBadge ? <Badge className={cn("font-semibold",badgeStyle)}>{value}</Badge> : ( url ? <Button className="font-semibold" variant={"link"}><Link href={url} target="_blank">{value}</Link></Button> : <span className="font-semibold">{value}</span>)}</h3>
+            </div>
         </>
     )
 }

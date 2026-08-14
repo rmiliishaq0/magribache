@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import {useCallback, useEffect, useState } from "react";
+import React, { SetStateAction, useCallback } from "react";
 import { Controller } from "react-hook-form";
 import {
   Select,
@@ -13,86 +13,33 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
-    CompanyType,
   PartnerPriority,
   PartnerSource,
-  PartnerStatus,
 } from "@/app/generated/prisma/enums";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useProspectForm } from "@/modules/crm/hooks/forms";
 import { useCreateProspect } from "../hooks/mutations/use-create-prospect";
 import { z } from "zod";
+import { crmSchema } from "../schemas/prospect";
 import { Options } from "../constants/options-to-frensh";
-import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
-import { crmScemaWithId } from "../types";
-import {  crmSchema, crmSchemaWithRef } from "../schemas/prospect";
-import { useUpdateProspect } from "../hooks/mutations/use-update-prospect";
-import { SelectOption } from "../constants/select-option";
 
 
-export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof crmScemaWithId> | null, setItem:React.Dispatch<React.SetStateAction<z.infer<typeof crmScemaWithId> | null>>}) {
-    const updateMutate = useUpdateProspect()
+export default function ProspectForm({setIsOpen}:{setIsOpen:React.Dispatch<SetStateAction<boolean>>}){
     const mutate = useCreateProspect()
-    const form= useProspectForm({defaultValues:{
-        companyName:item?.companyName || undefined,
-        fullName:item?.fullName || "",
-        email:item?.email || undefined,
-        phone:item?.phone || undefined,
-        whatsapp:item?.whatsapp || undefined,
-        website:item?.website || undefined,
-        address:item?.address || undefined,
-        city:item?.city || undefined,
-        region:item?.region || undefined,
-        country:item?.country || undefined,
-        ice:item?.ice || undefined,
-        rc:item?.rc || undefined,
-        ifNumber:item?.ifNumber || undefined,
-        activity:item?.activity || undefined,
-        source:item?.source || "OTHER",
-        status:item?.status || "NEW",
-        priority:item?.priority || "LOW",
-        notes:item?.notes || undefined,
-        nextFollowUpAt:item?.nextFollowUpAt || undefined,
-        companyType:item?.companyType || "INDIVIDUAL",
-
-    }})
+    const form= useProspectForm({})
     const onSubmit = useCallback((data:z.infer<typeof crmSchema>)=>{
-        updateMutate.mutate({...data,reference:item?.reference || ""},{onSuccess:()=>{
-            setItem(null)
-        }})
-    },[updateMutate])
-        useEffect(() => {
-            if (!item) return;
-            form.reset({
-                companyName:item?.companyName || undefined,
-        fullName:item?.fullName || "",
-        email:item?.email || undefined,
-        phone:item?.phone || undefined,
-        whatsapp:item?.whatsapp || undefined,
-        website:item?.website || undefined,
-        address:item?.address || undefined,
-        city:item?.city || undefined,
-        region:item?.region || undefined,
-        country:item?.country || undefined,
-        ice:item?.ice || undefined,
-        rc:item?.rc || undefined,
-        ifNumber:item?.ifNumber || undefined,
-        activity:item?.activity || undefined,
-        source:item?.source || "OTHER",
-        status:item?.status || "NEW",
-        priority:item?.priority || "LOW",
-        notes:item?.notes || undefined,
-        nextFollowUpAt:item?.nextFollowUpAt || undefined,
-        companyType:item?.companyType || "INDIVIDUAL",
-            })
-
-            }, [item,form]);
+        mutate.mutate(data,{
+            onSuccess:()=>{
+                setIsOpen(false)
+                form.reset()
+            }
+        })
+    },[mutate])
     return(
-        <>
-        <form  onSubmit={form.handleSubmit(onSubmit)} id="form">               
-             <ScrollArea className="h-[calc(90vh-130px)] overflow-y-auto" >
+        <form className="flex flex-col gap-4 w-full " onSubmit={form.handleSubmit(onSubmit)} >
+        <ScrollArea className="h-96 w-full mb-14">
+            <FieldGroup className="grid grid-cols-2 p-4 gap-4 items-center justify-center relative">
 
-            <FieldGroup className="p-4 flex flex-col gap-4">
                     <Controller
                     name="companyName"
                     control={form.control}
@@ -105,28 +52,6 @@ export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof c
                             {...field}
                             value={field.value ?? ""}
                         />
-                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                        </Field>
-                    )}
-                    />
-                    <Controller
-                        name="companyType"
-                        control={form.control}
-                        render={({ field, fieldState }) => (
-                        <Field aria-invalid={fieldState.invalid}>
-                        <FieldLabel>Statut</FieldLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger>
-                            <SelectValue placeholder="Choisir un statut" />
-                            </SelectTrigger>
-                            <SelectContent>
-                            {Object.values(CompanyType).map((item) => (
-                                <SelectItem key={item} value={item}>
-                                    {Options[item]}
-                                </SelectItem>
-                            ))}
-                            </SelectContent>
-                        </Select>
                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
                     )}
@@ -341,28 +266,7 @@ export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof c
                     )}
                     />
 
-                    <Controller
-                        name="status"
-                        control={form.control}
-                        render={({ field, fieldState }) => (
-                        <Field aria-invalid={fieldState.invalid}>
-                        <FieldLabel>Statut</FieldLabel>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger>
-                            <SelectValue placeholder="Choisir un statut" />
-                            </SelectTrigger>
-                            <SelectContent>
-                            {SelectOption.map((item) => (
-                                <SelectItem key={item} value={item}>
-                                    {Options[item as keyof typeof Options]}
-                                </SelectItem>
-                            ))}
-                            </SelectContent>
-                        </Select>
-                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                        </Field>
-                    )}
-                    />
+        
 
                     <Controller
                     name="source"
@@ -390,11 +294,10 @@ export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof c
                     <Controller
                     name="priority"
                     control={form.control}
-                    render={({ field, fieldState }) => {
-                        console.log("field.value",field.value)
-                        return <Field aria-invalid={fieldState.invalid}>
+                    render={({ field, fieldState }) => (
+                        <Field aria-invalid={fieldState.invalid}>
                         <FieldLabel>Priorité</FieldLabel>
-                        <Select value={field.value || undefined} onValueChange={field.onChange}>
+                        <Select value={field.value} onValueChange={field.onChange}>
                             <SelectTrigger>
                             <SelectValue placeholder="Choisir une priorité" />
                             </SelectTrigger>
@@ -406,9 +309,9 @@ export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof c
                             ))}
                             </SelectContent>
                         </Select>
-                        {fieldState.invalid  && <FieldError errors={[fieldState.error]} />}
-                        </Field>}
-                    }
+                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </Field>
+                    )}
                     />
 
                     <Controller
@@ -432,9 +335,9 @@ export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof c
                     name="nextFollowUpAt"
                     control={form.control}
                     render={({ field, fieldState }) => (
-                        <Field aria-invalid={fieldState.invalid}>
+                        <Field aria-invalid={fieldState.invalid} className="col-span-2">
                         <FieldLabel htmlFor="nextFollowUpAt">Prochain suivi</FieldLabel>
-                        <Input
+                        <Input     
                             id="nextFollowUpAt"
                             type="date"
                             value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""}
@@ -449,17 +352,13 @@ export default function ProspectFormUpdate({item,setItem}:{item:z.infer<typeof c
                         </Field>
                     )}
                     />
-            </FieldGroup>                    </ScrollArea>
-
+                <div className="fixed bottom-2 bg-white left-0 right-0 p-4">
+                    <Button className="col-span-2 w-full" disabled={!form.formState.isValid || mutate.isPending || !form.formState.isDirty  } type="submit">
+                    {mutate.isPending || form.formState.isSubmitting ? <Spinner /> : "Enregistrer"}
+                </Button>
+                </div>
+            </FieldGroup>
+            </ScrollArea>
         </form>
-        <DrawerFooter>
-            <Button form={"form"} disabled={!form.formState.isValid || mutate.isPending || form.formState.isSubmitting || !form.formState.isDirty}  type="submit">
-                {mutate.isPending || form.formState.isSubmitting ? <Spinner />: "Modifier"}
-            </Button>
-            <DrawerClose asChild>
-                <Button variant="outline">Annuler</Button>
-            </DrawerClose>
-        </DrawerFooter>
-        </>
     )
 }

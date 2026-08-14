@@ -18,7 +18,7 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table"
 
-import {columns} from "@/modules/crm/columns"
+import {columns} from "@/modules/crm/columns/prospect"
 import { crmScemaWithId } from "@/modules/crm/types";
 import StatsCard from "@/components/stats-card";
 import { crmStats } from "@/modules/crm/constants/crm-stats";

@@ -29,9 +29,9 @@ export default function FilterBoardForm({data,form}:{data:z.infer<typeof crmScem
                         <Field aria-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="statut">Statut</FieldLabel>
                         <Select value={field.value ?? ""}
-  onValueChange={(value) =>
-    field.onChange(value === "" ? undefined : value)
-  }>
+                                onValueChange={(value) =>
+                                    field.onChange(value === "" ? undefined : value)
+                                }>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Tous"/>
                             </SelectTrigger>
@@ -58,9 +58,9 @@ export default function FilterBoardForm({data,form}:{data:z.infer<typeof crmScem
                         <Field aria-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="source">Source</FieldLabel>
                         <Select value={field.value ?? ""}
-  onValueChange={(value) =>
-    field.onChange(value === "" ? undefined : value)
-  } >
+                            onValueChange={(value) =>
+                                field.onChange(value === "" ? undefined : value)
+                            } >
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Toutes"/>
                             </SelectTrigger>
@@ -87,19 +87,19 @@ export default function FilterBoardForm({data,form}:{data:z.infer<typeof crmScem
                         <Field aria-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="ville">Ville</FieldLabel>
                         <Select value={field.value ?? ""}
-  onValueChange={(value) =>
-    field.onChange(value === "" ? undefined : value)
-  } disabled={!data?.some((i)=>i.region)}>
+                            onValueChange={(value) =>
+                                field.onChange(value === "" ? undefined : value)
+                            } disabled={!data?.some((i)=>i.region)}>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Toutes"/>
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
                                 <SelectLabel>Ville</SelectLabel>
-                                    {data.map(({region}) => (
-                                        region && (
-                                            <SelectItem key={region} value={region}>
-                                            {region}
+                                    {data.map(({city}) => (
+                                        city && (
+                                            <SelectItem key={city} value={city}>
+                                            {city}
                                         </SelectItem>
                                         )
                                     ))}
@@ -118,9 +118,9 @@ export default function FilterBoardForm({data,form}:{data:z.infer<typeof crmScem
                         <Field aria-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="region">Région</FieldLabel>
                         <Select value={field.value ?? ""}
-  onValueChange={(value) =>
-    field.onChange(value === "" ? undefined : value)
-  } disabled={!data.some(item => item.region)}>
+                                onValueChange={(value) =>
+                                    field.onChange(value === "" ? undefined : value)
+                                } disabled={!data.some(item => item.region)}>
                             <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Toutes"/>
                             </SelectTrigger>

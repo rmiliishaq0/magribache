@@ -6,6 +6,7 @@ import { activityRepository } from "@/modules/activity/activity.repository";
 import { FilterType } from "../types";
 import { Prisma } from "@/app/generated/prisma/client";
 import { logsRepository } from "@/modules/logs/logs-repository";
+import { revalidatePath } from "next/cache";
 
 export const prospectService = {
 
@@ -201,7 +202,8 @@ export const prospectService = {
         if (logs.length > 0) {
           await logsRepository.createMany(logs)
         }
-        
+        revalidatePath(`/admin/crm/`);
+
          return {
         success: true,
         message: "Partenaire mis à jour",
@@ -286,7 +288,8 @@ export const prospectService = {
             message:"Partenaire introuvable"
           }
         }
-        const client = await prospectRepository.convertToClient(parsedData)
+        const newReference = prospect.reference.replace("PR","CL")
+        const client = await prospectRepository.convertToClient(parsedData,newReference)
 
         await activityRepository.create({entityType:"PARTNER",action:"STATUS_CHANGED",note:"Partenaire converti en client.",partner:{connect:{id:client.id}}})
         

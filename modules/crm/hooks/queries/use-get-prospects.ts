@@ -1,4 +1,4 @@
-import { getProspects } from "@/utils/Apis";
+import { getProspects } from "@/modules/crm/api/get-prospects";
 import { useQuery } from "@tanstack/react-query";
 import { SortingState} from "@tanstack/react-table";
 import { z } from "zod";

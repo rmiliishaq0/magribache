@@ -77,17 +77,25 @@ export const prospectRepository = {
   },   
 
   async findByReference(reference:string){
-    return await prisma.businessPartner.findUnique({where:{reference}})
+    return await prisma.businessPartner.findUnique({where:{reference},include:{
+      activities: {
+        include: {
+          logs: true,
+        },
+      },
+      documents:true
+    }})
   },
   
   async delete(reference:string){
     return await prisma.businessPartner.update({where:{reference}, data:{type:"ARCHIVED"}})
   },
 
-  async convertToClient(reference:string){
+  async convertToClient(reference:string,newReference:string){
     return await prisma.businessPartner.update({
       where:{reference},
       data:{
+        reference:newReference,
         type:"CLIENT"
       }
     })
