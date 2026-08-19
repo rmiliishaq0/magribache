@@ -5,7 +5,7 @@ import { statusColors } from "../constants/colors";
 import { PartnerPriority, PartnerSource, PartnerStatus, Prisma } from "@/app/generated/prisma/client";
 import { SimpleIcon } from "simple-icons";
 import React from "react";
-import { ActivityType, DocumentStatus } from "@/app/generated/prisma/browser";
+import { ActivityType, CompanyType, DocumentStatus } from "@/app/generated/prisma/browser";
 
 export const crmScemaWithId = crmSchema.extend({id:z.number(),reference:z.string().optional()})
 
@@ -31,6 +31,7 @@ export type FilterType ={
     priority?: PartnerPriority;
     source?: PartnerSource;
     date?: {from?:string,to?:string}
+    companyType?:CompanyType
 }
 
 type BusinessPartner = Prisma.BusinessPartnerGetPayload<{}>

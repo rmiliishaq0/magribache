@@ -1,14 +1,16 @@
 import { getProspects } from "@/modules/crm/api/get-prospects";
 import { useQuery } from "@tanstack/react-query";
-import { SortingState} from "@tanstack/react-table";
 import { z } from "zod";
 import { filterSchema } from "../../schemas/filter";
+import { getClients } from "../../api/get-clients";
 
-export  function useGetProspects({activeFilters}: { activeFilters?:z.infer<typeof filterSchema>}) {
+
+
+export  function useGetClients({activeFilters}: { activeFilters?:z.infer<typeof filterSchema>}) {
   return useQuery({
-      queryKey: activeFilters ? ['prospects',activeFilters] :[],
+      queryKey: activeFilters ? ['clients',activeFilters] :['clients'],
       queryFn: async()=>{
-        if(activeFilters) {
+        if(activeFilters){
           const params = new URLSearchParams();
         Object.entries(activeFilters).forEach(([key, value]) => {
             if (
@@ -29,9 +31,9 @@ export  function useGetProspects({activeFilters}: { activeFilters?:z.infer<typeo
             }
             params.set(key, String(value));
           });
-        return getProspects(params);
+          return getClients(params);
         }
-        return getProspects();
+        return getClients();
       },
     })
 }

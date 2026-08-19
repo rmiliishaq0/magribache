@@ -11,7 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
-export default function TableCellViewerEntity({children,title,item,setItem}: EntityCellViewer) {
+export default function TableCellViewerEntity({children,title,item,setItem,link}: EntityCellViewer) {
     const isMobile = useIsMobile()
 
     return (
@@ -22,7 +22,7 @@ export default function TableCellViewerEntity({children,title,item,setItem}: Ent
         <DrawerHeader className=" gap-1">
           <div className="flex justify-between items-center">
             <DrawerTitle>{title}</DrawerTitle>
-              <Link href={`/admin/crm/${item?.reference }` || ""}><Button variant={"outline"}><ExternalLink/></Button></Link>
+              {link && <Link href={link}><Button variant={"outline"}><ExternalLink/></Button></Link>}
           </div>
         </DrawerHeader>
         {children}

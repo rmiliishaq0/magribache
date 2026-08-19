@@ -18,22 +18,25 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table"
 
-import {columns} from "@/modules/crm/columns/prospect"
 import { crmScemaWithId } from "@/modules/crm/types";
 import StatsCard from "@/components/stats-card";
-import { crmStats } from "@/modules/crm/constants/prospects-stats";
 import { statusColors } from "@/modules/crm/constants/colors";
 import EntityDialog from "@/components/entity-dialog";
-import ProspectForm from "@/modules/crm/components/prospect-form";
 import { useGetProspects } from "@/modules/crm/hooks/queries/use-get-prospects";
 import { useFilterBoard } from "@/modules/crm/hooks/forms";
 import { toast } from "sonner";
 import { filterSchema } from "@/modules/crm/schemas/filter";
 import TableCellViewerEntity from "@/components/table-cell-viewer-entity";
 import ProspectFormUpdate from "@/modules/crm/components/prospect-form-update";
-import FilterBoardForm from "@/modules/crm/components/filter-board-form";
+import { clientsStats } from "@/modules/clients/constants/clients-stats";
+import FilterBoardForm from "@/modules/clients/components/filter-board-form";
+import ClientForm from "@/modules/clients/components/client-form";
+import { columns } from "@/modules/clients/columns/client";
+import { useGetClients } from "@/modules/clients/hooks/queries/use-get-clients";
+import ClientFormUpdate from "@/modules/clients/components/client-form-update";
 
-export default function CrmPage() {
+
+export default function Clients() {
     const form= useFilterBoard()
     const [pagination, setPagination] =useState({
         pageIndex: 0,
@@ -83,14 +86,15 @@ export default function CrmPage() {
         );
         }, [filters]);
         
-    const {isPending,isError,error,data} = useGetProspects({activeFilters})
-    const dataWithoutFilters = useGetProspects({})
+    const {isPending,isError,error,data} = useGetClients({activeFilters})
 
-    const prospects:z.infer<typeof crmScemaWithId>[] = useMemo(()=>{
-        return data?.prospects?.prospects || []
-    },[data])
-    const prospectsWithoutFilters:z.infer<typeof crmScemaWithId>[] = useMemo(()=>{
-        return dataWithoutFilters?.data?.prospects?.prospects || []
+    const dataWithoutFilters = useGetClients({})
+
+    const clientsWithoutFilters:z.infer<typeof crmScemaWithId>[]  = useMemo(()=>{
+        return dataWithoutFilters?.data?.clients?.clients || []
+    },[dataWithoutFilters])    
+    const clients:z.infer<typeof crmScemaWithId>[] = useMemo(()=>{
+        return data?.clients?.clients || []
     },[data])
     
     useEffect(()=>{
@@ -98,7 +102,7 @@ export default function CrmPage() {
     },[isError])
 
     const table = useReactTable({
-    data:prospects,
+    data:clients,
     columns:columns({setItem}),
     state: {
       sorting,
@@ -125,22 +129,22 @@ export default function CrmPage() {
     return (
        <Card>
             <CardContent className=" space-y-6 mb-4">
-            <h2 className="text-2xl font-bold text-secondary mt-2 mb-6">Liste Des Prospects</h2>
+            <h2 className="text-2xl font-bold text-secondary mt-2 mb-6">Liste Des Clients</h2>
                 <div className="grid md:grid-cols-4 grid-cols-2 gap-4">
-                    {crmStats.map((i,index)=>(
-                <StatsCard key={index} Icon={i.icon} description={i.description} number={data?.prospects?.[i.accessKey] || 0} style={statusColors[i.style]}/>
+                    {clientsStats.map((i,index)=>(
+                <StatsCard key={index} Icon={i.icon} description={i.description} number={data?.clients?.[i.accessKey] || 0} style={statusColors[i.style]}/>
             ))}
                 </div>
-            <FilterBoard form={form} setIsOpen={setIsOpen} table={table} title="prospect" >
-                <FilterBoardForm form={form} data={prospectsWithoutFilters}/>
+            <FilterBoard form={form} setIsOpen={setIsOpen} table={table} title="clients" >
+                <FilterBoardForm form={form} data={clientsWithoutFilters}/>
             </FilterBoard>
             <DataTable<z.infer<typeof crmScemaWithId>> table={table} isPending={isPending} />
-                <EntityDialog  title="prospect" open={isOpen} setIsOpen={setIsOpen}>
-                    <ProspectForm setIsOpen={setIsOpen}/>
+                <EntityDialog title="prospect" open={isOpen} setIsOpen={setIsOpen}>
+                    <ClientForm setIsOpen={setIsOpen}/>
                 </EntityDialog>  
-            <TableCellViewerEntity link={`/admin/crm/${item?.reference}`} title={item?.reference || ""} item={item} setItem={setItem}>
+            <TableCellViewerEntity link={`/admin/clients/${item?.reference}`} title={item?.reference || ""} item={item} setItem={setItem}>
                 {
-                    item && <ProspectFormUpdate item={item} setItem={setItem} />
+                    item && <ClientFormUpdate item={item} setItem={setItem} />
                 }
             </TableCellViewerEntity>    
             </CardContent>

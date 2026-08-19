@@ -6,6 +6,7 @@ import {
   Package,
   PieChart,
   ShoppingCart,
+  UserRoundCheck,
   Users2,
 } from "lucide-react"
 import type { ColumnMeta } from "../types/types"
@@ -32,6 +33,11 @@ export const sideBarecontents = {
       title:"CRM",
       icon:Users2,
       href:"/admin/crm",
+    },
+    {
+      title:"Clients",
+      icon:UserRoundCheck,
+      href:"/admin/clients",
     },
     {
       title:"Clients",

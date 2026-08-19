@@ -1,5 +1,3 @@
-import { useCallback } from "react";
-import { useFilterBoard } from "../hooks/forms";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Controller, UseFormReturn } from "react-hook-form";
 import {
@@ -11,15 +9,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { PartnerPriority, PartnerSource, PartnerStatus } from "@/app/generated/prisma/enums";
 import { DatePickerWithRange } from "@/components/date-picker";
-import { Options } from "../constants/options-to-frensh";
 import { z } from "zod";
-import { crmScemaWithId } from "../types";
+import { crmScemaWithId } from "@/modules/crm/types";
 import { filterSchema } from "../schemas/filter";
+import { Options } from "@/modules/crm/constants/options-to-frensh";
 import { SelectOption } from "../constants/select-option";
+import { CompanyType } from "@/app/generated/prisma/browser";
+import { memo } from "react";
 
-export default function FilterBoardForm({data,form}:{data:z.infer<typeof crmScemaWithId>[],form:UseFormReturn<z.infer<typeof filterSchema>>}){
+export default memo(function FilterBoardForm({data,form}:{data:z.infer<typeof crmScemaWithId>[],form:UseFormReturn<z.infer<typeof filterSchema>>
+}){    
     return(
         <form>
             <FieldGroup className="flex gap-4 flex-row">
@@ -53,11 +53,11 @@ export default function FilterBoardForm({data,form}:{data:z.infer<typeof crmScem
                     />
 
                     <Controller
-                    name="source"
+                    name="companyType"
                     control={form.control}
                     render={({ field, fieldState }) => (
                         <Field aria-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="source">Source</FieldLabel>
+                        <FieldLabel htmlFor="source">Type client</FieldLabel>
                         <Select value={field.value ?? ""}
                             onValueChange={(value) =>
                                 field.onChange(value === "" ? undefined : value)
@@ -68,7 +68,7 @@ export default function FilterBoardForm({data,form}:{data:z.infer<typeof crmScem
                             <SelectContent>
                                 <SelectGroup>
                                 <SelectLabel>Source</SelectLabel>
-                                    {Object.values(PartnerSource).map((item) => (
+                                    {Object.values(CompanyType).map((item) => (
                                         <SelectItem key={item} value={item}>
                                             {Options[item]}
                                         </SelectItem>
@@ -155,36 +155,7 @@ export default function FilterBoardForm({data,form}:{data:z.infer<typeof crmScem
                     )}
                     />
 
-                     <Controller
-                    name="priority"
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                        <Field aria-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="priority">Priorité</FieldLabel>
-                        <Select value={field.value ?? ""}
-  onValueChange={(value) =>
-    field.onChange(value === "" ? undefined : value)
-  } >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Toutes"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                <SelectLabel>Priorité</SelectLabel>
-                                    {Object.values(PartnerPriority).map((item) => (
-                                        <SelectItem key={item} value={item}>
-                                            {Options[item]}
-                                        </SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                            </Select>
-                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                        </Field>
-                    )}
-                    />
-
             </FieldGroup>
         </form>
     )
-}
+})
