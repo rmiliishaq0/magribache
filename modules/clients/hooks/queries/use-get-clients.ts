@@ -4,11 +4,15 @@ import { z } from "zod";
 import { filterSchema } from "../../schemas/filter";
 import { getClients } from "../../api/get-clients";
 
+type Pagination={
+  pageIndex:number,
+  pageSize:number
+}
 
 
-export  function useGetClients({activeFilters}: { activeFilters?:z.infer<typeof filterSchema>}) {
+export  function useGetClients({activeFilters,pagination}: {pagination?:Pagination, activeFilters?:z.infer<typeof filterSchema>}) {
   return useQuery({
-      queryKey: activeFilters ? ['clients',activeFilters] :['clients'],
+      queryKey: activeFilters ? ['clients',activeFilters,pagination] :['clients'],
       queryFn: async()=>{
         if(activeFilters){
           const params = new URLSearchParams();
@@ -31,6 +35,8 @@ export  function useGetClients({activeFilters}: { activeFilters?:z.infer<typeof 
             }
             params.set(key, String(value));
           });
+          params.set("page",String(pagination?.pageIndex))
+          params.set("limit",String(pagination?.pageSize))
           return getClients(params);
         }
         return getClients();

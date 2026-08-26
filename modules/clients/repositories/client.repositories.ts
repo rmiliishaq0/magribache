@@ -12,7 +12,10 @@ export const clientRepository ={
         ...(filters.region && {region:filters.region}),
         ...(filters.companyType && {companyType:filters.companyType}),
         ...(filters.date?.from && {createdAt: { gte: startOfDay(filters.date.from)}}),
-        ...(filters.date?.to && {createdAt: {...(filters.date?.from && {gte: startOfDay(filters.date.from)}), lte: endOfDay(filters.date.to)}})}})
+        ...(filters.date?.to && {createdAt: {...(filters.date?.from && {gte: startOfDay(filters.date.from)}), lte: endOfDay(filters.date.to)}})},
+        take:filters.take,
+        skip:filters.skip
+      })
       },
       async getActiveClients(){
         return prisma.businessPartner.findMany({where:{type:"CLIENT",status:"ACTIVE"}})
@@ -25,5 +28,17 @@ export const clientRepository ={
       },
       async getNeedFollowUP(){
         return prisma.businessPartner.findMany({where:{type:"CLIENT",status:"TO_MONITOR"}})
-      }
+      },
+      async getAllByFilter(filters: FilterType){
+    return prisma.businessPartner.findMany({
+      where:{
+        type:"CLIENT",
+        ...(filters.status && {status:filters.status}),
+        ...(filters.city && {city:filters.city}),
+        ...(filters.region && {region:filters.region}),
+        ...(filters.companyType && {companyType:filters.companyType}),
+        ...(filters.date?.from && {createdAt: { gte: startOfDay(filters.date.from)}}),
+        ...(filters.date?.to && {createdAt: {...(filters.date?.from && {gte: startOfDay(filters.date.from)}), lte: endOfDay(filters.date.to)}})},
+      })
+      },
 }

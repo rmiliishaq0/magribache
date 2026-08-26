@@ -86,7 +86,7 @@ export default function Clients() {
         );
         }, [filters]);
         
-    const {isPending,isError,error,data} = useGetClients({activeFilters})
+    const {isPending,isError,error,data} = useGetClients({pagination:{...pagination,pageIndex:pagination.pageIndex+1},activeFilters})
 
     const dataWithoutFilters = useGetClients({})
 
@@ -100,7 +100,9 @@ export default function Clients() {
     useEffect(()=>{
         if(isError) toast.error(error?.message  || "Une erreur s'est produite")
     },[isError])
-
+    const total = useMemo(()=>{
+        return data?.clients?.total || 1
+    },[data])
     const table = useReactTable({
     data:clients,
     columns:columns({setItem}),
@@ -118,6 +120,8 @@ export default function Clients() {
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: setPagination,
+    manualPagination:true,
+    pageCount:Math.ceil(total/pagination.pageSize),
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

@@ -98,7 +98,7 @@ export default function ProspectHeader({prospect}:{prospect :z.infer<typeof crmS
                         const value = prospect?.[i.accessKey as keyof typeof prospect] || undefined
  
                         const displayValue =
-                            value == null
+                            value == undefined
                             ? "Pas de relance"
                             : i.accessKey === "nextFollowUpAt"
                                 ? (isAfter(new Date(value),new Date()) ? format(new Date(value), "PP") : "Pas de relance")

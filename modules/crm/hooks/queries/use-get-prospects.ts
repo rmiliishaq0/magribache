@@ -1,12 +1,15 @@
 import { getProspects } from "@/modules/crm/api/get-prospects";
 import { useQuery } from "@tanstack/react-query";
-import { SortingState} from "@tanstack/react-table";
 import { z } from "zod";
 import { filterSchema } from "../../schemas/filter";
+type Pagination={
+  pageIndex:number,
+  pageSize:number
+}
 
-export  function useGetProspects({activeFilters}: { activeFilters?:z.infer<typeof filterSchema>}) {
+export  function useGetProspects({pagination,activeFilters}: {pagination?:Pagination, activeFilters?:z.infer<typeof filterSchema>}) {
   return useQuery({
-      queryKey: activeFilters ? ['prospects',activeFilters] :[],
+      queryKey: activeFilters ? ['prospects',activeFilters,pagination] :[],
       queryFn: async()=>{
         if(activeFilters) {
           const params = new URLSearchParams();
@@ -28,7 +31,9 @@ export  function useGetProspects({activeFilters}: { activeFilters?:z.infer<typeo
               return;
             }
             params.set(key, String(value));
-          });
+          })
+          params.set("page",String(pagination?.pageIndex))
+          params.set("limit",String(pagination?.pageSize))
         return getProspects(params);
         }
         return getProspects();

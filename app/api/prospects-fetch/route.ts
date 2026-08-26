@@ -14,7 +14,11 @@ export async function GET(req:NextRequest){
         const from = (params.get("from")||undefined)
         const to =(params.get("to")||undefined)
 
-        const prospects = await prospectService.get({source,status:statut,priority,city,region,date:{from,to}})
+        const page = Number(params.get("page") ?? 1);
+        const limit = Number(params.get("limit") ?? 10);
+        const skip = (page-1)*limit
+        
+        const prospects = await prospectService.get({skip,take:limit, source,status:statut,priority,city,region,date:{from,to}})
         return Response.json({prospects },{status:200})
     }catch(err){
         return Response.json({message:"Une erreur s'est produite"},{status:500})

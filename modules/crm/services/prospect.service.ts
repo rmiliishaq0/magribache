@@ -96,6 +96,7 @@ export const prospectService = {
           message: "Unauthorized",
         };
         }
+        const total = (await prospectRepository.getAllByFilter(filters)).length
         const prospects = await prospectRepository.findByFilters(filters)
         const followUp = (await prospectRepository.getFollowUpToday()).length
         const win = (await prospectRepository.getWinClients()).length
@@ -108,7 +109,8 @@ export const prospectService = {
           followUp,
           win,
           lost,
-          newClients
+          newClients,
+          total
         };
     }catch(err){
         console.error(err)

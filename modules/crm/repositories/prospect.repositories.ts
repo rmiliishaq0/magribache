@@ -25,7 +25,7 @@ export const prospectRepository = {
       where:{
         type:"PROSPECT",
       }
-    })
+      })
   },
   async findByEmail(email:string){
     return await prisma.businessPartner.findUnique({where:{email}})
@@ -66,8 +66,12 @@ export const prospectRepository = {
         ...(filters.region && {region:filters.region}),
         ...(filters.source && {source:filters.source}),
         ...(filters.date?.from && {createdAt: { gte: startOfDay(filters.date.from)}}),
-        ...(filters.date?.to && {createdAt: {...(filters.date?.from && {gte: startOfDay(filters.date.from)}), lte: endOfDay(filters.date.to)}})}})
+        ...(filters.date?.to && {createdAt: {...(filters.date?.from && {gte: startOfDay(filters.date.from)}), lte: endOfDay(filters.date.to)}})
       },
+      take:filters.take,
+      skip:filters.skip   
+    })     
+  },
 
   async update(data:Prisma.BusinessPartnerCreateInput) {
     return await prisma.businessPartner.update({
@@ -99,5 +103,19 @@ export const prospectRepository = {
         type:"CLIENT"
       }
     })
-  }
+  },
+  async getAllByFilter(filters: FilterType){
+    return prisma.businessPartner.findMany({
+      where:{
+        type:"PROSPECT",
+        ...(filters.status && {status:filters.status}),
+        ...(filters.city && {city:filters.city}),
+        ...(filters.priority && {priority:filters.priority}),
+        ...(filters.region && {region:filters.region}),
+        ...(filters.source && {source:filters.source}),
+        ...(filters.date?.from && {createdAt: { gte: startOfDay(filters.date.from)}}),
+        ...(filters.date?.to && {createdAt: {...(filters.date?.from && {gte: startOfDay(filters.date.from)}), lte: endOfDay(filters.date.to)}})
+      }
+    })     
+  },
 }

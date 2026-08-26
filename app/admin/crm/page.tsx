@@ -83,7 +83,7 @@ export default function CrmPage() {
         );
         }, [filters]);
         
-    const {isPending,isError,error,data} = useGetProspects({activeFilters})
+    const {isPending,isError,error,data} = useGetProspects({pagination:{...pagination,pageIndex:pagination.pageIndex+1},activeFilters})
     const dataWithoutFilters = useGetProspects({})
 
     const prospects:z.infer<typeof crmScemaWithId>[] = useMemo(()=>{
@@ -91,12 +91,14 @@ export default function CrmPage() {
     },[data])
     const prospectsWithoutFilters:z.infer<typeof crmScemaWithId>[] = useMemo(()=>{
         return dataWithoutFilters?.data?.prospects?.prospects || []
-    },[data])
+    },[dataWithoutFilters])
     
     useEffect(()=>{
         if(isError) toast.error(error?.message  || "Une erreur s'est produite")
     },[isError])
-
+    const total = useMemo(()=>{
+        return data?.prospects?.total || 1
+    },[data])
     const table = useReactTable({
     data:prospects,
     columns:columns({setItem}),
@@ -113,6 +115,8 @@ export default function CrmPage() {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
+    manualPagination:true,
+    pageCount:Math.ceil(total/pagination.pageSize),
     onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

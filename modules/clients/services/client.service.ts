@@ -92,6 +92,7 @@ export const clientService = {
           message: "Unauthorized",
         };
         }
+        const total = (await clientRepository.getAllByFilter(filters)).length
         const clients = await clientRepository.findByFilters(filters)
         const goodClients = (await clientRepository.getGoodClients()).length
         const needFollowUP = (await clientRepository.getNeedFollowUP()).length
@@ -103,7 +104,8 @@ export const clientService = {
           goodClients,
           needFollowUP,
           activeClients,
-          newClients
+          newClients,
+          total
         };
     }catch(err){
         console.error(err)

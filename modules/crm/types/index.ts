@@ -32,6 +32,8 @@ export type FilterType ={
     source?: PartnerSource;
     date?: {from?:string,to?:string}
     companyType?:CompanyType
+    take?:number
+    skip?:number
 }
 
 type BusinessPartner = Prisma.BusinessPartnerGetPayload<{}>
