@@ -7,6 +7,6 @@ export type EntityCellViewer = {
     children:React.ReactNode,
     title?:string
     ModifyButton?: React.ReactNode
-    item:z.infer<typeof crmScemaWithId> | null
-    setItem:React.Dispatch<React.SetStateAction<z.infer<typeof crmScemaWithId> | null>>
+    item:any
+    setItem:React.Dispatch<React.SetStateAction<any>>
 }

@@ -1,10 +1,10 @@
 "use client"
 
 import { useAuthStore } from "@/stores/auth-store"
-import { devisSchema } from "@/utils/schema"
 import { UseFormReturn } from "react-hook-form"
 import {z} from "zod"
 import Image from "next/image";
+import { devisSchema } from "@/modules/devis/schemas/devis";
 
 
 interface DevisPreviewProps {

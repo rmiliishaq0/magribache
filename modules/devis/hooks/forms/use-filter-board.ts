@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { filterSchema } from "../../schemas/filter";
+import { filterSchema } from "../../schemas/devis-filter-schema";
 
 export function useFilterBoard(){
     return useForm<z.infer<typeof filterSchema>>({
@@ -10,9 +10,8 @@ export function useFilterBoard(){
         reValidateMode:"onChange",
         defaultValues:{
             city:"",
-            region:"",
-            source:undefined,
             statut:undefined,
-            priority:undefined,
+            date:{from:undefined,to:undefined},
+            client:undefined
         }
 })}

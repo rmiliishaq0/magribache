@@ -1,3 +1,4 @@
+"use client"
 import {Card, CardContent, CardHeader} from "@/components/ui/card"
 import { filterBoard } from "@/types/filter-board";
 import { Button } from "./ui/button";
@@ -5,9 +6,11 @@ import {Download, Plus, RefreshCcw} from "lucide-react"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { IconChevronDown, IconLayoutColumns } from "@tabler/icons-react";
 import { useExport } from "@/modules/crm/hooks/export/use-export-to-csv";
+import { useRouter } from "next/navigation";
 
-export default function FilterBoard({title,table,setIsOpen,children,form}:filterBoard){ 
-    const {exportCsv}= useExport({filename:"prospects",table})
+export default function FilterBoard({title,table,setIsOpen,children,form,link}:filterBoard){ 
+    const {exportCsv}= useExport({filename:title,table})
+    const router = useRouter()
     return(
         <Card className="p-4">
             <CardHeader>
@@ -51,7 +54,7 @@ export default function FilterBoard({title,table,setIsOpen,children,form}:filter
                         </DropdownMenu>
                 </div>
                 <div className="flex gap-2 items-center">
-                    <Button onClick={()=>setIsOpen(true)}><Plus/> Nouveau {title}</Button>
+                    <Button onClick={()=>link ? router.push("/admin/devis/create") : setIsOpen && setIsOpen(true)}><Plus/> Nouveau {title}</Button>
                     <Button onClick={exportCsv} variant={"outline"}><Download/> Exporter</Button>
                 </div>             
             </CardContent>

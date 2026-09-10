@@ -6,6 +6,7 @@ import { PartnerPriority, PartnerSource, PartnerStatus, Prisma } from "@/app/gen
 import { SimpleIcon } from "simple-icons";
 import React from "react";
 import { ActivityType, CompanyType, DocumentStatus } from "@/app/generated/prisma/browser";
+import { Decimal } from "@prisma/client/runtime/client";
 
 export const crmScemaWithId = crmSchema.extend({id:z.number(),reference:z.string().optional()})
 
@@ -67,7 +68,7 @@ export type Devis =  {
     id:number
     numero: String,
     createdAt:Date,
-    montantTTC:number,
+    montantTTC:Decimal,
     status:DocumentStatus
 }
 

@@ -88,11 +88,29 @@ enum DocumentType {
   FACTURE
 }
 
+
 enum DocumentStatus {
-  BROUILLON
-  ENVOYE
-  PAYE
-  ANNULE
+  DRAFT
+
+  // Quote
+  SENT
+  UNDER_NEGOTIATION
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CONVERTED_TO_ORDER
+
+  // General
+  VALIDATED
+  CANCELLED
+  CLOSED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
 }
 
 enum EntityType {
@@ -242,7 +260,7 @@ model Activity {
 
   logs ActivityLog[]
 
-  documentId String?
+  documentId Int?
   document Document? @relation(fields: [documentId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
@@ -330,56 +348,54 @@ model ActivityLog {
 //     updatedAt DateTime @updatedAt()
 // }
 
-
 model Document {
-  id String @id @default(uuid())
-
-  numero String @unique
+  id Int @id @default(autoincrement())
 
   type DocumentType
+  status DocumentStatus @default(DRAFT)
 
-  status DocumentStatus @default(BROUILLON)
+  paymentStatus PaymentStatus @default(UNPAID)
 
-  reference String?
-
+  reference String @unique
   objet String?
 
   clientId Int
-
-  client BusinessPartner @relation(fields: [clientId], references: [id],onDelete: Cascade,onUpdate: Cascade)
+  client BusinessPartner @relation(fields: [clientId],references: [id],onDelete: Restrict,onUpdate: Cascade)
 
   dateDocument DateTime @default(now())
+  dateValidite DateTime?
 
-  dateValidite String?
-
-  devise String? @default("MAD")
+  devise String @default("MAD")
 
   notes String?
-
   conditions String?
 
-  remise Float @default(0)
+  remise Decimal @default(0) @db.Decimal(15, 2)
+  ajustement Decimal @default(0) @db.Decimal(15, 2)
 
-  ajustement Float @default(0)
-
-  montantHT Float @default(0)
-
-  montantTVA Float @default(0)
-
-  montantTTC Float @default(0)
+  montantHT Decimal @default(0) @db.Decimal(15, 2)
+  montantTVA Decimal @default(0) @db.Decimal(15, 2)
+  montantTTC Decimal @default(0) @db.Decimal(15, 2)
+  
+  sentAt  DateTime?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  updatedAt DateTime @updatedAt
 
   items DocumentItem[]
-
   activity Activity[]
+
+  @@index([type])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([clientId])
+  @@index([dateDocument])
 }
 
 model DocumentItem {
-  id String @id @default(uuid())
+  id Int @id @default(autoincrement())
 
-  documentId String
+  documentId Int
   document Document @relation(fields: [documentId], references: [id], onDelete: Cascade,onUpdate: Cascade)
 
   article String
@@ -399,4 +415,6 @@ model DocumentItem {
   montantTTC Float @default(0)
 
   createdAt DateTime @default(now())
+  @@index([documentId])
+
 }

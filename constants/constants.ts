@@ -8,6 +8,7 @@ import {
   ShoppingCart,
   UserRoundCheck,
   Users2,
+  FileText
 } from "lucide-react"
 import type { ColumnMeta } from "../types/types"
 import { EntityKey } from "../config/form-config"
@@ -39,10 +40,10 @@ export const sideBarecontents = {
       icon:UserRoundCheck,
       href:"/admin/clients",
     },
-    {
-      title:"Clients",
-      icon:Banknote,
-      href:"/admin/sales",
+     {
+      title:"Devis",
+      icon:FileText,
+      href:"/admin/devis",
     },
     {
       title:"Achats",

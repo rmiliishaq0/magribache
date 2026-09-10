@@ -25,7 +25,7 @@ import { z } from "zod";
 import { Options } from "../constants/options-to-frensh";
 import { DrawerClose, DrawerFooter } from "@/components/ui/drawer";
 import { crmScemaWithId } from "../types";
-import {  crmSchema, crmSchemaWithRef } from "../schemas/prospect";
+import {  crmSchema } from "../schemas/prospect";
 import { useUpdateProspect } from "../hooks/mutations/use-update-prospect";
 import { SelectOption } from "../constants/select-option";
 

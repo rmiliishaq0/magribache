@@ -2,8 +2,7 @@
 import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
-import { Spinner } from "./ui/spinner"
-import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from "./ui/select"
+import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem, SelectLabel, SelectGroup } from "./ui/select"
 import { Card } from "./ui/card"
 import {
     Table,
@@ -18,11 +17,22 @@ import { closestCenter, DndContext } from "@dnd-kit/core"
 import { Plus, TrashIcon } from "lucide-react"
 import { Textarea } from "./ui/textarea"
 import { Separator } from "./ui/separator"
-import { Controller, useFieldArray, UseFormReturn } from "react-hook-form"
+import { Controller, useFieldArray } from "react-hook-form"
 import z from "zod"
-import { devisSchema } from "@/utils/schema"
+import { DocFormProps } from "@/modules/devis/types";
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from "@/components/ui/combobox"
+import { DocumentStatus } from "@/app/generated/prisma/browser";
+import { documentStatusLabels } from "@/modules/devis/constants/options-to-frensh";
 
-export default function DocForm({form,client,onSubmit}:{form:UseFormReturn<z.infer< typeof devisSchema>>,client:any,onSubmit:(data:z.infer<typeof devisSchema>)=>void}) {
+
+export default function DocForm({form,clients,onSubmit}:DocFormProps) {
     const { fields, append, remove } = useFieldArray({
         control:form.control,
         name:"items"
@@ -48,30 +58,53 @@ export default function DocForm({form,client,onSubmit}:{form:UseFormReturn<z.inf
     const total = subtotal + totalTax
 
     return (
-        <Card className="w-full p-4 ">
+        <Card className="p-6 flex-1 border border-bg">
             <form id="devis" className="mt-4 flex flex-col gap-4 w-full" onSubmit={form.handleSubmit(onSubmit)}>                
             <h3 className="font-bold text-secondary text-[1rem]">Informations generales</h3>
             <FieldGroup className="grid grid-cols-2">
                 <Controller
                     name="client"
                     control={form.control}
-                    render={({field ,fieldState}) => (
-                        <Field>
-                            <FieldLabel aria-invalid={fieldState.invalid} htmlFor="client">Client</FieldLabel>
-                            <Select value={field.value} onValueChange={field.onChange}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select a client" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {client?.map((i:any)=>(
-                                        <SelectItem key={i.id} value={i.id}>{i?.entreprise}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    render={({ field, fieldState }) => {
+                            const selectedClient = clients?.find((client) => client.value === field.value) ?? null;
+                        return(
+                        <Field aria-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="client">Client</FieldLabel>
+
+                        <Combobox
+                            virtualized
+                            value={selectedClient}
+                            onValueChange={(value) => {
+                            field.onChange(value || "");
+                            }}
+                            items={clients ?? []}
+                            >
+                            <ComboboxInput
+                                aria-invalid={fieldState.invalid}
+                                placeholder="Toutes"
+                                showClear
+                                disabled={!clients?.length}
+                            />
+
+                            <ComboboxContent>
+                            <ComboboxEmpty>Aucun client trouvé.</ComboboxEmpty>
+
+                            <ComboboxList>
+                                {(item) => (
+                                <ComboboxItem key={item.value} value={item.value}>
+                                    {item.label}
+                                </ComboboxItem>
+                                )}
+                            </ComboboxList>
+                            </ComboboxContent>
+                        </Combobox>
+
+                        {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                        )}
                         </Field>
-                    )}
-                />
+                    )}}
+                    />
                 <Controller
                     name="devisDate"
                     control={form.control}
@@ -80,29 +113,6 @@ export default function DocForm({form,client,onSubmit}:{form:UseFormReturn<z.inf
                             <FieldLabel htmlFor="objet">Date du devis
                             </FieldLabel>
                             <Input aria-invalid={fieldState.invalid} type="date" id="dateDocument" {...field} />
-                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                        </Field>
-                    )}
-                />
-                <Controller
-                    name="dateValidite"
-                    control={form.control}
-                    render={({field,fieldState})=>(
-                        <Field aria-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor="dateDocument">Date de validité
-                            </FieldLabel>
-                            <Input aria-invalid={fieldState.invalid} type="date" id="dateValidite" {...field}/>
-                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                        </Field>
-                    )}
-                />
-                <Controller 
-                    name="reference"
-                    control={form.control}
-                    render={({field,fieldState})=>(
-                        <Field aria-invalid={fieldState.invalid}>
-                            <FieldLabel htmlFor="reference">Référence</FieldLabel>
-                            <Input aria-invalid={fieldState.invalid} type="text" id="reference" placeholder="Référence" {...field}/>
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
                     )}
@@ -138,14 +148,30 @@ export default function DocForm({form,client,onSubmit}:{form:UseFormReturn<z.inf
                         <SelectValue placeholder="Select a statut" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="BROUILLON">BROUILLON</SelectItem>
-                        <SelectItem value="ENVOYE">ENVOYE</SelectItem>
-                        <SelectItem value="PAYE">PAYE</SelectItem>
-                        <SelectItem value="ANNULE">ANNULE</SelectItem>
+                        <SelectGroup>
+                            <SelectLabel>Statut</SelectLabel>
+                                {Object.values(DocumentStatus).map((item) => (
+                                    <SelectItem key={item} value={item}>
+                                        {documentStatusLabels[item]}
+                                    </SelectItem>
+                            ))}
+                        </SelectGroup>    
                     </SelectContent>
                 </Select>
                     {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                 </Field>
+                    )}
+                />
+                <Controller
+                    name="dateValidite"
+                    control={form.control}
+                    render={({field,fieldState})=>(
+                        <Field aria-invalid={fieldState.invalid} className="col-span-2">
+                            <FieldLabel htmlFor="dateDocument">Date de validité
+                            </FieldLabel>
+                            <Input aria-invalid={fieldState.invalid} type="date" id="dateValidite" {...field}/>
+                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </Field>
                     )}
                 />
             </FieldGroup>
@@ -158,7 +184,11 @@ export default function DocForm({form,client,onSubmit}:{form:UseFormReturn<z.inf
             quantity:1,
             unitPrice:0,
             tax:20
-        })
+        },
+  {
+    shouldFocus: true,
+    focusIndex: fields.length,
+  })
     } size={"sm"} className="cursor-pointer"><Plus/> Ajouter Un Article</Button>
                 </div>
                 <div className="overflow-hidden rounded-lg border">
@@ -184,7 +214,7 @@ export default function DocForm({form,client,onSubmit}:{form:UseFormReturn<z.inf
               </TableHeader>
               <TableBody>
                   {fields.map((f,i)=>(
-                    <TableRow>
+                    <TableRow key={f.id}>
                         <TableCell>{i+1}</TableCell>
                         <TableCell>
                         <Controller
@@ -192,7 +222,9 @@ export default function DocForm({form,client,onSubmit}:{form:UseFormReturn<z.inf
                             control={form.control}
                             render={({field}) => (
                                 <Input
+
                                     {...field}
+                                    ref={field.ref}
                                     type="text"
                                     placeholder="Article"
                                 />

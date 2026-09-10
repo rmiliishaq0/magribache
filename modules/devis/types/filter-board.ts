@@ -1,17 +1,16 @@
 import { crmScemaWithId } from "@/modules/crm/types";
-import { devisSchemaWithId } from "@/modules/devis/schemas/devis";
 import { Table } from "@tanstack/react-table";
 import React, { SetStateAction } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
+import { filterSchema } from "../schemas/devis-filter-schema";
 
 
 export type filterBoard = {
     title:string
-    table:Table<any>
-    setIsOpen?:React.Dispatch<SetStateAction<boolean>>
+    table:Table<z.infer<typeof crmScemaWithId>>
+    setIsOpen:React.Dispatch<SetStateAction<boolean>>
     children:React.ReactNode,
-    form:UseFormReturn<any>,
-    link?:string
+    form:UseFormReturn<z.infer< typeof filterSchema>>
 }
 
