@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  name         String?
+  password     String
+  email        String?  @unique
+  phone        String?
+  address      String?
+  website      String?
+  description  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  logo         String?
+  profilIcon   String?
+  defaultColor String?
+  footerText   String?
+  signature    String?
+  tasks        Task[]
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  status      String
+  priority    String
+  dueDate     DateTime?
+  projet      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  adminId     String
+  admin       Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+}
+
+model BusinessPartner {
+  reference      String          @unique
+  status         PartnerStatus   @default(NEW)
+  companyType    CompanyType     @default(INDIVIDUAL)
+  companyName    String?
+  email          String?         @unique
+  phone          String?         @unique
+  whatsapp       String?         @unique
+  website        String?
+  address        String?
+  city           String?
+  region         String?
+  country        String?         @default("Maroc")
+  ice            String?
+  rc             String?
+  ifNumber       String?
+  activity       String?
+  source         PartnerSource   @default(OTHER)
+  priority       PartnerPriority @default(MEDIUM)
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  fullName       String?
+  type           PartnerType     @default(PROSPECT)
+  id             Int             @id @default(autoincrement())
+  nextFollowUpAt DateTime?
+  activities     Activity[]
+  documents      Document[]
+
+  @@index([status])
+}
+
+model Activity {
+  id         String           @id @default(cuid())
+  entityType EntityType
+  action     ActivityType
+  note       String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  partnerId  Int?
+  documentId Int?
+  document   Document?        @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  partner    BusinessPartner? @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  logs       ActivityLog[]
+
+  @@index([partnerId])
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  activityId String
+  field      String
+  oldValue   String?
+  newValue   String?
+  createdAt  DateTime @default(now())
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@index([activityId])
+}
+
+
+
+model Document {
+  id            Int            @id @default(autoincrement())
+  type          DocumentType
+  status        DocumentStatus @default(DRAFT)
+  reference     String         @unique
+
+  documentDate  DateTime       @default(now())
+  currency      String         @default("MAD")
+  notes         String?
+  conditions String?
+
+  discount      Decimal        @default(0) @db.Decimal(15, 2)
+  adjustment    Decimal        @default(0) @db.Decimal(15, 2)
+  subtotal      Decimal        @default(0) @db.Decimal(15, 2)
+  taxAmount     Decimal        @default(0) @db.Decimal(15, 2)
+  totalAmount   Decimal        @default(0) @db.Decimal(15, 2)
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  clientId      Int
+  paymentStatus PaymentStatus  @default(UNPAID)
+  validUntil    DateTime?
+  sentAt        DateTime?
+
+  activity      Activity[]
+  client        BusinessPartner @relation(fields: [clientId], references: [id])
+  items         DocumentItem[]
+
+  @@index([type])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([clientId])
+  @@index([documentDate])
+}
+
+model DocumentItem {
+  id          Int      @id @default(autoincrement())
+  product     String
+  description String?
+  quantity    Float    @default(1)
+  unitPrice   Float    @default(0)
+  tax     Float    @default(0)
+  //discount    Float    @default(0)
+  //subtotal    Float    @default(0)
+  //totalAmount Float    @default(0)
+
+  createdAt   DateTime @default(now())
+
+  documentId  Int
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+}
+
+enum PartnerType {
+  PROSPECT
+  CLIENT
+  ARCHIVED
+}
+
+enum CompanyType {
+  INDIVIDUAL
+  FARMER
+  COMPANY
+  RESELLER
+  ADMINISTRATION
+  ASSOCIATION
+}
+
+enum PartnerPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum PartnerSource {
+  PHONE
+  WHATSAPP
+  FACEBOOK
+  INSTAGRAM
+  WEBSITE
+  TIKTOK
+  LINKEDIN
+  VISIT
+  REFERRAL
+  OTHER
+}
+
+enum PartnerStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  QUOTE_TO_PREPARE
+  QUOTE_SENT
+  NEGOTIATION
+  WON
+  LOST
+  FOLLOW_UP_LATER
+  ACTIVE
+  GOOD_CLIENT
+  TO_MONITOR
+  INACTIVE
+  BLOCKED
+}
+
+enum ActivityType {
+  CREATED
+  UPDATED
+  DELETED
+  NOTE
+  CALL
+  EMAIL
+  WHATSAPP
+  MEETING
+  STATUS_CHANGED
+  PDF_GENERATED
+  SENT
+  PAYMENT_RECEIVED
+  STARTED
+  COMPLETED
+}
+
+enum DocumentType {
+  DEVIS
+  FACTURE
+}
+
+enum DocumentStatus {
+  DRAFT
+  SENT
+  UNDER_NEGOTIATION
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CONVERTED_TO_ORDER
+  VALIDATED
+  CANCELLED
+  CLOSED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+}
+
+enum EntityType {
+  PARTNER
+  DOCUMENT
+  PRODUCTION
+  DELIVERY
+  INVENTORY
+  PRODUCT
+}
