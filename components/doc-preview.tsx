@@ -1,14 +1,14 @@
 "use client"
 
 import { useAuthStore } from "@/stores/auth-store"
-import { devisSchema } from "@/utils/schema"
 import { UseFormReturn } from "react-hook-form"
 import {z} from "zod"
 import Image from "next/image";
+import {  devisWithRefrence } from "@/modules/devis/schemas/devis";
 
 
 interface DevisPreviewProps {
-  form: UseFormReturn<z.infer<typeof devisSchema>>
+  form: UseFormReturn<z.infer<typeof devisWithRefrence>>
   name:string,
   email:string,
   phone:string,

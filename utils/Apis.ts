@@ -1,8 +1,18 @@
 import {clientSchema, fournisseurSchema, loginSchema, taskSchemaWithID,contactsfournisseurSchema, contactsschema, contratsschema, prospectsschema, devisSchema} from "./schema";
 import z from "zod";
 import axios from "axios";
-import {settingSchema} from "./schema"
+import {legalSettingsSchema, settingSchema} from "./schema"
 import { taskSchema } from "./schema";
+
+export async function updateDocumentSettings(documentSettings: string) {
+  try {
+    const response = await axios.post("/api/settings-document-update", { documentSettings });
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) throw new Error(error.response?.data?.message || "Une erreur s'est produite");
+    throw new Error("Une erreur s'est produite");
+  }
+}
 
 export async function login({email,password}:z.infer<typeof loginSchema>){
     try{
@@ -77,6 +87,9 @@ export async function updateSetting(data: z.infer<typeof settingSchema>) {
     if(data.footerText){
       formData.append("footerText",data.footerText)
     }
+    if (data.watermark) {
+      formData.append("watermark", data.watermark);
+    }
 
     const response = await axios.post("/api/settings-update", formData);
 
@@ -88,6 +101,18 @@ export async function updateSetting(data: z.infer<typeof settingSchema>) {
       );
     }
 
+    throw new Error("Une erreur s'est produite");
+  }
+}
+
+export async function updateLegalSettings(data: z.infer<typeof legalSettingsSchema>) {
+  try {
+    const response = await axios.post("/api/settings-legal-update", data);
+    return response.data;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message || "Une erreur s'est produite");
+    }
     throw new Error("Une erreur s'est produite");
   }
 }

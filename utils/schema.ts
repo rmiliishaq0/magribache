@@ -16,6 +16,20 @@ export const settingSchema = z.object({
     signature: z.union([z.instanceof(File).optional(),z.string().optional()]),
     defaultColor: z.string().optional(),
     footerText:z.string().optional(),
+    watermark: z.union([z.instanceof(File).optional(), z.string().optional()]),
+});
+
+export const legalSettingsSchema = z.object({
+    ice: z.string().trim().max(30).optional(),
+    rc: z.string().trim().max(30).optional(),
+    fiscalId: z.string().trim().max(30).optional(),
+    patente: z.string().trim().max(30).optional(),
+    cnss: z.string().trim().max(30).optional(),
+    shareCapital: z.string().trim().max(30).optional(),
+});
+
+export const documentSettingsSchema = z.object({
+    documentSettings: z.string().max(50_000),
 });
 
 export const taskSchema = z.object({
@@ -147,8 +161,3 @@ export const devisSchema = z.object({
        })
     ).min(1)
  })
-
- export const crmSchema = z.union([
-    clientSchema,prospectsschema,contactsfournisseurSchema,fournisseurSchema,contactsschema,contratsschema
- ])
-

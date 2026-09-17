@@ -12,23 +12,27 @@ export async function POST(req:NextRequest) {
     if(!result.success){
         return NextResponse.json({ error: "Les donnees invalide" }, { status: 403 });
     }
-    const {name,address,phone,website,description,signature,logo,profileImage,footerText,defaultColor}=result.data
+    const {name,address,phone,website,description,signature,logo,profileImage,footerText,defaultColor,watermark}=result.data
 
     const signatureBytes = signature instanceof File ? await signature.arrayBuffer() : null;
     const logoBytes = logo instanceof File ? await logo.arrayBuffer() : null;
     const profileImageBytes = profileImage instanceof File ? await profileImage.arrayBuffer() : null;
+    const watermarkBytes = watermark instanceof File ? await watermark.arrayBuffer() : null;
 
     const signatureBuffer = signatureBytes ? Buffer.from(signatureBytes) : null;
     const logoBuffer = logoBytes ? Buffer.from(logoBytes) : null;
     const profileImageBuffer = profileImageBytes ? Buffer.from(profileImageBytes) : null;
+    const watermarkBuffer = watermarkBytes ? Buffer.from(watermarkBytes) : null;
 
     const signaturePath = signatureBuffer ? path.join(process.cwd(), 'public','uploads',`${Date.now()}_signature.png`) : null;
     const logoPath = logoBuffer ? path.join(process.cwd(), 'public','uploads', `${Date.now()}_logo.png`) : null;
     const profileImagePath = profileImageBuffer ? path.join(process.cwd(), 'public','uploads', `${Date.now()}_profileImage.png`) : null;
+    const watermarkPath = watermarkBuffer ? path.join(process.cwd(), 'public','uploads', `${Date.now()}_watermark.png`) : null;
 
     signaturePath && signatureBuffer && await writeFile(signaturePath, signatureBuffer);
     logoPath && logoBuffer && await writeFile(logoPath, logoBuffer);
     profileImagePath && profileImageBuffer && await writeFile(profileImagePath, profileImageBuffer);
+    watermarkPath && watermarkBuffer && await writeFile(watermarkPath, watermarkBuffer);
 
     const cookieStore = await cookies();
     const token = cookieStore.get("token");
@@ -65,6 +69,7 @@ export async function POST(req:NextRequest) {
             ...(profileImagePath && { profilIcon: `/uploads/${path.basename(profileImagePath)}` }),
             ...(logoPath && { logo: `/uploads/${path.basename(logoPath)}` }),
             ...(signaturePath && { signature: `/uploads/${path.basename(signaturePath)}` }),
+            ...(watermarkPath && { watermark: `/uploads/${path.basename(watermarkPath)}` }),
         }
     })
     return NextResponse.json({ update }, { status: 200 });
