@@ -12,6 +12,14 @@ type AuthData = {
     signature: string | null;
     defaultColor: string | null;
     footerText: string | null;
+    ice: string | null;
+    rc: string | null;
+    fiscalId: string | null;
+    patente: string | null;
+    cnss: string | null;
+    shareCapital: string | null;
+    watermark: string | null;
+    documentSettings: string | null;
 };
 
 type AuthState = AuthData & {
@@ -30,7 +38,7 @@ export const useAuthStore = create<AuthState>()((set) => ({
   profilIcon: null,
   signature: null,
   defaultColor: null,
-footerText:null,
+footerText:null, ice:null, rc:null, fiscalId:null, patente:null, cnss:null, shareCapital:null, watermark:null, documentSettings:null,
   setAuthState: (authState:AuthData) => set(authState),
-  logout: () => set({ name:null,email:null,phone:null,address:null,website:null,description:null,logo:null,profilIcon:null,signature:null,defaultColor:null,footerText:null }),
+  logout: () => set({ name:null,email:null,phone:null,address:null,website:null,description:null,logo:null,profilIcon:null,signature:null,defaultColor:null,footerText:null,ice:null,rc:null,fiscalId:null,patente:null,cnss:null,shareCapital:null,watermark:null,documentSettings:null }),
 }))

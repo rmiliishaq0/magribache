@@ -23,6 +23,14 @@ model Admin {
   defaultColor String?
   footerText   String?
   signature    String?
+  ice          String?
+  rc           String?
+  fiscalId     String?
+  patente      String?
+  cnss         String?
+  shareCapital String?
+  watermark    String?
+  documentSettings String?
   tasks        Task[]
 }
 
