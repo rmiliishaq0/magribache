@@ -6,7 +6,7 @@ import { DevisContentProps } from "../types";
 
 
 
-export default function DevisContent({form, onSubmit, data, previewRef, client}:DevisContentProps) {
+export default function DevisContent({form, onSubmit, data, previewRef, client,reference}:DevisContentProps) {
     return(
       <Card>
           <ResizablePanelGroup
@@ -21,7 +21,7 @@ export default function DevisContent({form, onSubmit, data, previewRef, client}:
               <ResizableHandle />
               <ResizablePanel defaultSize="60%" className="w-full">
                 <div ref={previewRef} className="flex h-full w-full justify-center  w-full">
-                  <DevisPreview docNumber={""} isFacture={false} name={client?.name} email={client?.email} phone={client?.phone} form={form}/>
+                  <DevisPreview clientRefrence={client.reference} docNumber={reference} isFacture={false} name={client?.name} email={client?.email} phone={client?.phone} form={form}/>
                 </div>
               </ResizablePanel>
             </ResizablePanelGroup>

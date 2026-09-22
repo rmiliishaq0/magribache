@@ -27,7 +27,9 @@ export async function GET(request: NextRequest) {
                 profilIcon: true,
                 signature:true,
                 footerText:true,
-                defaultColor:true,
+                titlesColor:true,
+                tableBgColor:true,
+                tableFontColor:true,
                 ice: true,
                 rc: true,
                 fiscalId: true,
@@ -36,6 +38,8 @@ export async function GET(request: NextRequest) {
                 shareCapital: true,
                 watermark: true,
                 documentSettings: true,
+                currency:true,
+                tva:true,
             }
         })
         return NextResponse.json({ me: user }, { status: 200 });

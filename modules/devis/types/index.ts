@@ -33,8 +33,10 @@ export type DevisContentProps = {
     client:
     {name:string,
     email:string,
-    phone:string
+    phone:string,
+    reference:string
     },
+    reference:string
 }
 
 export type DocFormProps ={

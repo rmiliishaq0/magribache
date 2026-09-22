@@ -17,7 +17,6 @@ import { useQuery } from "@tanstack/react-query"
 import { useAuthStore } from "@/stores/auth-store"
 import { me } from "@/utils/Apis"
 import { useEffect } from "react"
-import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from "next/navigation"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

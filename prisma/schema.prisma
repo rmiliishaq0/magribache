@@ -6,6 +6,11 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+enum Currency {
+  MAD
+  EUR
+  USD
+}
 
 model Admin {
   id           String   @id @default(uuid())
@@ -20,7 +25,9 @@ model Admin {
   updatedAt    DateTime @updatedAt
   logo         String?
   profilIcon   String?
-  defaultColor String?
+  titlesColor String @default("#D97706")
+  tableFontColor String  @default("#ffffff")
+  tableBgColor String  @default("#D97706")
   footerText   String?
   signature    String?
   ice          String?
@@ -31,6 +38,9 @@ model Admin {
   shareCapital String?
   watermark    String?
   documentSettings String?
+  currency  Currency @default(MAD)
+  tva Float @default(20)
+
   tasks        Task[]
 }
 

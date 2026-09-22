@@ -49,7 +49,7 @@ export default function DevisCreatePage() {
       }
     },[reference])
 
-    const [client,setClient] = useState({name:"",email:"",phone:""})
+    const [client,setClient] = useState({name:"",email:"",phone:"",reference:""})
 
     const form = useDevisForm()
 
@@ -74,6 +74,7 @@ export default function DevisCreatePage() {
         name: selectedClient?.fullName || "",
         email: selectedClient?.email || "",
         phone: selectedClient?.phone || "",
+        reference:selectedClient?.reference || "",
       })
 
     }, [selectedClientId, getAllPartners?.data])
@@ -127,7 +128,7 @@ export default function DevisCreatePage() {
           <Card className="mb-6">           
           <CardContent className="space-y-6">
             <DevisHeader form={form} isPending={isPending} isError={isError} handlePrint={handlePrint}/>
-            <DevisContent form={form}  onSubmit={onSubmit} data={partners}  previewRef={previewRef} client={client}/>
+            <DevisContent reference={reference} form={form}  onSubmit={onSubmit} data={partners}  previewRef={previewRef} client={client}/>
           </CardContent>
         </Card>
     )

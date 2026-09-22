@@ -15,3 +15,4 @@ export type companySections={
     active:(typeof COMPANY_SECTIONS)[number]["id"],
     setIsActive:React.Dispatch<SetStateAction< (typeof COMPANY_SECTIONS)[number]["id"]>>
 }
+export type DocumentSettings = {  priceMode: "ht" | "ttc"; totalHtLabel: string; totalVatLabel: string; netLabel: string; recipientSignature: string; amountPrefix: string;  paymentTerms: string; footer: string };

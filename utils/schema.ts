@@ -5,32 +5,7 @@ export const loginSchema = z.object({
     password: z.string().min(6, "Mot de passe trop court"),
 });
 
-export const settingSchema = z.object({
-    name: z.string().min(1, "Le nom est requis"),
-    address: z.string().min(1, "L'adresse est requise"),
-    phone: z.string().min(1, "Le téléphone est requis"),
-    website: z.string().url("L'URL du site web est invalide"),
-    description: z.string().min(1, "La description est requise"),
-    logo:z.union([z.instanceof(File).optional(),z.string().optional()]) ,
-    profileImage:  z.union([z.instanceof(File).optional(),z.string().optional()]) ,
-    signature: z.union([z.instanceof(File).optional(),z.string().optional()]),
-    defaultColor: z.string().optional(),
-    footerText:z.string().optional(),
-    watermark: z.union([z.instanceof(File).optional(), z.string().optional()]),
-});
 
-export const legalSettingsSchema = z.object({
-    ice: z.string().trim().max(30).optional(),
-    rc: z.string().trim().max(30).optional(),
-    fiscalId: z.string().trim().max(30).optional(),
-    patente: z.string().trim().max(30).optional(),
-    cnss: z.string().trim().max(30).optional(),
-    shareCapital: z.string().trim().max(30).optional(),
-});
-
-export const documentSettingsSchema = z.object({
-    documentSettings: z.string().max(50_000),
-});
 
 export const taskSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
