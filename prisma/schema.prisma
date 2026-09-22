@@ -6,126 +6,242 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+enum Currency {
+  MAD
+  EUR
+  USD
+}
 
-model Admin { 
-  id    String     @id @default(uuid()) 
-  name String?
-  password String
-  email String? @unique
-  phone String?
-  address String?
-  website String?
+model Admin {
+  id           String   @id @default(uuid())
+  name         String?
+  password     String
+  email        String?  @unique
+  phone        String?
+  address      String?
+  website      String?
+  description  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  logo         String?
+  profilIcon   String?
+  titlesColor String @default("#D97706")
+  tableFontColor String  @default("#ffffff")
+  tableBgColor String  @default("#D97706")
+  footerText   String?
+  signature    String?
+  ice          String?
+  rc           String?
+  fiscalId     String?
+  patente      String?
+  cnss         String?
+  shareCapital String?
+  watermark    String?
+  documentSettings String?
+  currency  Currency @default(MAD)
+  tva Float @default(20)
+
+  tasks        Task[]
+}
+
+model Task {
+  id          String    @id @default(uuid())
+  name        String
   description String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-  logo String?
-  profilIcon String?
-  tasks Task[]
-} 
+  status      String
+  priority    String
+  dueDate     DateTime?
+  projet      String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  adminId     String
+  admin       Admin     @relation(fields: [adminId], references: [id], onDelete: Cascade)
+}
+
+model BusinessPartner {
+  reference      String          @unique
+  status         PartnerStatus   @default(NEW)
+  companyType    CompanyType     @default(INDIVIDUAL)
+  companyName    String?
+  email          String?         @unique
+  phone          String?         @unique
+  whatsapp       String?         @unique
+  website        String?
+  address        String?
+  city           String?
+  region         String?
+  country        String?         @default("Maroc")
+  ice            String?
+  rc             String?
+  ifNumber       String?
+  activity       String?
+  source         PartnerSource   @default(OTHER)
+  priority       PartnerPriority @default(MEDIUM)
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  fullName       String?
+  type           PartnerType     @default(PROSPECT)
+  id             Int             @id @default(autoincrement())
+  nextFollowUpAt DateTime?
+  activities     Activity[]
+  documents      Document[]
+
+  @@index([status])
+}
+
+model Activity {
+  id         String           @id @default(cuid())
+  entityType EntityType
+  action     ActivityType
+  note       String?
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  partnerId  Int?
+  documentId Int?
+  document   Document?        @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  partner    BusinessPartner? @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  logs       ActivityLog[]
+
+  @@index([partnerId])
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  activityId String
+  field      String
+  oldValue   String?
+  newValue   String?
+  createdAt  DateTime @default(now())
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  @@index([activityId])
+}
 
 
-model Task { 
-  id    String     @id @default(uuid()) 
-  name String
+
+model Document {
+  id            Int            @id @default(autoincrement())
+  type          DocumentType
+  status        DocumentStatus @default(DRAFT)
+  reference     String         @unique
+
+  documentDate  DateTime       @default(now())
+  currency      String         @default("MAD")
+  notes         String?
+  conditions String?
+
+  discount      Decimal        @default(0) @db.Decimal(15, 2)
+  adjustment    Decimal        @default(0) @db.Decimal(15, 2)
+  subtotal      Decimal        @default(0) @db.Decimal(15, 2)
+  taxAmount     Decimal        @default(0) @db.Decimal(15, 2)
+  totalAmount   Decimal        @default(0) @db.Decimal(15, 2)
+
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  clientId      Int
+  paymentStatus PaymentStatus  @default(UNPAID)
+  validUntil    DateTime?
+  sentAt        DateTime?
+
+  activity      Activity[]
+  client        BusinessPartner @relation(fields: [clientId], references: [id])
+  items         DocumentItem[]
+
+  @@index([type])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([clientId])
+  @@index([documentDate])
+}
+
+model DocumentItem {
+  id          Int      @id @default(autoincrement())
+  product     String
   description String?
-  status String
-  priority String
-  dueDate DateTime?
-  projet String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-  adminId String
-  admin Admin @relation(fields: [adminId], references: [id])
-} 
+  quantity    Float    @default(1)
+  unitPrice   Float    @default(0)
+  tax     Float    @default(0)
+  //discount    Float    @default(0)
+  //subtotal    Float    @default(0)
+  //totalAmount Float    @default(0)
 
-model Client { 
-  id String     @id @default(uuid()) 
-  entreprise String
-  téléphone String?
-  email String? @unique
-  catégories String?
-  ICE String?
-  identifiantFiscal String?
-  ville String?
-  pays String?
-  actif String?
-  documents Document[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
+  createdAt   DateTime @default(now())
+
+  documentId  Int
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
 }
 
-model Fournisseur {
-  id String @id @default(uuid())
-
-  fournisseur String
-  email String? @unique
-  téléphone String?
-  ICE String?
-  identifiantFiscal String?
-  ville String?
-  pays String?
-  catégories String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-
-  contacts ContactsFournisseur[]
+enum PartnerType {
+  PROSPECT
+  CLIENT
+  ARCHIVED
 }
 
-model ContactsFournisseur {
-  id String @id @default(uuid())
-
-  name String
-  title String?
-  email String? @unique
-  téléphone String?
-  Fournisseur String?
-  city String?
-  country String?
-  actif String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-
-  fournisseurId String
-  fournisseur Fournisseur @relation(fields: [fournisseurId], references: [id])
+enum CompanyType {
+  INDIVIDUAL
+  FARMER
+  COMPANY
+  RESELLER
+  ADMINISTRATION
+  ASSOCIATION
 }
 
-model Prospects {
-    id String     @id @default(uuid())
-    nom String
-    prospect String?
-    email String? @unique
-    téléphone String?
-    statut String?
-    source String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
-    localisation String?
+enum PartnerPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
 
-model Contrats {
-    id String     @id @default(uuid())
-     sujet String?
-     client String?
-     modèleContrat String?
-     dateDepart String?
-     dateFin String?
-     createdAt DateTime @default(now())
-     updatedAt DateTime @updatedAt()
+enum PartnerSource {
+  PHONE
+  WHATSAPP
+  FACEBOOK
+  INSTAGRAM
+  WEBSITE
+  TIKTOK
+  LINKEDIN
+  VISIT
+  REFERRAL
+  OTHER
 }
 
-model Contacts {
-    id String     @id @default(uuid())
-    nom String
-    civilité String?
-    email String? @unique
-    téléphone String?
-    //entreprise String?
-    ville String?
-    pays String?
-    actif String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt()
+enum PartnerStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  QUOTE_TO_PREPARE
+  QUOTE_SENT
+  NEGOTIATION
+  WON
+  LOST
+  FOLLOW_UP_LATER
+  ACTIVE
+  GOOD_CLIENT
+  TO_MONITOR
+  INACTIVE
+  BLOCKED
+}
+
+enum ActivityType {
+  CREATED
+  UPDATED
+  DELETED
+  NOTE
+  CALL
+  EMAIL
+  WHATSAPP
+  MEETING
+  STATUS_CHANGED
+  PDF_GENERATED
+  SENT
+  PAYMENT_RECEIVED
+  STARTED
+  COMPLETED
 }
 
 enum DocumentType {
@@ -134,76 +250,30 @@ enum DocumentType {
 }
 
 enum DocumentStatus {
-  BROUILLON
-  ENVOYE
-  PAYE
-  ANNULE
+  DRAFT
+  SENT
+  UNDER_NEGOTIATION
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CONVERTED_TO_ORDER
+  VALIDATED
+  CANCELLED
+  CLOSED
 }
 
-model Document {
-  id String @id @default(uuid())
-
-  numero String @unique
-
-  type DocumentType
-
-  status DocumentStatus @default(BROUILLON)
-
-  reference String?
-
-  objet String?
-
-  clientId String
-
-  client Client @relation(fields: [clientId], references: [id])
-
-  dateDocument DateTime @default(now())
-
-  dateValidite String?
-
-  devise String? @default("MAD")
-
-  notes String?
-
-  conditions String?
-
-  remise Float @default(0)
-
-  ajustement Float @default(0)
-
-  montantHT Float @default(0)
-
-  montantTVA Float @default(0)
-
-  montantTTC Float @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt()
-
-  items DocumentItem[]
+enum PaymentStatus {
+  UNPAID
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
 }
 
-model DocumentItem {
-  id String @id @default(uuid())
-
-  documentId String
-  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  article String
-
-  description String?
-
-  quantite Float @default(1)
-
-  prixUnitaire Float @default(0)
-
-  taxe Float @default(0)
-
-  remise Float @default(0)
-
-  montantHT Float @default(0)
-
-  montantTTC Float @default(0)
-
-  createdAt DateTime @default(now())
+enum EntityType {
+  PARTNER
+  DOCUMENT
+  PRODUCTION
+  DELIVERY
+  INVENTORY
+  PRODUCT
 }

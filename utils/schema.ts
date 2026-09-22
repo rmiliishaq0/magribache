@@ -5,18 +5,7 @@ export const loginSchema = z.object({
     password: z.string().min(6, "Mot de passe trop court"),
 });
 
-export const settingSchema = z.object({
-    name: z.string().min(1, "Le nom est requis"),
-    address: z.string().min(1, "L'adresse est requise"),
-    phone: z.string().min(1, "Le téléphone est requis"),
-    website: z.string().url("L'URL du site web est invalide"),
-    description: z.string().min(1, "La description est requise"),
-    logo:z.union([z.instanceof(File).optional(),z.string().optional()]) ,
-    profileImage:  z.union([z.instanceof(File).optional(),z.string().optional()]) ,
-    signature: z.union([z.instanceof(File).optional(),z.string().optional()]),
-    defaultColor: z.string().optional(),
-    footerText:z.string().optional(),
-});
+
 
 export const taskSchema = z.object({
   name: z.string().min(1, "Le nom est requis"),
@@ -147,8 +136,3 @@ export const devisSchema = z.object({
        })
     ).min(1)
  })
-
- export const crmSchema = z.union([
-    clientSchema,prospectsschema,contactsfournisseurSchema,fournisseurSchema,contactsschema,contratsschema
- ])
-

@@ -1,19 +1,26 @@
 "use client"
 
 import { useAuthStore } from "@/stores/auth-store"
-import { devisSchema } from "@/utils/schema"
 import { UseFormReturn } from "react-hook-form"
 import {z} from "zod"
 import Image from "next/image";
+import {  devisWithRefrence } from "@/modules/devis/schemas/devis";
+import { formatDate } from "@/utils/format-date";
+import { useEffect, useState } from "react";
+import { DocumentSettings } from "@/modules/settings/types";
+import { readSettings } from "@/modules/settings/utils/read-settings";
+import { toWords } from 'to-words';
+
 
 
 interface DevisPreviewProps {
-  form: UseFormReturn<z.infer<typeof devisSchema>>
+  form: UseFormReturn<z.infer<typeof devisWithRefrence>>
   name:string,
   email:string,
   phone:string,
   isFacture:boolean
   docNumber:string | null
+  clientRefrence:string
 }
 
 export default function DocPreview({
@@ -22,10 +29,19 @@ export default function DocPreview({
   phone,  
   form,
   isFacture,
-  docNumber
+  docNumber,
+  clientRefrence
 }: DevisPreviewProps) {
+  let defaults :DocumentSettings
+  const user =useAuthStore()
 
+  const [settings, setSettings] = useState<DocumentSettings>(() => readSettings(user.documentSettings,defaults));
 
+  useEffect(() => {
+      const settings:DocumentSettings = readSettings(user.documentSettings,defaults)
+      defaults={  priceMode:settings?.priceMode || "ht",  totalHtLabel:settings?.totalHtLabel || "Total HT", totalVatLabel:settings?.totalVatLabel || "Total TVA", netLabel:settings?.netLabel || "Net à Payer", recipientSignature:settings?.recipientSignature || "", amountPrefix:settings?.amountPrefix || "Arrêté le présent document à la somme de :", paymentTerms:settings?.paymentTerms || "50% à la commande 50% à la livraison", footer: "" };
+      setSettings(settings)
+    }, [user.documentSettings]);
   const values = form.watch()
 
   const subtotal =
@@ -40,13 +56,12 @@ export default function DocPreview({
         (
           item.quantity *
           item.unitPrice *
-          item.tax
+          (user?.tva ?? 20)
         ) / 100
       )
     }, 0) || 0
 
   const total = subtotal + tax
-    const user =useAuthStore()
   return (
     <div className="sticky top-4 w-full">
 
@@ -70,11 +85,11 @@ export default function DocPreview({
         <div className="flex  justify-between border-b pb-6 items-end">
 
           <div className="flex flex-col items-start">
-              {user.logo && (
-                <Image src={user.logo}  alt="Logo"  width={180}
+              {user.logo && user.logo !=undefined && user.logo !=null && user.logo !="undefined"   && (
+                <Image src={"/"+user.logo}  alt="Logo"  width={180}
   height={80} className="object-contain mb-4" />
               )}
-            <h1 className={`text-3xl font-bold` }   style={{ color: user.defaultColor || "#000" }}
+            <h1 className={`text-3xl font-bold` }   style={{ color: user.titlesColor || "#000" }}
 >
               {isFacture?"Facture" : "DEVIS"}
             </h1>
@@ -106,12 +121,13 @@ export default function DocPreview({
 
         </div>
 
+
         {/* CLIENT */}
         <div className="mt-8 grid grid-cols-2 gap-6">
 
           <div>
             <p className="text-sm text-muted-foreground mb-2">
-              CLIENT
+              {clientRefrence.startsWith("CL") ? "CLIENT" : "PROSPECT"}
             </p>
 
             <div className="space-y-1">
@@ -137,26 +153,26 @@ export default function DocPreview({
               <span className="font-medium">
                 Date:
               </span>{" "}
-              {values.devisDate ? new Date(values.devisDate).toLocaleDateString() :   new Date().toLocaleDateString()}
+              {values.documentDate ? formatDate(new Date(values.documentDate)) :   formatDate(new Date())}
             </p>
 
             <p>
               <span className="font-medium">
                 Validité:
               </span>{" "}
-              {values.dateValidite || "Indéterminée"}
+              {(values.validUntil && formatDate(new Date(values.validUntil))) || "Indéterminée"}
             </p>
 
           </div>
 
         </div>
-
+    
+        <p className="mt-6 font-medium">Mode de paiement :</p>
         {/* ITEMS TABLE */}
-        <div className="mt-10 overflow-hidden border rounded-lg">
-
+        <div className="mt-4 overflow-hidden border rounded-lg">
           <table className="w-full">
 
-            <thead style={{backgroundColor:user.defaultColor || "oklch(0.97 0 0)" ,color:user.defaultColor ? "white" :"black"}}>
+            <thead style={{backgroundColor:user.tableBgColor || "oklch(0.97 0 0)" ,color:user.tableFontColor ? "white" :"black"}}>
 
               <tr className="text-left">
 
@@ -208,15 +224,15 @@ export default function DocPreview({
                       </td>
 
                       <td className="p-4">
-                        {item.unitPrice || 0} {values.devise}
+                        {item.unitPrice || 0} {user.currency}
                       </td>
 
                       <td className="p-4">
-                        {item.tax || 0}%
+                        {user.tva || 0}%
                       </td>
 
                       <td className="p-4 text-right font-medium">
-                        {lineTotal.toFixed(2)} {values.devise}
+                        {lineTotal.toFixed(2)} {user.currency}
                       </td>
 
                     </tr>
@@ -229,7 +245,11 @@ export default function DocPreview({
           </table>
 
         </div>
-
+        <div className="bg-white w-full mt-6 border-l-4 py-2 px-4 rounded-md" style={{borderColor:user?.titlesColor || "white"}}>
+          <p className="text-sm text-muted-foreground">{settings?.amountPrefix}</p>
+          <p className="font-medium mt-1">{toWords(tax.toFixed(2),{localeCode:"fr-MA"})}</p>
+        </div>      
+        <p className="text-[12px] text-muted-foreground mt-4">{settings?.paymentTerms}</p>
         {/* NOTES */}
         <div className="mt-8">
 
@@ -244,50 +264,59 @@ export default function DocPreview({
         </div>
 
         {/* TOTALS */}
-        <div className="mt-10 flex justify-between items-center">
-          <div>
-            {user.signature && (
+        <div className="mt-6 flex items-end flex-col mb-6">
+
+
+          <div className="w-full max-w-sm space-y-3 ">
+
+            <div className="flex justify-between">
+              <span>{settings?.totalHtLabel}</span>
+
+              <span>
+                {subtotal.toFixed(2)} {user.currency}
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>{settings?.totalVatLabel}</span>
+
+              <span>
+                {tax.toFixed(2)} {user.currency}
+              </span>
+            </div>
+
+            <div className={`border-t pt-3 flex justify-between text-xl font-bold`}   style={{ color: user.titlesColor || "#000" }}>
+
+              <span>{settings?.netLabel}</span>
+
+              <span>
+                {total.toFixed(2)} {user.currency}
+              </span>
+
+            </div>
+
+          </div>
+
+          
+
+        </div>
+
+        <div className="border-t w-full ">
+          <div className=" ml-[50%]  mt-6">
+            <p className="font-medium decoration-1 underline underline-offset-1">{settings?.recipientSignature || "Signature & Cachet Client"}</p>
+            <div className="mt-2">
+            {user.signature && user.signature !=undefined && user.signature !=null && user.signature !="undefined" && (
               <Image width={250}
   height={120}
-  className="object-contain" src={user.signature} alt="signature"/>
+  className="object-contain" src={"/"+user.signature} alt="signature"/>
             )}
           </div>
-
-          <div className="w-full max-w-sm space-y-3">
-
-            <div className="flex justify-between">
-              <span>Sous-total HT</span>
-
-              <span>
-                {subtotal.toFixed(2)} {values.devise}
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span>TVA</span>
-
-              <span>
-                {tax.toFixed(2)} {values.devise}
-              </span>
-            </div>
-
-            <div className={`border-t pt-3 flex justify-between text-xl font-bold`}   style={{ color: user.defaultColor || "#000" }}>
-
-              <span>Total TTC</span>
-
-              <span>
-                {total.toFixed(2)} {values.devise}
-              </span>
-
-            </div>
-
           </div>
-
         </div>
 
         <div className="mt-20 border-t pt-6 text-center text-sm text-muted-foreground">
 
-          {user.footerText ||"Merci pour votre confiance."}
+          {settings?.footer ||"Merci pour votre confiance."}
 
         </div>
 
