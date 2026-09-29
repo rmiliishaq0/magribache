@@ -21,46 +21,19 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import {
-  IconChevronDown,
   IconChevronLeft,
   IconChevronRight,
   IconChevronsLeft,
   IconChevronsRight,
-  IconCircleCheckFilled,
-  IconDotsVertical,
-  IconGripVertical,
-  IconLayoutColumns,
-  IconLoader,
 } from "@tabler/icons-react"
 import {
   flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
+  Table as TableType,
   type Row,
-  type SortingState,
-  type VisibilityState,
-  type OnChangeFn, PaginationState,
 } from "@tanstack/react-table"
-import { toast } from "sonner"
-import { z } from "zod"
-
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
+
 import { Label } from "@/components/ui/label"
 import {
   Select,
@@ -77,47 +50,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Tabs,
-  TabsContent,
-} from "@/components/ui/tabs"
-
-import DeleteDialog from "@/components/delete-dialog";
-
-import type { ColumnMeta } from "@/utils/types"
-
-import TableCellViewer from "./DrawerTabs"
-import { Spinner } from "./ui/spinner"
-import { SortAsc, SortDesc } from "lucide-react"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import {memo} from "react";
-import { Field } from "./ui/field"
-import { useMoveProspect, useTransferDevis } from "@/hooks/mutations"
-import { useRouter } from "next/navigation"
-import { EntityKey } from "@/utils/form-config";
+import { Spinner } from "./ui/spinner";
 
 
-function DragHandle({ id }: { id: number }) {
-  const { attributes, listeners } = useSortable({
-    id,
-  })
 
-  return (
-    <Button
-      {...attributes}
-      {...listeners}
-      variant="ghost"
-      size="icon"
-      className="size-7 text-muted-foreground hover:bg-transparent"
-    >
-      <IconGripVertical className="size-3 text-muted-foreground" />
-      <span className="sr-only">Drag to reorder</span>
-    </Button>
-  )
-}
-
-
-function DraggableRow({ row }: { row: any }) {
+function DraggableRow<T extends {id:number}>({ row }: { row: Row<T> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
   })
@@ -141,235 +78,29 @@ function DraggableRow({ row }: { row: any }) {
     </TableRow>
   )
 }
-type Pagination={
-  pageIndex:number
-  pageSize:number
-}
 
-export default memo(function DataTable<T extends z.ZodTypeAny>({
-  data: initialData,
-  activeTab,
-  constants,
-  headers,
-  pagination,
-  setPagination,
-  isPending,
-  rowCount,
-  sorting,
-  setSorting,
-  onDelete,
-  schema,
-  selectedItem,
-  setselectedItem,
-  form,
-  onUpdate,
-  isUpdatePending
+export default function DataTable<T extends {id:number}>({
+  table,
+  isPending
 }: {
-  data:z.infer<T>
-  activeTab?: string
-  constants: Record<string, ColumnMeta[]> | Record<string, Record<string, ColumnMeta[]>>
-  headers?: Record<string, string>
-  isPending?: boolean,
-  pagination:Pagination,
-  setPagination: OnChangeFn<PaginationState>,
-  rowCount: number,
-  sorting: SortingState,
-  setSorting: OnChangeFn<SortingState>,
-  onDelete:(ids:number[])=>void,
-  schema:T,
-  setselectedItem: React.Dispatch<any>,
-  selectedItem:any,
-  form:any,
-  onUpdate:(data:any)=>void,
-  isUpdatePending?:boolean
+   table:TableType<T>,
+   isPending:boolean
 }) {
-  const router =useRouter()
-  const moveProspectMutation = useMoveProspect()
-  const transferDevis =useTransferDevis()
-  const [deleteIds, setDeleteIds] = React.useState<number[] | null>(null)
-  const [data, setData] = React.useState(() => initialData)
-  const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [data, setData] = React.useState(() => table.options.data)
+
   const sortableId = React.useId()
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   )
-  React.useEffect(() => {
-    setData(initialData)
-  }, [initialData])
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ id}) => id) || [],
+    () => data?.map(({ id }) => id) || [],
     [data]
   )
-  const columns = React.useMemo<ColumnDef<any>[]>(() => {
-    const currentFields = activeTab ? constants[activeTab] : constants
-    return [
-      {
-        id: "drag",
-        header: () => null,
-        cell: ({ row }) => <DragHandle id={row.original.id} />,
-      },
-      {
-        id: "select",
-        header: ({ table }) => (
-          <div className="flex items-center justify-center">
-            <Checkbox
-              checked={
-                table.getIsAllPageRowsSelected() ||
-                (table.getIsSomePageRowsSelected() && "indeterminate")
-              }
-              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-              aria-label="Select all"
-            />
-          </div>
-        ),
-        cell: ({ row }) => (
-          <div className="flex items-center justify-center">
-            <Checkbox
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label="Select row"
-            />
-          </div>
-        ),
-        enableSorting: false,
-        enableHiding: false,
-      },
-      ...Object.entries(currentFields).map(([field, meta]) => (
-        {
-          accessorKey: field,
-          header: ({ column } :any) => {
-            const sorted = column.getIsSorted() 
-  return (
-    <Button
-      variant="ghost"
-      onClick={() => column.toggleSorting(sorted === "asc")}
-    >
-      {headers ? (headers[field] || field) : field } {sorted === "asc" ? <SortAsc/> : sorted === "desc" ? <SortDesc/> : ""} 
-    </Button>
-  )
-},
-          enableHiding: meta?.[0]?.isNavigate ? false : true,
-          cell: ({ row }: { row: any }) => {
-            const config = meta?.[0]
-            if (config?.isNavigate) {
-              return (
-              <Button onClick={()=>{setselectedItem(row.original)}} variant="link" className="w-fit px-0 text-left text-foreground">
-                {row.original[field.toLocaleLowerCase()] || row.original[field] || row.original[config?.key]}
-              </Button>
-              )
-            }
 
-            if (config?.isBadge) {                 
-              if (field == "status" || field == "Actif" || field == "Statut") {      
-                return (
-                  <>
-                    <Badge variant="outline" className="px-1.5 text-muted-foreground">
-                      {row.original[field] === "Terminé" || row.original["actif"] == "Oui" || row.original[field]?.[config?.key] == "PAYE" || row.original[field]?.[config?.key] == "ENVOYE" ?  (
-                        <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-                      ) : (
-                        <IconLoader />
-                      )}
-                      {row.original[field.toLocaleLowerCase()] || row.original[field] || row?.original?.[config?.key]}
-                    </Badge>
-                  </>
-                )
-              } else {
-                {
-                  return (row.original[field] === "Moyenne" ? (
-                    <Badge className="bg-yellow-50 text-yellow-700 dark:bg-yellow-950 dark:text-yellow-300">
-                      {row.original[field]}
-                    </Badge>
-                  ) : (
-                    <Badge variant={row.original[field] === "Haute" ? "destructive" : "outline"}>
-                      {row.original[field]}
-                    </Badge>
-                  ))
-                }
-              }
-            }
 
-            if (config?.isInput || config?.isTextEarea || config?.isSelected) {
-              console.log(row.original)
-              console.warn([meta?.[0]?.key])
-              if(typeof (row.original[field.toLocaleLowerCase()] || row.original[field]) === "object"){
-                return (
-                  <Field>{row.original[field.toLocaleLowerCase()]?.[config?.key] || row.original[field]?.[config?.key]}</Field>
-                )
-              }
-              return (
-                <Field>{ row.original[field] ?? row.original[field.toLocaleLowerCase()] ?? row.original.identifiantFiscal ?? row.original?.[meta?.[0]?.key]}</Field>
-              )
-            }
-            return (
-              <>
-                <div className="w-32">
-                  <Badge variant="outline" className="px-1.5 text-muted-foreground">
-                    {meta?.[0]?.isDate ? new Date(row.original[field] ?? row.original?.[meta?.[0]?.key] ?? row.original?.dateDocument ).toLocaleDateString()  : (row.original?.[meta?.[0]?.key] || row.original[field] || row.original[field.toLowerCase()] || row.original.numero)}
-                  </Badge>
-                </div>
-              </>
-            )
-          },
-        })),
-      {
-        id: "actions",
-        cell: ({row}) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="flex size-8 text-muted-foreground data-[state=open]:bg-muted"
-                size="icon"
-              >
-                <IconDotsVertical />
-                <span className="sr-only">Open menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-32">
-                <DropdownMenuItem onClick={()=>{activeTab == "Devis" || activeTab =="Factures" ? router.push(`/admin/sales/${activeTab.toLocaleLowerCase()}/${row.original?.id} `) : row.original.projet ? setselectedItem({...row.original,project: row.original?.projet}) : setselectedItem(row.original) }}>Modifier</DropdownMenuItem>
-                {activeTab == "Prospects" && <DropdownMenuItem onClick={()=>{moveProspectMutation.mutate(row.original)}}>Convertir en client</DropdownMenuItem>}
-                {activeTab == "Devis" && <DropdownMenuItem onClick={()=>{transferDevis.mutate({id:row.original?.id})}}>Convertir en Facture</DropdownMenuItem>}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" onClick={() => { setDeleteIds([row.original.id])}}>Delete</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ),
-      },
-    ]
-  }, [activeTab,
-  constants,
-  headers,
-])
-
-  const table = useReactTable({
-    data,
-    columns,
-    state: {
-      sorting,
-      columnVisibility,
-      rowSelection,
-      columnFilters,
-      pagination,
-    },
-    getRowId: (row) => row.id.toString(),
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-    rowCount,
-    manualPagination: true,
-  })
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event
@@ -381,85 +112,9 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
       })
     }
   }
+
   return (
-    <Tabs
-      defaultValue="outline"
-      className="w-full flex-col justify-start gap-6"
-    >
-      <div className="flex items-center justify-between">
-        <Label htmlFor="view-selector" className="sr-only">
-          View
-        </Label>
-        {/* <Select defaultValue="outline">
-          <SelectTrigger
-            className="flex w-fit @4xl/main:hidden"
-            size="sm"
-            id="view-selector"
-          >
-            <SelectValue placeholder="Select a view" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="outline">Outline</SelectItem>
-            <SelectItem value="past-performance">Past Performance</SelectItem>
-            <SelectItem value="key-personnel">Key Personnel</SelectItem>
-            <SelectItem value="focus-documents">Focus Documents</SelectItem>
-          </SelectContent>
-        </Select> */}
-        {/* <TabsList className="hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:bg-muted-foreground/30 **:data-[slot=badge]:px-1 @4xl/main:flex">
-          <TabsTrigger value="outline">Outline</TabsTrigger>
-          <TabsTrigger value="past-performance">
-            Past Performance <Badge variant="secondary">3</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="key-personnel">
-            Key Personnel <Badge variant="secondary">2</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
-        </TabsList> */}
-        <div>
-          {table.getFilteredSelectedRowModel().rows.length > 2 && (
-              <Button variant="destructive" onClick={() => { setDeleteIds(table.getFilteredSelectedRowModel().rows.map((row) => row.original.id))}}>Delete</Button>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconLayoutColumns />
-                <span className="hidden lg:inline">Personnaliser les colonnes</span>
-                <span className="lg:hidden">Colonnes</span>
-                <IconChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {table
-                .getAllColumns()
-                .filter(
-                  (column) =>
-                    typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide()
-                )
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-      <TabsContent
-        value="outline"
-        className="relative flex flex-col gap-4 overflow-auto"
-      >
+    <>
         <div className="overflow-hidden rounded-lg border">
           <DndContext
             collisionDetection={closestCenter}
@@ -468,8 +123,7 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
             sensors={sensors}
             id={sortableId}
           >
-          <ScrollArea>
-            <Table   >
+            <Table>
               <TableHeader className="sticky top-0 z-10 bg-muted">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
@@ -479,61 +133,57 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
                         </TableHead>
                       )
                     })}
                   </TableRow>
                 ))}
               </TableHeader>
-              <TableBody>
-                {isPending ? (
-                  <TableRow>
+              <TableBody className="**:data-[slot=table-cell]:first:w-8">
+                {isPending ? <TableRow>
                     <TableCell
-                      colSpan={columns.length}
-                      className="h-24"
+                      colSpan={table.getVisibleLeafColumns().length}
+                      className="text-center"
                     >
-                      <div className="flex items-center justify-center w-full">
-                        <Spinner />
-                      </div>
+                       <div className="flex h-24 items-center justify-center">
+                          <Spinner />
+                        </div>
                     </TableCell>
-                  </TableRow>
-                ) : table?.getRowModel().rows?.length ? (
+                  </TableRow> :(table.getRowModel().rows?.length ? (
                   <SortableContext
                     items={dataIds}
                     strategy={verticalListSortingStrategy}
                   >
                     {table.getRowModel().rows.map((row) => (
-                      <DraggableRow key={row.id} row={row} />
+                      <DraggableRow<T> key={row.id} row={row} />
                     ))}
                   </SortableContext>
                 ) : (
                   <TableRow>
                     <TableCell
-                      colSpan={columns.length}
+                      colSpan={table.getVisibleLeafColumns().length}
                       className="h-24 text-center"
                     >
                       No results.
                     </TableCell>
                   </TableRow>
-                )}
+                ))}
               </TableBody>
             </Table>
-            <ScrollBar orientation="horizontal" />
-            </ScrollArea>
           </DndContext>
         </div>
         <div className="flex items-center justify-between px-4">
           <div className="hidden flex-1 text-sm text-muted-foreground lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} ligne sur{" "}
-            {table.getFilteredRowModel().rows.length} sélectionnée(s)
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} row(s) selected.
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">
               <Label htmlFor="rows-per-page" className="text-sm font-medium">
-                Lignes par page
+                Rows per page
               </Label>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
@@ -547,7 +197,7 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
                   />
                 </SelectTrigger>
                 <SelectContent side="top">
-                  {[10, 20, 30, 40, 50,100].map((pageSize) => (
+                  {[10, 20, 30, 40, 50].map((pageSize) => (
                     <SelectItem key={pageSize} value={`${pageSize}`}>
                       {pageSize}
                     </SelectItem>
@@ -556,7 +206,7 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
               </Select>
             </div>
             <div className="flex w-fit items-center justify-center text-sm font-medium">
-              Page {table.getState()?.pagination?.pageIndex + 1} sur{" "}
+              Page {table.getState().pagination.pageIndex + 1} of{" "}
               {table.getPageCount()}
             </div>
             <div className="ml-auto flex items-center gap-2 lg:ml-0">
@@ -602,24 +252,6 @@ export default memo(function DataTable<T extends z.ZodTypeAny>({
             </div>
           </div>
         </div>
-      </TabsContent>
-      <TableCellViewer isPending={isUpdatePending} form={form} onSubmit={onUpdate} activeTab={activeTab as EntityKey} constants={activeTab ? constants[activeTab] : constants} open={!!selectedItem} setOpenChange={(open:boolean)=>{if(!open) setselectedItem(null)}} item={selectedItem}/>
-      <DeleteDialog
-          open={!!deleteIds}
-          ids={deleteIds || []}
-          setOpenModel={(open) => {
-            if (!open) setDeleteIds(null)
-          }}
-          onDelete={(ids) => {
-            onDelete(ids as number[])
-            if(deleteIds){
-              if(deleteIds.length > 2){
-                table.toggleAllRowsSelected(false)
-              }
-            }
-            setDeleteIds(null)
-          }}
-      />
-    </Tabs>
+      </>
   )
-})
+}

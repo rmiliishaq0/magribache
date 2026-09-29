@@ -1,0 +1,1 @@
+export const CURRENCY = [{label:"MAD — dirhams",value:"MAD"},{label:"EUR — euros",value:"EUR"},{label:"USD — dollars",value:"USD"}]

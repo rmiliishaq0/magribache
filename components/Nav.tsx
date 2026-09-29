@@ -1,14 +1,5 @@
-import {  NotebookPen, Plus, Search, Settings } from "lucide-react";
+import {  NotebookPen,  Search, Settings } from "lucide-react";
 import { Input } from "./ui/input";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import Link from "next/link";
 
 export default function Nav(){

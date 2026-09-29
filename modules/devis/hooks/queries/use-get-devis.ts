@@ -1,0 +1,43 @@
+import { useQuery } from "@tanstack/react-query";
+import { z } from "zod";
+import { filterSchema } from "../../schemas/devis-filter-schema";
+import { getDevis } from "../../api/get-devis";
+
+type Pagination={
+  pageIndex:number,
+  pageSize:number
+}
+
+export  function useGetDevis({pagination,activeFilters}: {pagination?:Pagination, activeFilters?:z.infer<typeof filterSchema>}) {
+  return useQuery({
+      queryKey: activeFilters ? ['devis',activeFilters,pagination] :[],
+      queryFn: async()=>{
+        if(activeFilters) {
+          const params = new URLSearchParams();
+        Object.entries(activeFilters).forEach(([key, value]) => {
+            if (
+              typeof value === "object" &&
+              value !== null &&
+              "from" in value &&
+              "to" in value
+            ) {
+              if (value.from) {
+                params.set("from", value.from.toISOString());
+              }
+
+              if (value.to) {
+                params.set("to", value.to.toISOString());
+              }
+
+              return;
+            }
+            params.set(key, String(value));
+          })
+          params.set("page",String(pagination?.pageIndex))
+          params.set("limit",String(pagination?.pageSize))
+        return getDevis(params);
+        }
+        return getDevis();
+      },
+    })
+}

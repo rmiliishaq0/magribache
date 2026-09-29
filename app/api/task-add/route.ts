@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req:NextRequest){
     try{
-        const auth = await requireAuth(req)
+        const auth = await requireAuth()
         if (auth.error) {
             return auth.response
         }
