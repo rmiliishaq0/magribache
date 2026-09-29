@@ -24,23 +24,57 @@ import { usePushDevis } from "../hooks/mutations/use-push-devis";
 import { DocumentStatus } from "@/app/generated/prisma/browser";
 import { documentStatusLabels } from "../constants/options-to-frensh";
 
+const toDate = (value: Date | string | null | undefined) => {
+  if (!value) return undefined;
+
+  if (value instanceof Date) {
+    return value;
+  }
+
+  return new Date(value);
+};
 
 export default function DevisFormUpdate({item,setItem}:{item:z.infer<typeof devisWithRefrence> | null, setItem:React.Dispatch<React.SetStateAction<z.infer<typeof devisSchemaWithId> | null>>}) {
-    const form= useDevisForm()
-    const {mutate,isError,isPending} = usePushDevis()
+    const form= useDevisForm({
+                reference :item?.reference || "",
+                client: item?.client ||"",
+                documentDate: toDate(item?.documentDate),
+                status:item?.status || "DRAFT",
+                validUntil: toDate(item?.validUntil),
+                notes:item?.notes || undefined,
+                items:item?.items || []
+            })
+    const {mutate,isPending} = usePushDevis()
+
     const onSubmit = useCallback((data:z.infer<typeof devisWithRefrence>)=>{
+        console.log(data)
             mutate(data ,{onSuccess:()=>{
             setItem(null)
         }})
     },[mutate])
 
-        useEffect(() => {
-            if (!item) return;
-            form.reset()
-            }, [item,form]);
+    useEffect(() => {
+  if (!item) return;
+
+  form.reset({
+    reference: item.reference ?? "",
+    client: item.client ?? "",
+    documentDate: toDate(item.documentDate),
+    status: item.status ?? "DRAFT",
+    validUntil: toDate(item.validUntil),
+    notes: item.notes ?? "",
+    items: item.items ?? [],
+  });
+}, [item, form]);
     return(
         <>
-        <form  onSubmit={form.handleSubmit(onSubmit)} id="form">               
+        <form
+  id="form"
+  onSubmit={form.handleSubmit(
+    onSubmit,
+    (errors) => console.log("❌ FORM VALIDATION:", errors)
+  )}
+>            
              <ScrollArea className="h-[calc(90vh-130px)] overflow-y-auto" >
                 <FieldGroup className="p-4 flex flex-col gap-4">
                 <Controller
@@ -57,26 +91,6 @@ export default function DevisFormUpdate({item,setItem}:{item:z.infer<typeof devi
                             } />
                             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                         </Field>
-                    )}
-                />
-                <Controller
-                    name="currency"
-                    control={form.control}
-                    render={({field,fieldState})=>(
-                        <Field aria-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="Devise">Devise</FieldLabel>
-                    <Select value={field.value}             onValueChange={field.onChange}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select a devise" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="MAD">MAD</SelectItem>
-                        <SelectItem value="USD">USD</SelectItem>
-                        <SelectItem value="EUR">EUR</SelectItem>
-                    </SelectContent>
-                </Select>
-                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
                     )}
                 />
                 <Controller
@@ -120,7 +134,20 @@ export default function DevisFormUpdate({item,setItem}:{item:z.infer<typeof devi
                         </Field>
                     )}
                 />
-                </FieldGroup>                    
+                <Controller
+                name="notes"
+                control={form.control}
+                render={({field,fieldState}) => (
+                    <Field aria-invalid={fieldState.invalid}>
+                        <FieldLabel htmlFor="Notes">Notes</FieldLabel>
+                        <Textarea id="Notes" {...field} placeholder="Notes...">Notes ...</Textarea>
+                        {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    </Field>
+                )}
+            />
+                </FieldGroup>    
+
+
             </ScrollArea>
         </form>
         <DrawerFooter>

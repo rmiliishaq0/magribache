@@ -13,12 +13,12 @@ import { Spinner } from "@/components/ui/spinner";
 import { DevisHeaderProps } from "../types";
 
 
-export default function DevisHeader({form,isPending,isError,handlePrint}:DevisHeaderProps) {
+export default function DevisHeader({type,form,isPending,isError,handlePrint}:DevisHeaderProps) {
     return(
         <>
             <div className="flex items-center justify-between">
                     <div className="space-y-2">
-                        <h2 className="text-2xl font-bold text-secondary mt-2">Créer Un Devis</h2>
+                        <h2 className="text-2xl font-bold text-secondary mt-2">{`${type == "Modify" ? "Modifier" :"Créer"} Un Devis`}</h2>
                             <Breadcrumb>
                                 <BreadcrumbList>
                                     <BreadcrumbItem>
@@ -28,7 +28,7 @@ export default function DevisHeader({form,isPending,isError,handlePrint}:DevisHe
                                     </BreadcrumbItem>
                                     <BreadcrumbSeparator />
                                     <BreadcrumbItem>
-                                        <BreadcrumbPage>Créer Un Devis</BreadcrumbPage>
+                                        <BreadcrumbPage>{`${type == "Modify" ? "Modifier" :"Créer"} Un Devis`}</BreadcrumbPage>
                                     </BreadcrumbItem>
                                 </BreadcrumbList>
                             </Breadcrumb>

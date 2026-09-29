@@ -1,5 +1,4 @@
 import {
-  Banknote,
   BriefcaseBusiness,
   ChartColumn,
   Landmark,
@@ -12,7 +11,6 @@ import {
 } from "lucide-react"
 import type { ColumnMeta } from "../types/types"
 import { EntityKey } from "../config/form-config"
-import { useClients, useFournisseurs } from "@/hooks/querys"
 
 export const sideBarecontents = {
   user: {
@@ -79,67 +77,7 @@ export const CrmFields:EntityKey[] = [
 
 
 
-export const CrmTableFields : Record<string,Record<string, ColumnMeta[]>> ={
-  Clients:{
-    "Entreprise":[{isNavigate:true,}],
-    "Téléphone":[{isInput:true,type:"number"}],
-    "Email":[{isInput:true,type:"email"}],
-    "Catégories":[{isInput:true,type:"text"}],
-    "ICE":[{isInput:true,type:"number"}],
-    "Identifiant fiscal (IF)": [{isInput:true,type:"number"}],
-    "Ville": [{isInput:true,type:"text"}],
-    "Pays": [{isInput:true,type:"text"}],
-    "Actif": [{isBadge:true,isSelected:true,values:["Oui","Non"],fullWidth:true}],
-  },
-  Fournisseurs:{
-    "Fournisseur":[{isNavigate:true,}],
-    "Email":[{isInput:true,type:"email"}],
-    "Téléphone":[{isInput:true,type:"number"}],
-    "ICE":[{isInput:true,type:"number"}],
-    "Identifiant fiscal (IF)": [{isInput:true,type:"number"}],
-    "Ville": [{isInput:true,type:"text"}],
-    "Pays": [{isInput:true,type:"text"}],
-    "Catégories": [{isInput:true,type:"text"}]
-  },
-  Contacts:{
-    "Nom":[{isNavigate:true,}],
-    "Civilité":[{isInput:true,type:"text"}],
-    "Email":[{isInput:true,type:"email"}],
-    "Téléphone":[{isInput:true,type:"number"}],
-    //"Entreprise":[{isInput:true,type:"text"}],
-    "Ville":[{isInput:true,type:"text"}],
-    "Pays":[{isInput:true,type:"text"}],
-    "Actif":[{isBadge:true,isSelected:true,values:["Oui","Non"]}]
-  },
-  "Contacts fournisseurs":{
-    "Name":[{isNavigate:true,}],
-    "Title":[{isInput:true,type:"text"}],
-    "Email":[{isInput:true,type:"email"}],
-    "Téléphone":[{isInput:true,type:"number"}],
-    "Fournisseur":[{isSelected:true,type:"text",needToFetch:true,hook:useFournisseurs,key:"fournisseur"}],
-    "City":[{isInput:true,type:"text"}],
-    "Country":[{isInput:true,type:"text",fullWidth:true}],
-  },
-  Prospects:{
-    "Nom":[{isNavigate:true,key:"entreprise"}],
-    "Prospect":[{isInput:true,type:"text"}],
-    "Email":[{isInput:true,type:"email"}],
-    "Téléphone":[{isInput:true,type:"number"}],
-    //"Attribué à":[{isInput:true,type:"text"}],
-    "Statut":[{isInput:true,type:"text"}],
-    "Source":[{isInput:true,type:"text"}],
-    "Date d'ajout":[{isDate:true,type:"date",key:"createdAt"}],
-    "Dernier contact":[{isDate:true,type:"date",key:"updatedAt"}],
-    "Localisation":[{isInput:true,type:"text"}],
-  },
-  Contrats:{
-   "Sujet":[{isNavigate:true,}],
-    "Client":[{isSelected:true,type:"text",needToFetch:true,hook:useClients,key:"clients"}],
-    "Modèle de contrat":[{isInput:true,type:"text",key:"modèleContrat"}],
-    "Date de depart":[{isInput:true,type:"date",key:"dateDepart"}],
-    "Date de fin":[{isInput:true,type:"date",fullWidth:true,key:"dateFin"}]
-  }
-}
+
 
 export const SalesFields = [
   "Devis",

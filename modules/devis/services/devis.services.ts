@@ -6,6 +6,7 @@ import z from "zod";
 import { activityRepository } from "@/modules/activity/activity.repository";
 import { Prisma } from "@/app/generated/prisma/client";
 import { logsRepository } from "@/modules/logs/logs-repository";
+import { serializePrisma } from "@/utils/serialize-prisma";
 
 export const devisService = {
     async get(filters:FilterType){
@@ -172,7 +173,7 @@ export const devisService = {
 
             return {
                 success: true,
-                devis
+                devis:serializePrisma(devis)
             }
         }catch(err){
         console.error(err)
@@ -204,5 +205,38 @@ export const devisService = {
             success: true,
             message: "Devis supprimé",
         }
+    },
+    async getByReference(refrence:string){
+        try{
+
+        const auth = await requireAuth()
+
+         if (auth.error) {
+            return {
+                success: false,
+                message: "Unauthorized",
+            };
+        }
+        if(!refrence || refrence.length<2){
+             return {
+                success: false,
+                message: "Unauthorized",
+            };
+        }
+
+        const devis = await devisRepository.getByRefrence(refrence)
+
+         return {
+          success: true,
+          devis:devis,
+        };
+    }catch(err){
+        console.error(err)
+        return {
+        success: false,
+        message: "Une erreur s'est produite",
+      };
     }
+    },
+    
 }

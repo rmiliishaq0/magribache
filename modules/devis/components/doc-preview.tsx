@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { DocumentSettings } from "@/modules/settings/types";
 import { readSettings } from "@/modules/settings/utils/read-settings";
 import { toWords } from 'to-words';
+import { paymentMethods } from "@/modules/devis/constants/options-to-frensh";
 
 
 
@@ -42,6 +43,7 @@ export default function DocPreview({
       defaults={  priceMode:settings?.priceMode || "ht",  totalHtLabel:settings?.totalHtLabel || "Total HT", totalVatLabel:settings?.totalVatLabel || "Total TVA", netLabel:settings?.netLabel || "Net à Payer", recipientSignature:settings?.recipientSignature || "", amountPrefix:settings?.amountPrefix || "Arrêté le présent document à la somme de :", paymentTerms:settings?.paymentTerms || "50% à la commande 50% à la livraison", footer: "" };
       setSettings(settings)
     }, [user.documentSettings]);
+  
   const values = form.watch()
 
   const subtotal =
@@ -167,7 +169,7 @@ export default function DocPreview({
 
         </div>
     
-        <p className="mt-6 font-medium">Mode de paiement :</p>
+        <p className="mt-6 font-medium">Mode de paiement : <span className="text-sm text-muted-foreground">{values?.paymentMethod == "check" ? `${paymentMethods[values?.paymentMethod as keyof typeof paymentMethods || "bankTransfer"]} (N° ${values?.chequeNum || ""} - ${values?.bank ||""})` : paymentMethods[values?.paymentMethod as keyof typeof paymentMethods] }</span></p>
         {/* ITEMS TABLE */}
         <div className="mt-4 overflow-hidden border rounded-lg">
           <table className="w-full">

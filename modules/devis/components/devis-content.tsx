@@ -1,9 +1,8 @@
 import { ResizablePanel, ResizablePanelGroup,ResizableHandle } from "@/components/ui/resizable";
-import DevisForm from "@/components/doc-from"
-import DevisPreview from "@/components/doc-preview"
+import DevisForm from "@/modules/devis/components/doc-from"
 import { Card,  } from "@/components/ui/card"
 import { DevisContentProps } from "../types";
-
+import DevisPreview from "./doc-preview"
 
 
 export default function DevisContent({form, onSubmit, data, previewRef, client,reference}:DevisContentProps) {

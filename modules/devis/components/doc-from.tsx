@@ -1,9 +1,9 @@
 "use client"
-import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field"
-import { Input } from "./ui/input"
-import { Button } from "./ui/button"
-import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem, SelectLabel, SelectGroup } from "./ui/select"
-import { Card } from "./ui/card"
+import { Field, FieldError, FieldGroup, FieldLabel } from "../../../components/ui/field"
+import { Input } from "../../../components/ui/input"
+import { Button } from "../../../components/ui/button"
+import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem, SelectLabel, SelectGroup } from "../../../components/ui/select"
+import { Card } from "../../../components/ui/card"
 import {
     Table,
     TableBody,
@@ -15,10 +15,9 @@ import {
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
 import { closestCenter, DndContext } from "@dnd-kit/core"
 import { Plus, TrashIcon } from "lucide-react"
-import { Textarea } from "./ui/textarea"
-import { Separator } from "./ui/separator"
+import { Textarea } from "../../../components/ui/textarea"
+import { Separator } from "../../../components/ui/separator"
 import { Controller, useFieldArray } from "react-hook-form"
-import z from "zod"
 import { DocFormProps } from "@/modules/devis/types";
 import {
   Combobox,
@@ -30,15 +29,21 @@ import {
 } from "@/components/ui/combobox"
 import { DocumentStatus } from "@/app/generated/prisma/browser";
 import { documentStatusLabels } from "@/modules/devis/constants/options-to-frensh";
+import { useAuthStore } from "@/stores/auth-store"
+import {paymentMethods} from "@/modules/devis/constants/payment-methode"
 
 
 export default function DocForm({form,clients,onSubmit}:DocFormProps) {
+    const settings = useAuthStore()
+    
+
     const { fields, append, remove } = useFieldArray({
         control:form.control,
         name:"items"
     })
     
-    
+    const paymentMethode = form.watch("paymentMethod")
+
     const items = form.watch("items")
     const subtotal = items?.reduce((acc, item) => {
         return acc + (
@@ -51,7 +56,7 @@ export default function DocForm({form,clients,onSubmit}:DocFormProps) {
         return acc + (
             Number(item.quantity || 0) *
             Number(item.unitPrice || 0) *
-            Number(item.tax || 0) / 100
+            Number(settings?.tva || 0) / 100
         )
     }, 0)
 
@@ -122,26 +127,6 @@ export default function DocForm({form,clients,onSubmit}:DocFormProps) {
                     )}
                 />
                 <Controller
-                    name="currency"
-                    control={form.control}
-                    render={({field,fieldState})=>(
-                        <Field aria-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="Devise">Devise</FieldLabel>
-                    <Select value={field.value}             onValueChange={field.onChange}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select a devise" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="MAD">MAD</SelectItem>
-                        <SelectItem value="USD">USD</SelectItem>
-                        <SelectItem value="EUR">EUR</SelectItem>
-                    </SelectContent>
-                </Select>
-                 {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-                </Field>
-                    )}
-                />
-                <Controller
                     name="status"
                     control={form.control}
                     render={({field,fieldState})=>(
@@ -170,7 +155,7 @@ export default function DocForm({form,clients,onSubmit}:DocFormProps) {
                     name="validUntil"
                     control={form.control}
                     render={({field,fieldState})=>(
-                        <Field aria-invalid={fieldState.invalid} className="col-span-2">
+                        <Field aria-invalid={fieldState.invalid} >
                             <FieldLabel htmlFor="dateDocument">Date de validité
                             </FieldLabel>
                             <Input aria-invalid={fieldState.invalid} type="date" id="dateValidite" value={field.value ? new Date(field.value).toISOString().split("T")[0] : ""} onChange={(e) =>
@@ -182,6 +167,63 @@ export default function DocForm({form,clients,onSubmit}:DocFormProps) {
                         </Field>
                     )}
                 />
+
+                <Controller
+                    name="paymentMethod"
+                    control={form.control}
+                    render={({field,fieldState})=>(
+                        <Field aria-invalid={fieldState.invalid} className="col-span-2">
+                    <FieldLabel htmlFor="Statut">Mode de paiement</FieldLabel>
+                    <Select value={field.value}  onValueChange={field.onChange}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select a Mode de paiement" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Mode de paiement</SelectLabel>
+                                {paymentMethods.map(({value,label}) => (
+                                    <SelectItem key={value} value={value}>
+                                        {label}
+                                    </SelectItem>
+                            ))}
+                        </SelectGroup>    
+                    </SelectContent>
+                </Select>
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+                    )}
+                />
+
+            {
+                paymentMethode === "check" && 
+                <>
+                    <Controller
+                    name="chequeNum"
+                    control={form.control}
+                    render={({field,fieldState})=>(
+                        <Field aria-invalid={fieldState.invalid}>
+                            <FieldLabel htmlFor="chequeNum">Numéro de chèque</FieldLabel>
+                            <Input aria-invalid={fieldState.invalid} type="text" id="chequeNum" {...field} />
+                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </Field>
+                    )}
+                />
+
+                <Controller
+                    name="bank"
+                    control={form.control}
+                    render={({field,fieldState})=>(
+                        <Field aria-invalid={fieldState.invalid}>
+                            <FieldLabel htmlFor="bank">La banque</FieldLabel>
+                            <Input aria-invalid={fieldState.invalid} type="text" id="bank" {...field} />
+                            {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                        </Field>
+                    )}
+                />
+
+            </>
+            }
+
             </FieldGroup>
             <FieldGroup className="mt-6">
                 <div className="flex flex-row gap-4 justify-between items-center">
@@ -191,7 +233,6 @@ export default function DocForm({form,clients,onSubmit}:DocFormProps) {
             product:"",
             quantity:1,
             unitPrice:0,
-            tax:20
         },
   {
     shouldFocus: true,
@@ -215,7 +256,6 @@ export default function DocForm({form,clients,onSubmit}:DocFormProps) {
                         <TableHead>Article</TableHead>
                         <TableHead>Qte</TableHead>
                         <TableHead>PU</TableHead>
-                        <TableHead>TVA</TableHead>
                         <TableHead/>
                         {/*<TableHead>Total</TableHead>*/}
                   </TableRow>
@@ -268,20 +308,6 @@ export default function DocForm({form,clients,onSubmit}:DocFormProps) {
                         />
                     </TableCell>
                     <TableCell>
-                        <Controller
-                            name={`items.${i}.tax`}
-                            control={form.control}
-                            render={({field}) => (
-                                <Input
-                                    {...field}
-                                    type="number"
-                                    placeholder="TVA"
-                                     onChange={(e) => field.onChange(Number(e.target.value))}
-                                />
-                            )}
-                        />
-                    </TableCell>
-                    <TableCell>
                         <Button
                             type="button"
                             variant={"destructive"}
@@ -316,18 +342,18 @@ export default function DocForm({form,clients,onSubmit}:DocFormProps) {
                 <div className="flex flex-col items-center gap-2">
                     <span className="text-secondary block">Sous-total HT</span>
                     <h3 className="font-semibold text-lg">
-                        {subtotal?.toFixed(2)} {form.getValues("currency") ?? "MAD"}
+                        {subtotal?.toFixed(2)} {settings?.currency ?? "MAD"}
                     </h3>
                 </div>
                 <Separator orientation="vertical"/>
                 <div className="flex flex-col items-center gap-2">
-                    <span className="text-secondary block">TVA(20%)</span>
-                    <h3 className="font-semibold text-lg">{totalTax?.toFixed(2)} {form.getValues("currency") ?? "MAD"}</h3>
+                    <span className="text-secondary block">TVA({(settings?.tva) ?? "20"}%)</span>
+                    <h3 className="font-semibold text-lg">{totalTax?.toFixed(2)} {settings?.currency  ?? "MAD"}</h3>
                 </div>
                 <Separator orientation="vertical"/>
                 <div className="flex flex-col items-center gap-2">
                     <span className="text-secondary block">Total TTC</span>
-                    <h3 className="font-semibold text-lg">{total?.toFixed(2)} {form.getValues("currency") ?? "MAD"}</h3>
+                    <h3 className="font-semibold text-lg">{total?.toFixed(2)} {settings?.currency  ?? "MAD"}</h3>
                 </div>
             </div>
             </form>

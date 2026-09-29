@@ -19,6 +19,7 @@ export type CLientWithDevis = {
 }
 
 export type DevisHeaderProps = {
+    type?: "Modify" | "Create"
     form:UseFormReturn<z.infer<typeof devisWithRefrence>>,
     isPending:boolean,
     isError:boolean,

@@ -18,7 +18,8 @@ export const devisRepository = {
             take: filters.take,
             skip: filters.skip,
             include:{
-                client:true
+                client:true,
+                items:true
             }
         })     
     },
@@ -116,7 +117,7 @@ export const devisRepository = {
                 reference: data.reference,
             },
             create: { ...data, type: "DEVIS",client:{connect:{reference:data.client}},items:{createMany:{data:data.items}} },
-            update: { ...data, type: "DEVIS",client:{connect:{reference:data.client}},items:{createMany:{data:data.items}} },
+            update: { ...data, type: "DEVIS",client:{connect:{reference:data.client}},items:{deleteMany: {},createMany:{data:data.items}} },
         });
     },
     async create(data:z.infer<typeof devisWithRefrence>){
@@ -127,13 +128,17 @@ export const devisRepository = {
             where:{
                 reference:data.reference
             },
-            data:{ ...data, type: "DEVIS",client:{connect:{reference:data.client}},items:{createMany:{data:data.items}} }
+            data:{ ...data, type: "DEVIS",client:{connect:{reference:data.client}},items:{deleteMany:{},createMany:{data:data.items}} }
         })
     },
     async getByRefrence(reference:string){
         return prisma.document.findFirst({
             where:{
                 reference
+            },
+            include:{
+                items:true,
+                client:true
             }
         })
     },

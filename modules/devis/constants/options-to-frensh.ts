@@ -21,3 +21,10 @@ export const paymentStatusLabels = {
   PAID: "Payée",
   OVERDUE: "En retard",
 } as const;
+
+export const paymentMethods = {
+  bankTransfer: "Virement",
+  check: "Chèque",
+  cash: "Espèces",
+  bankCard: "Carte Bancaire",
+} as const;
