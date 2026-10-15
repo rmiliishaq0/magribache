@@ -1,7 +1,7 @@
 "use client"
 import { Card } from "@/components/ui/card";
 import DataTable  from "@/components/data-table";
-import { TasksTableFields, TasksTableFieldsKeys } from "@/utils/constants";
+import { TasksTableFields, TasksTableFieldsKeys } from "@/constants/constants";
 import {Button} from "@/components/ui/button";
 import { IconPlus } from "@tabler/icons-react";
 import {useCallback, useEffect, useMemo, useState} from "react";
