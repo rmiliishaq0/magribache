@@ -1,3 +1,4 @@
+import { LucideIcon } from "lucide-react";
 import { z } from "zod";
 
 export type ColumnMeta = {
@@ -29,3 +30,23 @@ type Me={
 }
 
 export type Crm = z.infer<typeof crmSchema>
+
+
+export type SidebarWithCollapseProps = {
+  items: {
+    title: string
+    href: string
+    icon?: LucideIcon
+    isActive?: boolean
+    items?: {
+      title: string
+      href: string
+    }[]
+  }[],
+  item:{
+    title: string
+    href: string
+    icon?: LucideIcon
+    isActive?: boolean
+  } 
+}

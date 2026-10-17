@@ -44,6 +44,25 @@ export const sideBarecontents = {
       href:"/admin/devis",
     },
     {
+      title:"Stock",
+      icon:BriefcaseBusiness,
+      href:"/admin/stock",
+      hasSubMenu:true,
+      subMenu:[
+        {
+          title:"Matières Premières",
+          href:"/admin/stock/products",
+        },
+        {
+          title:"Produits Finis",
+          href:"/admin/stock/produits-finis",
+        },{
+          title:"Mouvements de stock",
+          href:"/admin/stock/mouvements",
+        }
+      ]
+    },
+    {
       title:"Achats",
       icon:ShoppingCart,
       href:"/admin/purchases",
