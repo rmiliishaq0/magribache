@@ -45,20 +45,24 @@ export const sideBarecontents = {
     },
     {
       title:"Stock",
-      icon:BriefcaseBusiness,
+      icon:Package,
       href:"/admin/stock",
       hasSubMenu:true,
       subMenu:[
         {
-          title:"Matières Premières",
+          title:"Produits",
           href:"/admin/stock/products",
         },
         {
+          title:"Matières Premières",
+          href:"/admin/stock/raw-materials",
+        },
+        {
           title:"Produits Finis",
-          href:"/admin/stock/produits-finis",
+          href:"/admin/stock/finished-products",
         },{
           title:"Mouvements de stock",
-          href:"/admin/stock/mouvements",
+          href:"/admin/stock/stock-movements",
         }
       ]
     },
