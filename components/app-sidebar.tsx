@@ -6,19 +6,22 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenuButton,
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar"
 import SideBareCard from "@/components/sidebare-card"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {sideBarecontents} from "@/utils/constants"
+import {sideBarecontents} from "@/constants/constants"
 import { useQuery } from "@tanstack/react-query"
 import { useAuthStore } from "@/stores/auth-store"
 import { me } from "@/utils/Apis"
 import { useEffect } from "react"
-import { Skeleton } from "@/components/ui/skeleton"
 import { useRouter } from "next/navigation"
+import { CollapsibleContent, CollapsibleTrigger } from "./ui/collapsible";
+import { ChevronRight } from "lucide-react";
+import SidebarWithCollapse from "./ui/sidebar-with-collapse";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter();
@@ -47,13 +50,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <div className="flex gap-4 flex-col ml-2 mt-6">
           {
-          sideBarecontents.contents.map((item,index)=>{
-            return(
+          sideBarecontents.contents.map((item,index)=>
+            item.hasSubMenu ? 
+            <SidebarWithCollapse items={item?.subMenu} item={{...item, isActive: pathname === item.href}} />
+            : 
               <Link href={item.href} key={index} className="mr-2 group/item" >
                 <SideBareCard active={pathname===item.href} Logo={item.icon} name={item.title}/>
               </Link>
-            )
-          })
+            
+          )
         }
         </div>
       </SidebarContent>

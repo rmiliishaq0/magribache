@@ -1,0 +1,79 @@
+enum PartnerStatus {
+  "PROSPECT",
+  "CLIENT",
+  "ARCHIVED"
+}
+
+enum CompanyType {
+  INDIVIDUAL,
+  FARMER,
+  COMPANY,
+  RESELLER,
+  ADMINISTRATION,
+  ASSOCIATION,
+}
+
+enum PartnerPriority {
+  LOW,
+  MEDIUM,
+  HIGH,
+  URGENT,
+}
+
+enum PartnerSource {
+  PHONE,
+  WHATSAPP,
+  FACEBOOK,
+  INSTAGRAM,
+  WEBSITE,
+  TIKTOK,
+  LINKEDIN,
+  VISIT,
+  REFERRAL,
+  OTHER,
+}
+
+enum ActivityType {
+CREATED,
+UPDATED,
+DELETED,
+NOTE,
+
+CALL,
+EMAIL,
+WHATSAPP,
+MEETING,
+
+STATUS_CHANGED,
+
+PDF_GENERATED,
+SENT,
+
+PAYMENT_RECEIVED,
+
+STARTED,
+COMPLETED,
+}
+
+enum Documentype {
+  DEVIS,
+  FACTURE,
+}
+
+enum DocumentStatus {
+  BROUILLON,
+  ENVOYE,
+  PAYE,
+  ANNULE,
+}
+
+enum EntityType {
+  PARTNER,
+  DOCUMENT,
+  PRODUCTION,
+  DELIVERY,
+  INVENTORY,
+  PRODUCT,
+}
+
+export {PartnerSource}

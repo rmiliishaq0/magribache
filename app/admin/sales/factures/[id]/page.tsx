@@ -5,7 +5,7 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
   } from "@/components/ui/resizable"
-import DevisForm from "@/components/doc-from"
+import DevisForm from "@/modules/devis/components/doc-from"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
