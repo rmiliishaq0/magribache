@@ -11,7 +11,7 @@ export const productstats: ProductStats[] = [
     icon: Package,
     description: "Produits au total",
     style: "TOTAL",
-    accessKey: "totalProducts",
+    accessKey: "total",
   },
   {
     icon: Leaf,
@@ -29,6 +29,6 @@ export const productstats: ProductStats[] = [
     icon: Box,
     description: "Autres articles",
     style: "OTHER",
-    accessKey: "otherItems",
+    accessKey: "otherProducts",
   },
 ];

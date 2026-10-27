@@ -18,20 +18,22 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table"
 
-import {columns} from "@/modules/crm/columns/prospect"
-import { crmScemaWithId } from "@/modules/crm/types";
 import StatsCard from "@/components/stats-card";
 import EntityDialog from "@/components/entity-dialog";
-import ProspectForm from "@/modules/crm/components/prospect-form";
-import { useGetProspects } from "@/modules/crm/hooks/queries/use-get-prospects";
-import { useFilterBoard } from "@/modules/crm/hooks/forms";
 import { toast } from "sonner";
-import { filterSchema } from "@/modules/crm/schemas/filter";
 import TableCellViewerEntity from "@/components/table-cell-viewer-entity";
 import ProspectFormUpdate from "@/modules/crm/components/prospect-form-update";
 import { productstats } from "@/modules/products/constants/products-stats";
 import { productTypeColors } from "@/modules/products/constants/colors";
 import FilterBoardForm from "@/modules/products/components/filter-board-form";
+import { useFilterBoard } from "@/modules/products/hooks/forms/use-filter-board";
+import { Fournisseur, productsSchemaWithId } from "@/modules/products/types";
+import { columns } from "@/modules/products/columns/products";
+import ProductForm from "@/modules/products/components/products-form";
+import { useGetProducts } from "@/modules/products/hooks/queries/use-get-products";
+import { filterSchema } from "@/modules/products/schemas/filter";
+import { useGetSuppliers } from "@/modules/products/hooks/queries/use-get-suppliers";
+import ProductsFormUpdate from "@/modules/products/components/products-form-update";
 
 export default function ProductsPage() {
     const form= useFilterBoard()
@@ -42,17 +44,20 @@ export default function ProductsPage() {
     const [sorting, setSorting] = useState<SortingState>([])
     const [isOpen,setIsOpen] =useState(false)
 
-    const [item,setItem] = useState<z.infer<typeof crmScemaWithId> | null>(null)
+    const [item,setItem] = useState<productsSchemaWithId | null>(null)
     
     const [columnVisibility, setColumnVisibility] =useState<VisibilityState>({
-        companyName:false,
-        website:false,
-        adresse:false,
-        region:false,
-        country:false,
-        ice:false,
-        rc:false,
-        ifNumber:false
+        color:false,
+        grammage:false,
+        taxRate:false,
+        salePriceHT:false,
+        purchasePriceHT:false,
+        maximumStock:false,
+        minimumStock:false,
+        trackLot:false,
+        trackSerialNumber:false,
+        dimensions:false,
+        material:false,
     })
 
     const [rowSelection, setRowSelection] = useState({})
@@ -83,24 +88,25 @@ export default function ProductsPage() {
         );
         }, [filters]);
         
-    const {isPending,isError,error,data} = useGetProspects({pagination:{...pagination,pageIndex:pagination.pageIndex+1},activeFilters})
-    const dataWithoutFilters = useGetProspects({})
-
-    const prospects:z.infer<typeof crmScemaWithId>[] = useMemo(()=>{
-        return data?.prospects?.prospects || []
+    const {isPending,isError,error,data} = useGetProducts({pagination:{...pagination,pageIndex:pagination.pageIndex+1},activeFilters})
+    const suppliersData = useGetSuppliers()
+    
+    const products:productsSchemaWithId[] = useMemo(()=>{
+        return data?.products?.products || []
     },[data])
-    const prospectsWithoutFilters:z.infer<typeof crmScemaWithId>[] = useMemo(()=>{
-        return dataWithoutFilters?.data?.prospects?.prospects || []
-    },[dataWithoutFilters])
+
+    const suppliers:Fournisseur[] = useMemo(()=>{
+        return suppliersData.data?.suppliers || []
+    },[suppliersData])
     
     useEffect(()=>{
         if(isError) toast.error(error?.message  || "Une erreur s'est produite")
     },[isError])
     const total = useMemo(()=>{
-        return data?.prospects?.total || 1
+        return data?.products?.total || 1
     },[data])
     const table = useReactTable({
-    data:prospects,
+    data:products,
     columns:columns({setItem}),
     state: {
       sorting,
@@ -132,19 +138,19 @@ export default function ProductsPage() {
             <h2 className="text-2xl font-bold text-secondary mt-2 mb-6">Liste Des Produits</h2>
                 <div className="grid md:grid-cols-4 grid-cols-2 gap-4">
                     {productstats.map((i,index)=>(
-                <StatsCard key={index} Icon={i.icon} description={i.description} number={data?.prospects?.[i.accessKey] || 0} style={productTypeColors[i.style]}/>
+                <StatsCard key={index} Icon={i.icon} description={i.description} number={data?.products?.[i.accessKey] || 0} style={productTypeColors[i.style]}/>
             ))}
                 </div>
             <FilterBoard form={form} setIsOpen={setIsOpen} table={table} title="Produit" >
-                <FilterBoardForm form={form} data={prospectsWithoutFilters}/>
+                <FilterBoardForm form={form} data={suppliers}/>
             </FilterBoard>
-            <DataTable<z.infer<typeof crmScemaWithId>> table={table} isPending={isPending} />
+            <DataTable<productsSchemaWithId> table={table} isPending={isPending} />
                 <EntityDialog  title="prospect" open={isOpen} setIsOpen={setIsOpen}>
-                    <ProspectForm setIsOpen={setIsOpen}/>
+                    <ProductForm suppliers={suppliers} setIsOpen={setIsOpen}/>
                 </EntityDialog>  
-            <TableCellViewerEntity link={`/admin/crm/${item?.reference}`} title={item?.reference || ""} item={item} setItem={setItem}>
+            <TableCellViewerEntity link={`/admin/stock/products/${item?.reference}`} title={item?.reference || ""} item={item} setItem={setItem}>
                 {
-                    item && <ProspectFormUpdate item={item} setItem={setItem} />
+                    item && <ProductsFormUpdate item={item} setItem={setItem} />
                 }
             </TableCellViewerEntity>    
             </CardContent>

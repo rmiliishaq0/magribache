@@ -70,6 +70,21 @@ export const sideBarecontents = {
       title:"Achats",
       icon:ShoppingCart,
       href:"/admin/purchases",
+      hasSubMenu:true,
+      subMenu:[
+        {
+          title:"Fournisseurs",
+          href:"/admin/purchases/suppliers",
+        },
+        {
+          title:"Bon De Commande",
+          href:"/admin/purchases/purchase-order",
+        },
+        {
+          title:"Réception",
+          href:"/admin/purchases/goods-receipt",
+        }
+      ]
     },
     {
       title:"Produits",

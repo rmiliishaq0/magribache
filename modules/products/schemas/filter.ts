@@ -1,4 +1,4 @@
-import { ProductStatus ,ProductType} from "@/app/generated/prisma/client"
+import { ProductStatus ,ProductType} from "@/app/generated/prisma/browser";
 import { z } from "zod"
 
 export const filterSchema = z.object({

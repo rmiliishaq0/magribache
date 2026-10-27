@@ -87,8 +87,8 @@ export default function FilterBoardForm({data,form}:{data:Fournisseur[],form:Use
                         <Field aria-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="fournisseur">Fournisseur</FieldLabel>
                         <Combobox virtualized  value={field.value ?? ""} onValueChange={(value) =>
-                                field.onChange(value === "" || value == null ? undefined : value)} items={ data.map((i)=>i?.fullName) || [] } >
-                            <ComboboxInput  aria-invalid={fieldState.invalid} placeholder="Toutes" showClear  disabled={!data?.some((i)=>i?.fullName)}/>
+                                field.onChange(value === "" || value == null ? undefined : value)} items={ data.map((i)=>i?.name) || [] } >
+                            <ComboboxInput  aria-invalid={fieldState.invalid} placeholder="Toutes" showClear  disabled={!data?.some((i)=>i?.name)}/>
                             <ComboboxContent>
                                 <ComboboxEmpty>Aucun article trouvé.</ComboboxEmpty>
                                 <ComboboxList>

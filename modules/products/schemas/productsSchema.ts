@@ -1,5 +1,12 @@
 import { ProductStatus, ProductType, StockUnit } from "@/app/generated/prisma/browser";
 import z from "zod";
+import { Fournisseur } from "../types";
+
+const supplier: z.ZodType<Fournisseur> = z.object({
+  name: z.string(),
+  reference: z.string(),
+  city:z.string()
+});
 
 export const productsSchema = z.object({
 
@@ -7,25 +14,27 @@ export const productsSchema = z.object({
   "name": z.string().max(255),
 
   "type": z.nativeEnum(ProductType),
-  "status": z.nativeEnum(ProductStatus).default("ACTIVE"),
+  "status": z.nativeEnum(ProductStatus),
 
   "unit": z.nativeEnum(StockUnit),
 
-  "capacityM3": z.number().nullable(),
-  "dimensions": z.string().nullable(),
-  "material": z.string().nullable(),
-  "color": z.string().nullable(),
-  "grammage": z.string().nullable(),
+  "fournisseurs" :  z.array(supplier).optional(),
 
-  "taxRate": z.number().default(20),
-  "salePriceHT": z.number().nullable(),
-  "purchasePriceHT": z.number().nullable(),
+  "capacityM3": z.number().optional(),
+  "dimensions": z.string().optional(),
+  "material": z.string().optional(),
+  "color": z.string().optional(),
+  "grammage": z.string().optional(),
 
-  "currentStock": z.number().default(0),
-  "minimumStock": z.number().nullable(),
-  "maximumStock": z.number().nullable(),
+  "taxRate": z.number().optional(),
+  "salePriceHT": z.number().optional(),
+  "purchasePriceHT": z.number().optional(),
 
-  "trackLot": z.boolean().default(false),
-  "trackSerialNumber": z.boolean().default(false)
+  "currentStock": z.number().optional(),
+  "minimumStock": z.number().optional(),
+  "maximumStock": z.number().optional(),
+
+  "trackLot": z.boolean().optional(),
+  "trackSerialNumber": z.boolean().optional()
 
 })

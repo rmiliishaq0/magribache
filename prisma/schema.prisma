@@ -101,6 +101,9 @@ model Activity {
   documentId Int?
   document   Document?        @relation(fields: [documentId], references: [id], onDelete: Cascade)
   partner    BusinessPartner? @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  productId  Int?
+  product    Product?         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
   logs       ActivityLog[]
 
   @@index([partnerId])
@@ -309,7 +312,7 @@ enum SupplierStatus {
 
 
 model Product {
-  id                  String        @id @default(cuid())
+    id            Int            @id @default(autoincrement())
 
   reference           String        @unique
   name                String
@@ -346,6 +349,8 @@ model Product {
 
   finishedUnits       FinishedProductUnit[]
 
+  activity      Activity[]
+
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
 
@@ -355,7 +360,8 @@ model Product {
 }
 
 model Supplier {
-  id                  String          @id @default(cuid())
+    id            Int            @id @default(autoincrement())
+
 
   reference           String          @unique
   name                String
@@ -395,12 +401,12 @@ model Supplier {
 }
 
 model SupplierProduct {
-  id                  String    @id @default(cuid())
+  id                  Int    @id @default(autoincrement())
 
-  supplierId          String
+  supplierId          Int
   supplier            Supplier  @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 
-  productId           String
+  productId           Int
   product             Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   supplierReference   String?
@@ -429,11 +435,11 @@ enum PurchaseOrderStatus {
 }
 
 model PurchaseOrder {
-  id                  String              @id @default(cuid())
+  id            Int            @id @default(autoincrement())
 
   reference           String              @unique
 
-  supplierId          String
+  supplierId          Int
   supplier            Supplier            @relation(fields: [supplierId], references: [id])
 
   orderDate           DateTime            @default(now())
@@ -462,12 +468,12 @@ model PurchaseOrder {
 }
 
 model PurchaseOrderLine {
-  id                  String            @id @default(cuid())
+  id                  Int            @id @default(autoincrement())
 
-  purchaseOrderId     String
+  purchaseOrderId     Int
   purchaseOrder       PurchaseOrder    @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
 
-  productId           String
+  productId           Int
   product             Product           @relation(fields: [productId], references: [id])
 
   designation         String
@@ -501,14 +507,14 @@ enum GoodsReceiptStatus {
 }
 
 model GoodsReceipt {
-  id                  String             @id @default(cuid())
+  id                  Int             @id @default(autoincrement())
 
   reference           String             @unique
 
-  supplierId          String
+  supplierId          Int
   supplier            Supplier           @relation(fields: [supplierId], references: [id])
 
-  purchaseOrderId     String
+  purchaseOrderId     Int
   purchaseOrder       PurchaseOrder      @relation(fields: [purchaseOrderId], references: [id])
 
   receiptDate         DateTime           @default(now())
@@ -530,15 +536,15 @@ model GoodsReceipt {
 }
 
 model GoodsReceiptLine {
-  id                    String             @id @default(cuid())
+  id                    Int             @id @default(autoincrement())
 
-  goodsReceiptId        String
+  goodsReceiptId        Int
   goodsReceipt          GoodsReceipt       @relation(fields: [goodsReceiptId], references: [id], onDelete: Cascade)
 
-  purchaseOrderLineId   String
+  purchaseOrderLineId   Int
   purchaseOrderLine     PurchaseOrderLine @relation(fields: [purchaseOrderLineId], references: [id])
 
-  productId             String
+  productId             Int
   product               Product            @relation(fields: [productId], references: [id])
 
   quantityReceived      Decimal            @db.Decimal(14, 3)
@@ -560,17 +566,17 @@ model GoodsReceiptLine {
 }
 
 model StockLot {
-  id                  String       @id @default(cuid())
+  id                  Int       @id @default(autoincrement())
 
   lotNumber           String       @unique
 
-  productId           String
+  productId           Int
   product             Product      @relation(fields: [productId], references: [id])
 
-  supplierId          String?
+  supplierId          Int?
   supplier            Supplier?    @relation(fields: [supplierId], references: [id])
 
-  goodsReceiptId      String?
+  goodsReceiptId      Int?
 
   entryDate           DateTime     @default(now())
 
@@ -605,14 +611,14 @@ enum StockMovementType {
 }
 
 model StockMovement {
-  id                  String             @id @default(cuid())
+  id                  Int             @id @default(autoincrement())
 
   reference           String             @unique
 
-  productId           String
+  productId           Int
   product             Product            @relation(fields: [productId], references: [id])
 
-  stockLotId          String?
+  stockLotId          Int?
   stockLot            StockLot?          @relation(fields: [stockLotId], references: [id])
 
   type                StockMovementType
@@ -649,16 +655,16 @@ enum FinishedProductUnitStatus {
 }
 
 model FinishedProductUnit {
-  id                  String                    @id @default(cuid())
+  id                  Int                    @id @default(autoincrement())
 
   serialNumber        String                    @unique
 
-  productId           String
+  productId           Int
   product             Product                   @relation(fields: [productId], references: [id])
 
   status              FinishedProductUnitStatus @default(AVAILABLE)
 
-  productionOrderId   String?
+  productionOrderId   Int?
 
   qualityStatus       String?
 
