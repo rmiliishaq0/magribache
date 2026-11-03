@@ -23,9 +23,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import Link from "next/link";
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function SidebarWithCollapse({items,item}:SidebarWithCollapseProps){
     const {open} =useSidebar()
+
+    const pathname= usePathname()
   return (
           <SidebarMenu >
 
@@ -68,7 +72,7 @@ export default function SidebarWithCollapse({items,item}:SidebarWithCollapseProp
                         size="md"
                         >
                         <Link href={subItem.href}>
-                            <span className={`sidebar-hover-sub  transition text-secondary ${item.isActive && "text-primary!"}`}>{subItem.title}</span>
+                            <span className={`sidebar-hover-sub  transition text-secondary ${pathname === subItem.href && "text-primary!"}`}>{subItem.title}</span>
                        </Link>
                       </SidebarMenuSubButton>
                     </SidebarMenuSubItem>

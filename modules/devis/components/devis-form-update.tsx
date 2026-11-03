@@ -71,8 +71,7 @@ export default function DevisFormUpdate({item,setItem}:{item:z.infer<typeof devi
         <form
   id="form"
   onSubmit={form.handleSubmit(
-    onSubmit,
-    (errors) => console.log("❌ FORM VALIDATION:", errors)
+    onSubmit
   )}
 >            
              <ScrollArea className="h-[calc(90vh-130px)] overflow-y-auto" >

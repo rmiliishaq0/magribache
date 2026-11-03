@@ -39,12 +39,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     if(!data?.me)return;
     authState.setAuthState(data?.me)
   },[data,error])
-
   return (
     <Sidebar className="mt-2" collapsible="icon" {...props}>
       <SidebarHeader>
         <Link href={"/admin"}>
-          <SideBareCard isLogo Logo={sideBarecontents.logo.logo} name={sideBarecontents.logo.name} plan={sideBarecontents.logo.sub} />
+          <SideBareCard isLogo Logo={sideBarecontents.logo.logo} name={sideBarecontents.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         logo.name} plan={sideBarecontents.logo.sub} />
         </Link>
       </SidebarHeader>
       <SidebarContent>
@@ -52,7 +51,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           {
           sideBarecontents.contents.map((item,index)=>
             item.hasSubMenu ? 
-            <SidebarWithCollapse items={item?.subMenu} item={{...item, isActive: pathname === item.href}} />
+            <SidebarWithCollapse items={item?.subMenu} item={{...item, isActive: pathname.includes(item.href)}} />
             : 
               <Link href={item.href} key={index} className="mr-2 group/item" >
                 <SideBareCard active={pathname===item.href} Logo={item.icon} name={item.title}/>
