@@ -1,7 +1,7 @@
 "use server"
-import { z } from "zod";
-import { suppliersRepository } from "../repositories/suppliers.repositories";
+
+import { suppliersService } from "../services/suppliers.service";
 
 export async function getSupplier(reference: string) {
-  return await suppliersRepository.findByReference(reference);
+  return await suppliersService.getByReference(reference);
 }

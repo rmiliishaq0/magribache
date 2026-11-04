@@ -175,6 +175,7 @@ export const suppliersService = {
         const supplier = await suppliersRepository.update({
           ...parsedData,
           products: {
+            deleteMany: {},
             create: parsedData.products?.map(product => ({
               product: { connect: { reference: product } },
             })),
@@ -185,7 +186,7 @@ export const suppliersService = {
           entityType: "PARTNER",
           action: "UPDATED",
           note: "Partenaire mis à jour.",
-          partner: { connect: { id: supplier.id } },
+          supplier: { connect: { id: supplier.id } },
         })
 
         const logs: Prisma.ActivityLogCreateManyInput[] = []
@@ -208,6 +209,7 @@ export const suppliersService = {
           await logsRepository.createMany(logs)
         }
         revalidatePath(`/admin/purchases/suppliers`);
+        revalidatePath(`/admin/purchases/suppliers/${parsedData.reference}`);
 
          return {
         success: true,

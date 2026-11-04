@@ -17,3 +17,20 @@ export type SuppliersSchema = z.infer<typeof suppliersSchema>
 export type FilterType = z.infer<typeof filterSchema> & {take?:number,skip?:number}
 
 export type SuppliersSchemaWithId = z.infer<typeof suppliersSchemaWithId>
+
+
+export type PurchaseOrderRow = {
+  id: number
+  reference: string
+  status: string
+  totalTTC: unknown
+  currency: string
+}
+
+export type SupplierProductRow = {
+  id: number
+  product: { reference: string; name: string }
+  purchasePriceHT: unknown
+  deliveryDelayDays: number | null
+  isPreferred: boolean
+}

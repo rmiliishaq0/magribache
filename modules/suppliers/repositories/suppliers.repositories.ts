@@ -45,7 +45,7 @@ export const suppliersRepository = {
     })     
   },
 
-  async update(data:Prisma.SupplierCreateInput) {
+  async update(data: Prisma.SupplierUpdateInput & { reference: string }) {
     return await prisma.supplier.update({
       where: { reference: data.reference },
       data,
@@ -59,7 +59,16 @@ export const suppliersRepository = {
           logs: true,
         },
       },
-      products:true
+      products: {
+        include: {
+          product: true,
+        },
+      },
+      purchaseOrders: {
+        orderBy: {
+          orderDate: "desc",
+        },
+      },
     }})
   },
   
