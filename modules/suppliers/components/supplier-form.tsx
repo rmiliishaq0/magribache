@@ -42,7 +42,7 @@ export default function SupplierForm({setIsOpen}:{setIsOpen:React.Dispatch<SetSt
                 form.reset()
             }
         })
-    },[mutate,form])
+    },[mutate, form, setIsOpen])
 
     return(
         <form id="supplier-form" className="flex flex-col gap-4 w-full "  onSubmit={form.handleSubmit(onSubmit,    (errors) => console.log("❌ FORM VALIDATION:", errors)
@@ -381,7 +381,7 @@ export default function SupplierForm({setIsOpen}:{setIsOpen:React.Dispatch<SetSt
 
                 
                 <div className="fixed bottom-2 bg-white left-0 right-0 p-4">
-                    <Button form="supplier-form" className="col-span-2 w-full" disabled={mutate.isPending || form.formState.isSubmitting || !form.formState.isValid}  type="submit">
+                    <Button form="supplier-form" className="col-span-2 w-full" disabled={mutate.isPending || form.formState.isSubmitting} type="submit">
                         {mutate.isPending || form.formState.isSubmitting ? <Spinner /> : "Enregistrer"}
                     </Button>
                 </div>

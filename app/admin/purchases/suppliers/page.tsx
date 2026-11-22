@@ -22,7 +22,6 @@ import { fournisseurStats } from "@/modules/suppliers/constants/suppliers-stats"
 import StatsCard from "@/components/stats-card";
 import { toast } from "sonner";
 import TableCellViewerEntity from "@/components/table-cell-viewer-entity";
-import DevisFormUpdate from "@/modules/devis/components/devis-form-update";
 import {fournisseurStatsColors} from "@/modules/suppliers/constants/colors"
 
 import FilterBoardForm from "@/modules/suppliers/components/filter-board-form";
@@ -82,7 +81,8 @@ export default function Suppliers() {
         );
         }, [filters]);
         
-    const {isPending,isError,error,data} = useGetSuppliers({pagination:{...pagination,pageIndex:pagination.pageIndex+1},activeFilters})
+    const {isPending,isError,error,data} = useGetSuppliers({pagination,activeFilters})
+    const suppliersWithoutFilters = useGetSuppliers({activeFilters:{}})
 
     const suppliersData:SuppliersSchemaWithId[] = useMemo(()=>{
         return data?.suppliers?.suppliers || []
@@ -134,7 +134,7 @@ export default function Suppliers() {
             ))}
                 </div>
             <FilterBoard form={form} setIsOpen={setIsOpen} table={table} title="Fournisseur" >
-                <FilterBoardForm form={form} data={suppliersData}/>
+                <FilterBoardForm form={form} data={suppliersWithoutFilters.data?.suppliers?.suppliers || []}/>
             </FilterBoard>
             <EntityDialog  title="fournisseur" open={isOpen} setIsOpen={setIsOpen}>
                     <SupplierForm setIsOpen={setIsOpen}/>

@@ -32,8 +32,10 @@ export  function useGetProducts({pagination,activeFilters}: {pagination?:Paginat
             }
             params.set(key, String(value));
           })
-          params.set("page",String(pagination?.pageIndex))
-          params.set("limit",String(pagination?.pageSize))
+          if (pagination) {
+            params.set("page", String(pagination.pageIndex + 1))
+            params.set("limit", String(pagination.pageSize))
+          }
         return getProducts(params);
         }
         return getProducts();

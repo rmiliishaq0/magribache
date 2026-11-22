@@ -52,7 +52,20 @@ export const productRepository = {
           logs: true,
         },
       },
+      stockMovements: {
+        orderBy: {
+          createdAt: "desc",
+        },
+      },
     }})
+  },
+
+  async getAllStockMovements() {
+    return await prisma.stockMovement.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
   },
   
   async delete(reference:string){

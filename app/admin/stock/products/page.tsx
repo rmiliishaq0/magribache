@@ -88,7 +88,7 @@ export default function ProductsPage() {
         );
         }, [filters]);
         
-    const {isPending,isError,error,data} = useGetProducts({pagination:{...pagination,pageIndex:pagination.pageIndex+1},activeFilters})
+    const {isPending,isError,error,data} = useGetProducts({pagination,activeFilters})
     const suppliersData = useGetSuppliers()
     
     const products:productsSchemaWithId[] = useMemo(()=>{

@@ -33,8 +33,10 @@ export  function useGetSuppliers({pagination,activeFilters}: {pagination?:Pagina
             }
             params.set(key, String(value));
           })
-          params.set("page",String(pagination?.pageIndex))
-          params.set("limit",String(pagination?.pageSize))
+          if (pagination) {
+            params.set("page", String(pagination.pageIndex + 1))
+            params.set("limit", String(pagination.pageSize))
+          }
         return getSuppliers(params);
         }
         return getSuppliers();

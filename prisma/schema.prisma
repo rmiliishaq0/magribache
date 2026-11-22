@@ -107,6 +107,8 @@ model Activity {
   supplierId Int?
   supplier    Supplier?         @relation(fields: [supplierId], references: [id], onDelete: Cascade)
 
+  purchaseOrderId Int?
+  purchaseOrder   PurchaseOrder? @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
 
   logs       ActivityLog[]
 
@@ -285,6 +287,7 @@ enum EntityType {
   DELIVERY
   INVENTORY
   PRODUCT
+  PURCHASE_ORDER
 }
 
 
@@ -464,6 +467,7 @@ model PurchaseOrder {
 
   lines               PurchaseOrderLine[]
   receipts            GoodsReceipt[]
+  activities          Activity[]
 
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt

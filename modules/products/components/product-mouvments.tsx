@@ -16,7 +16,6 @@ import { ProductMouvmentsType } from "../types";
 import { columns } from "../columns/mouvments";
 
 export default function ProductMouvments({productMouvments}:{productMouvments:ProductMouvmentsType[] | undefined}){
-    const data = null
      const [pagination, setPagination] =useState({
         pageIndex: 0,
         pageSize: 10,
@@ -53,9 +52,9 @@ export default function ProductMouvments({productMouvments}:{productMouvments:Pr
                 <CardTitle className="text-lg font-bold text-secondary">Mouvements de stock</CardTitle>
             </CardHeader>
             <CardContent>
-                {data ? 
-                <DataTable<ProductMouvmentsType> isPending={!data} table={table}/>
-                : <div className="pb-6 text-muted-foreground flex items-center justify-center text-md ">Il n'y a pas de mouvements de stock</div>}
+                {productMouvments?.length ? 
+                <DataTable<ProductMouvmentsType> isPending={false} table={table}/>
+                : <div className="pb-6 text-muted-foreground flex items-center justify-center text-md ">Il n&apos;y a pas de mouvements de stock</div>}
             </CardContent>
         </Card>
     )

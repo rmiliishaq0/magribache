@@ -19,7 +19,7 @@ export default async function Product({params}:{params:Promise<{reference:string
     }
     const data = {...result.product,
                     id:10,
-                    reference:result.product?.reference!,
+                    reference:result.product?.reference ?? reference,
                     name :result.product?.name ?? "",
                     type:result.product?.type ?? ProductType.FINISHED_PRODUCT,
                     status:result.product?.status ?? ProductStatus.ACTIVE,
@@ -47,7 +47,7 @@ export default async function Product({params}:{params:Promise<{reference:string
                 <ProspectHistorique activities={data?.activity}/>
                 <ProductSuppliers suppliers={[]}/>
                 <ProductStockLot productStockLot={[]}/>
-                <ProductMouvments productMouvments={[]}/>
+                <ProductMouvments productMouvments={result.product?.stockMovements}/>
             </CardContent>
         </Card>
     )

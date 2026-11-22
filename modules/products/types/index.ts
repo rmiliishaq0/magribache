@@ -48,7 +48,7 @@ export type ProductMouvmentsType ={
     quantity: number | null
     unit:StockUnit
     totalCost:number |null
-    createdAt:Date | null
+    createdAt:Date | string | null
 }
 
 export type ProductStockLotType ={

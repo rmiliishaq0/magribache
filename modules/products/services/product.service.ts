@@ -235,6 +235,38 @@ export const productService = {
       }
     },
 
+    async getStockMovements() {
+      try {
+        const auth = await requireAuth();
+
+        if (auth.error) {
+          return {
+            success: false,
+            message: "Unauthorized",
+          };
+        }
+
+        const movements = await productRepository.getAllStockMovements();
+
+        return {
+          success: true,
+          movements: movements.map((movement) => ({
+            ...movement,
+            quantity: Number(movement.quantity),
+            unitCost: movement.unitCost === null ? null : Number(movement.unitCost),
+            totalCost: movement.totalCost === null ? null : Number(movement.totalCost),
+            createdAt: movement.createdAt.toISOString(),
+          })),
+        };
+      } catch (err) {
+        console.error(err);
+        return {
+          success: false,
+          message: "Une erreur s'est produite",
+        };
+      }
+    },
+
      async getSuppliersWithProducts(){
         try{
             const auth = await requireAuth()
