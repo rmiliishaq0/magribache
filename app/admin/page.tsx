@@ -70,7 +70,7 @@ export default function AdminHome() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {staticData.map((i)=>(
-                    <DashboardCard key={i} title={i.name} number={i.value} extra={i.extra} Logo={<SendToBack/>}>
+                    <DashboardCard key={i.name} title={i.name} number={i.value} extra={i.extra} Logo={<SendToBack/>}>
                         <Progress value={i.progress}/>
                     </DashboardCard>
                 ))}

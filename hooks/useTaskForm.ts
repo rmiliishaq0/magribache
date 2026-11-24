@@ -1,23 +1,20 @@
-import {useForm} from "react-hook-form";
-import {taskSchema, taskSchemaWithID} from "@/utils/schema";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import z from "zod";
+import { taskSchema } from "@/utils/schema";
 
-type TaskFormValues = z.infer<typeof taskSchemaWithID> | null;
-
-
-export default function useTaskForm() {
-    return useForm<z.infer<typeof taskSchema>>({
-        resolver:zodResolver(taskSchema),
-        mode:"all",
-        reValidateMode:"onChange",
-        defaultValues: {
-            name: "",
-            dueDate: "",
-            project: "",
-            description: "",
-            priority: "Moyenne",
-            status:"En cours"
-        }
-    })
+export default function useTaskForm(defaultValues?: z.infer<typeof taskSchema>) {
+  return useForm<z.infer<typeof taskSchema>>({
+    resolver: zodResolver(taskSchema),
+    mode: "all",
+    reValidateMode: "onBlur",
+    defaultValues: defaultValues ?? {
+      name: "",
+      description: "",
+      dueDate: "",
+      priority: "Moyenne",
+      project: "",
+      status: "En cours",
+    },
+  });
 }

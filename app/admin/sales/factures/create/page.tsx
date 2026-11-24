@@ -5,7 +5,7 @@ import {
     ResizablePanel,
     ResizablePanelGroup,
   } from "@/components/ui/resizable"
-import DocsForm from "@/components/doc-from"
+import DocsForm from "@/modules/devis/components/doc-from"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
@@ -98,7 +98,7 @@ import { useRouter } from "next/navigation"
             >
               <ResizablePanel defaultSize="40%" className="w-full">
                 <div className="flex h-full  justify-center p-4 w-full">
-                  <DocsForm onSubmit={onSubmit} client={clientQuery?.data?.clients ?? []} form={form} />
+                  <DocsForm onSubmit={onSubmit as any} clients={clientQuery?.data?.clients ?? []} form={form as any} />
                 </div>
               </ResizablePanel>
               <ResizableHandle />

@@ -139,3 +139,7 @@
 .sidebar-hover{
   @apply hover:bg-secondary-foreground/10  hover:text-primary hover:cursor-pointer transition;
 }
+
+.sidebar-hover-sub{
+  @apply   hover:text-primary hover:cursor-pointer transition;
+}

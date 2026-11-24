@@ -1,5 +1,5 @@
+import { redirect } from "next/navigation";
+
 export default function Products() {
-    return (
-        <h1>products</h1>
-    )
+    redirect("/admin/stock/products");
 }

@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {memo} from "react";
 import {Spinner} from "@/components/ui/spinner";
-import { ColumnMeta } from "@/utils/types";
+import { ColumnMeta } from "@/types/types";
 
 export default memo(function AddDialog({open,setOpen,onSubmit,form,isPending,constants,activeTab}:{
     open:boolean,

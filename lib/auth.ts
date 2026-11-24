@@ -2,10 +2,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import prisma from "@/lib/prisma";
+import { cookies } from "next/headers";
 
-export async function requireAuth(req: NextRequest) {
+export async function requireAuth() {
     try{
-        const token = req.cookies.get("token")?.value
+  const token = (await cookies()).get("token")?.value;
         let userId
         if(!token){
             return {error:true,response:NextResponse.json({message:"Non autorisé"},{status:401})}
