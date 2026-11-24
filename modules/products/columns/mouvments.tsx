@@ -69,7 +69,7 @@ export const columns: ColumnDef<ProductMouvmentsType>[] = [
     header:"Quantité",
     cell:({row})=>(
       <div className="min-w-32">
-        {row.original.quantity}
+        {row.original.quantity?.toString() || "0"}
       </div>
     )
   },
@@ -87,7 +87,7 @@ export const columns: ColumnDef<ProductMouvmentsType>[] = [
     header: "Coût total",
     cell: ({ row }) => (
       <div className="min-w-32">
-          {row.original.totalCost || "aucune"}
+          {row.original.totalCost?.toString() || "aucune"}
       </div>
     ),
   },

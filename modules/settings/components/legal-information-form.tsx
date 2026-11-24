@@ -11,7 +11,6 @@ import { Card } from "@/components/ui/card";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/stores/auth-store";
-import { updateLegalSettings } from "@/utils/Apis";
 import { legalSettingsSchema } from "../schamas/settings";
 import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";

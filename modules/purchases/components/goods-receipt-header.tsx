@@ -4,18 +4,20 @@ import Link from "next/link"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import StatsCard from "@/components/stats-card"
-import { Ban, ClipboardList, PackageCheck, ReceiptText, Trash } from "lucide-react"
+import { Ban, Building2, PackageCheck, CircleCheck, ClipboardList, Trash } from "lucide-react"
 import { GoodsReceiptStatus } from "@/app/generated/prisma/enums"
 import { useDeleteGoodsReceipt } from "../hooks/mutations/use-delete-goods-receipt"
+import { goodsReceiptLabels } from "../option-goods-receipt"
 import type { GoodsReceiptRow } from "../types"
 
 export default function GoodsReceiptHeader({ receipt }: { receipt: GoodsReceiptRow }) {
   const mutation = useDeleteGoodsReceipt()
   const received = receipt.lines.reduce((total, line) => total + Number(line.quantityReceived), 0)
   const stats = [
-    { title: "Lignes", value: receipt.lines.length, icon: ReceiptText, style: "text-blue-600" },
+    { title: "Fournisseur", value: receipt.supplier.name, icon: Building2, style: "text-blue-600" },
     { title: "Quantité reçue", value: received, icon: PackageCheck, style: "text-emerald-600" },
-    { title: "Commande", value: receipt.purchaseOrder.reference, icon: ClipboardList, style: "text-violet-600" },
+    { title: "Statut", value: goodsReceiptLabels[receipt.status], icon: CircleCheck, style: "text-violet-600" },
+    { title: "Commande", value: receipt.purchaseOrder.reference, icon: ClipboardList, style: "text-orange-600" },
   ]
 
   return (
@@ -54,7 +56,7 @@ export default function GoodsReceiptHeader({ receipt }: { receipt: GoodsReceiptR
           )}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <StatsCard key={stat.title} Icon={stat.icon} description={stat.title} number={stat.value} style={stat.style} />
         ))}

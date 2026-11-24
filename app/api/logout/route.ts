@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request,res:NextResponse) {
+export async function POST() {
     try {
         const response = NextResponse.json({message:"Connexion reussie"}, { status: 200 });
         response.cookies.set("token", "", { httpOnly: process.env.PRODUCTION === "true", secure: process.env.PRODUCTION === "true", sameSite: "strict", maxAge: 0 });

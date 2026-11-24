@@ -3,6 +3,7 @@ import { productTypeColors } from "../constants/colors"
 import { z } from "zod";
 import { productsSchema } from "../schemas/productsSchema";
 import { ProductStatus, ProductType, StockMovementType, StockUnit } from "@/app/generated/prisma/enums";
+import { Decimal } from "@prisma/client/runtime/client";
 
 
 
@@ -45,9 +46,9 @@ export type ProductMouvmentsType ={
     id:number
     reference:string | null
     type: StockMovementType
-    quantity: number | null
+    quantity: number | string | Decimal | null
     unit:StockUnit
-    totalCost:number |null
+    totalCost:number | string | Decimal | null
     createdAt:Date | string | null
 }
 

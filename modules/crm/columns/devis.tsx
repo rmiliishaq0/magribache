@@ -53,7 +53,7 @@ export const devisColumn :ColumnDef<Devis & {id:number}>[]=[
     cell: ({ row }) => {
       return <div className="min-w-32">
         <Button   variant="link" className="w-fit px-0 text-left text-foreground">
-          {row.original.numero}
+          {row.original.numero || row.original.reference || "aucune"}
         </Button>
       </div>
     },
@@ -90,7 +90,7 @@ export const devisColumn :ColumnDef<Devis & {id:number}>[]=[
     header:"Montant",
     cell:({row})=>(
       <div className="min-w-32">
-          {row.original?.montantTTC || "aucune"}
+          {(row.original?.montantTTC || row.original?.totalAmount)?.toString() || "aucune"}
       </div>
     )
   },
@@ -99,8 +99,8 @@ export const devisColumn :ColumnDef<Devis & {id:number}>[]=[
     header:"Statut",
     cell:({row})=>(
       <div className="w-32">
-        <Badge variant="outline" className={DOCUMENT_STATUS_STYLES[row.original.status]}>
-          {Options[row.original?.status] || "aucune"}
+        <Badge variant="outline" className={DOCUMENT_STATUS_STYLES[row.original.status as keyof typeof DOCUMENT_STATUS_STYLES]}>
+          {Options[row.original.status as keyof typeof Options] || "aucune"}
         </Badge>
       </div>
     )

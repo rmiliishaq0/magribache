@@ -54,7 +54,7 @@ import { Spinner } from "./ui/spinner";
 
 
 
-function DraggableRow<T extends {id:number}>({ row }: { row: Row<T> }) {
+function DraggableRow<T extends {id:number | string}>({ row }: { row: Row<T> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
   })
@@ -79,7 +79,7 @@ function DraggableRow<T extends {id:number}>({ row }: { row: Row<T> }) {
   )
 }
 
-export default function DataTable<T extends {id:number}>({
+export default function DataTable<T extends {id:number | string}>({
   table,
   isPending
 }: {

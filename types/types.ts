@@ -1,5 +1,6 @@
 import { LucideIcon } from "lucide-react";
 import { z } from "zod";
+import { crmSchema } from "@/modules/crm/schemas/prospect";
 
 export type ColumnMeta = {
   isNavigate?: boolean

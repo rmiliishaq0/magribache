@@ -98,7 +98,7 @@ import { useRouter } from "next/navigation"
             >
               <ResizablePanel defaultSize="40%" className="w-full">
                 <div className="flex h-full  justify-center p-4 w-full">
-                  <DocsForm onSubmit={onSubmit} client={clientQuery?.data?.clients ?? []} form={form} />
+                  <DocsForm onSubmit={onSubmit as any} clients={clientQuery?.data?.clients ?? []} form={form as any} />
                 </div>
               </ResizablePanel>
               <ResizableHandle />

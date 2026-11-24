@@ -139,7 +139,7 @@ export default function DevisFormUpdate({item,setItem}:{item:z.infer<typeof devi
                 render={({field,fieldState}) => (
                     <Field aria-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="Notes">Notes</FieldLabel>
-                        <Textarea id="Notes" {...field} placeholder="Notes...">Notes ...</Textarea>
+                        <Textarea id="Notes" {...field} value={field.value ?? ""} placeholder="Notes..." />
                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                     </Field>
                 )}

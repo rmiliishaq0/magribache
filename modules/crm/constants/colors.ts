@@ -136,7 +136,7 @@ export const ACTIVITY_TYPE_CONFIG = {
 } as const;
 
 
-export const DOCUMENT_STATUS_STYLES: Record<DocumentStatus, string> = {
+export const DOCUMENT_STATUS_STYLES: Record<string, string> = {
   BROUILLON: "bg-muted text-muted-foreground",
   ENVOYE: "bg-blue-100 text-blue-700",
   PAYE: "bg-green-100 text-green-700",

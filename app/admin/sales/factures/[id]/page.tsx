@@ -84,7 +84,7 @@ import DocPreview from "@/components/doc-preview"
   useEffect(() => {
       if (data?.docs) {
         const formData = data?.docs
-        form.reset({"client": formData?.clientId,devise:formData?.devise,devisDate:formData?.dateDocument,dateValidite:formData?.dateValidite,statut:formData?.status,reference:formData?.reference,items:formData.items.map((item) => ({
+        form.reset({"client": formData?.clientId,devise:formData?.devise,devisDate:formData?.dateDocument,dateValidite:formData?.dateValidite,statut:formData?.status,reference:formData?.reference,items:formData.items.map((item: any) => ({
     article: item.article ?? "",
     quantity: item.quantite ?? 1,
     unitPrice: item.prixUnitaire ?? 0,
@@ -125,7 +125,7 @@ import DocPreview from "@/components/doc-preview"
             >
               <ResizablePanel defaultSize="40%" className="w-full">
                 <div className="flex h-full  justify-center p-4 w-full">
-                  <DevisForm onSubmit={onSubmit} client={clientQuery?.data?.clients ?? []} form={form} />
+                  <DevisForm onSubmit={onSubmit as any} clients={clientQuery?.data?.clients ?? []} form={form as any} />
                 </div>
               </ResizablePanel>
               <ResizableHandle />

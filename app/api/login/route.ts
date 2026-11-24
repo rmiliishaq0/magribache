@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import  jwt  from "jsonwebtoken";
 
 
-export async function POST(req: Request,res:NextResponse) {
+export async function POST(req: Request) {
     try{
         const data = await req.json();
         const {data:parsedData,success} = loginSchema.safeParse(data);

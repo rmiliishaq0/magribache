@@ -5,6 +5,13 @@ import { TasksTableFields, TasksTableFieldsKeys } from "@/constants/constants";
 import {Button} from "@/components/ui/button";
 import { IconPlus } from "@tabler/icons-react";
 import {useCallback, useEffect, useMemo, useState} from "react";
+import {
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnDef,
+} from "@tanstack/react-table";
 import z from "zod"
 
 import {taskSchema, taskSchemaWithID} from "@/utils/schema";
@@ -89,6 +96,32 @@ export default function Tasks() {
     
     const tasks = useMemo(() => data?.tasks || [], [data])
 
+    const columns = useMemo<ColumnDef<(typeof tasks)[number]>[]>(() => [
+      { accessorKey: "name", header: "Titre" },
+      { accessorKey: "priority", header: "Priorité" },
+      { accessorKey: "projet", header: "Projet" },
+      { accessorKey: "dueDate", header: "Échéance" },
+      { accessorKey: "status", header: "Statut" },
+    ], [])
+
+    const [rowSelection, setRowSelection] = useState({})
+    const table = useReactTable({
+      data: tasks,
+      columns,
+      state: { pagination, sorting, rowSelection },
+      rowCount: total,
+      manualPagination: true,
+      manualSorting: true,
+      enableRowSelection: true,
+      onPaginationChange: setPagination,
+      onSortingChange: setSorting,
+      onRowSelectionChange: setRowSelection,
+      getRowId: (row) => String(row.id),
+      getCoreRowModel: getCoreRowModel(),
+      getPaginationRowModel: getPaginationRowModel(),
+      getSortedRowModel: getSortedRowModel(),
+    })
+
     useEffect(() => {
         if(isError){
             toast.error(error?.message)
@@ -136,7 +169,7 @@ export default function Tasks() {
                   <span>Ajouter une tâche</span>
                 </Button>
             </div>
-            <DataTable isUpdatePending={updateTaskMutation.isPending} form={updateForm} onUpdate={onUpdate} selectedItem={selectedItem} setselectedItem={setSelectedItem} schema={taskSchemaWithID} onDelete={onDelete} sorting={sorting} setSorting={setSorting} rowCount={total} pagination={pagination} setPagination={setPagination} isPending={isPending } data={tasks} constants={TasksTableFields} headers={TasksTableFieldsKeys} />
+            <DataTable table={table} isPending={isPending} />
             <AddTask isPending={createTaskMutation.isPending} form={form} openTask={openTask} setOpenTask={setOpenTask} onSubmit={onSubmit} />
             </div>
         </Card>

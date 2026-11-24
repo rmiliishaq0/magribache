@@ -20,6 +20,7 @@ import GoodsReceiptForm from "@/modules/purchases/components/goods-receipt-form"
 import { useGetGoodsReceipts } from "@/modules/purchases/hooks/queries/use-get-goods-receipts"
 import { useGetSuppliers } from "@/modules/suppliers/hooks/queries/use-get-suppliers"
 import type { GoodsReceiptRow } from "@/modules/purchases/types"
+import GoodsReceiptFormUpdate from "@/modules/purchases/components/goods-receipt-form-update";
 
 export default function GoodsReceipt() {
   const form = useForm<z.infer<typeof goodsReceiptFilterSchema>>({
@@ -93,7 +94,7 @@ export default function GoodsReceipt() {
           setItem={setItem}
           link={`/admin/purchases/goods-receipt/${item?.reference}`}
         >
-          {item && <GoodsReceiptForm embedded item={item} onSuccess={() => setItem(null)} />}
+          {item && <GoodsReceiptFormUpdate item={item} setItem={setItem} onSuccess={() => setItem(null)} />}
         </TableCellViewerEntity>
       </CardContent>
     </Card>

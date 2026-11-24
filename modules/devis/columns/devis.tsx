@@ -134,7 +134,7 @@ export const columns = ({setItem}:{setItem:React.Dispatch<React.SetStateAction<z
     header: "Devise",
     cell: ({ row }) => (
       <div className="min-w-32">
-          {row.original?.currency || "aucune"}
+          {((row.original as typeof row.original & { currency?: string }).currency) || "aucune"}
       </div>
     ),
   },
@@ -152,7 +152,7 @@ export const columns = ({setItem}:{setItem:React.Dispatch<React.SetStateAction<z
     header: "Remise",
     cell: ({ row }) => (
       <div className="min-w-32">
-          {row.original?.discount || "aucune"}
+          {row.original?.discount?.toString() || "aucune"}
       </div>
     ),
   },
@@ -161,7 +161,7 @@ export const columns = ({setItem}:{setItem:React.Dispatch<React.SetStateAction<z
     header: "Ajustement",
     cell: ({ row }) => (
       <div className="min-w-32">
-          {row.original?.adjustment || "aucune"}
+          {((row.original as typeof row.original & { adjustment?: number }).adjustment) || "aucune"}
       </div>
     ),
   },
@@ -170,7 +170,7 @@ export const columns = ({setItem}:{setItem:React.Dispatch<React.SetStateAction<z
     header: "Montant TVA",
     cell: ({ row }) => (
       <div className="min-w-32">
-          {row.original?.taxAmount || "aucune"}
+          {row.original?.taxAmount?.toString() || "aucune"}
       </div>
     ),
   },
@@ -179,7 +179,7 @@ export const columns = ({setItem}:{setItem:React.Dispatch<React.SetStateAction<z
     header: "Montant TTC",
     cell: ({ row }) => (
       <div className="min-w-32">
-          {row.original?.totalAmount || "aucune"}
+          {row.original?.totalAmount?.toString() || "aucune"}
       </div>
     ),
   },

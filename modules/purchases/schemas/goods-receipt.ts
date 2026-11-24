@@ -46,3 +46,11 @@ export const goodsReceiptSchema = z.object({
   }
 })
 
+export const goodsReceiptUpdateSchema = z.object({
+  purchaseOrderId: z.number().int().positive(),
+  receiptDate: z.date(),
+  supplierDocumentRef: z.string().optional(),
+  status: z.nativeEnum(GoodsReceiptStatus).default(GoodsReceiptStatus.DRAFT),
+  notes: z.string().optional(),
+})
+

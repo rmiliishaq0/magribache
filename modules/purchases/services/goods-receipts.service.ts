@@ -2,7 +2,7 @@ import prisma from "@/lib/prisma"
 import { Prisma } from "@/app/generated/prisma/client"
 import { requireAuth } from "@/lib/auth"
 import { GoodsReceiptStatus, PurchaseOrderStatus } from "@/app/generated/prisma/enums"
-import { goodsReceiptSchema } from "../schemas/goods-receipt"
+import { goodsReceiptSchema, goodsReceiptUpdateSchema } from "../schemas/goods-receipt"
 import { goodsReceiptsRepository } from "../repositories/goods-receipts.repository"
 
 type ReceiptFilters = {
@@ -261,7 +261,7 @@ export const goodsReceiptsService = {
     try {
       const auth = await requireAuth()
       if (auth.error) return { success: false, message: "Unauthorized" }
-      const parsed = goodsReceiptSchema.safeParse(data)
+      const parsed = goodsReceiptUpdateSchema.safeParse(data)
       if (!parsed.success) return { success: false, message: "Données invalides" }
       const before = await goodsReceiptsRepository.getById(id)
       if (!before) return { success: false, message: "Réception introuvable" }
@@ -281,16 +281,6 @@ export const goodsReceiptsService = {
         if (order.status === "RECEIVED" || order.status === "CANCELLED") {
           throw new Error("Cette commande ne peut plus être réceptionnée")
         }
-        for (const line of parsed.data.lines) {
-          const orderLine = order.lines.find((item) => item.id === line.purchaseOrderLineId)
-          if (!orderLine || orderLine.productId !== line.productId) {
-            throw new Error("Une ligne de réception ne correspond pas à la commande")
-          }
-          const remaining = Number(orderLine.quantity) - Number(orderLine.receivedQuantity)
-          if (parsed.data.status === GoodsReceiptStatus.COMPLETED && line.quantityReceived > remaining + 0.0001) {
-            throw new Error(`Quantité reçue supérieure au reliquat pour ${orderLine.designation}`)
-          }
-        }
         await tx.goodsReceipt.update({
           where: { id },
           data: {
@@ -298,20 +288,6 @@ export const goodsReceiptsService = {
             supplierDocumentRef: parsed.data.supplierDocumentRef,
             status: parsed.data.status,
             notes: parsed.data.notes,
-            lines: {
-              deleteMany: {},
-              create: parsed.data.lines.map((line) => ({
-                purchaseOrderLine: { connect: { id: line.purchaseOrderLineId } },
-                product: { connect: { id: line.productId } },
-                quantityReceived: line.quantityReceived,
-                unit: line.unit,
-                unitPriceHT: line.unitPriceHT,
-                lotNumber: line.lotNumber,
-                qualityChecked: line.qualityChecked,
-                qualityStatus: line.qualityStatus,
-                notes: line.notes,
-              })),
-            },
           },
         })
         if (parsed.data.status === GoodsReceiptStatus.COMPLETED) {

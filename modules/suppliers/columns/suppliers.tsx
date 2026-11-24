@@ -119,7 +119,7 @@ export const suppliers = ({setItem}:{setItem:React.Dispatch<React.SetStateAction
     cell:({row})=>(
       <div className="min-w-32">
           <Badge variant="outline" className={fournisseurStatsColors[row.original.status as keyof typeof fournisseurStatsColors]}>
-                {supplierStatusLabels[row.original?.status] || "aucune"}
+                {(row.original.status && supplierStatusLabels[row.original.status]) || "aucune"}
           </Badge>
       </div>
     )

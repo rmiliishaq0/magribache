@@ -66,9 +66,11 @@ export type Activity = {
 
 export type Devis =  {
     id:number
-    numero: String,
+    numero?: string,
+    reference?: string,
     createdAt:Date,
-    montantTTC:Decimal,
+    montantTTC?:Decimal,
+    totalAmount?: Decimal | null,
     status:DocumentStatus
 }
 
